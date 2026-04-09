@@ -4,11 +4,19 @@ import { Link } from 'react-router-dom'
 const features = [
   {
     title: 'Create professional invoices',
-    body: 'Generate invoices, calculate VAT automatically, export PDF copies, and share a payment reminder through WhatsApp.'
+    body: 'Generate invoices, calculate VAT automatically, export PDF copies, create public invoice links, and share reminders through WhatsApp.'
   },
   {
     title: 'Keep client records organised',
     body: 'Store client names, contact details, and invoice history in one place so you can follow up faster.'
+  },
+  {
+    title: 'Save products and services',
+    body: 'Keep a simple price list for the services or products you sell, then add them to invoices faster.'
+  },
+  {
+    title: 'Track expenses',
+    body: 'Record business spending and compare expenses against recorded invoice revenue on your dashboard.'
   },
   {
     title: 'Manage staff records',
@@ -22,8 +30,8 @@ const features = [
 
 const steps = [
   'Create your account with email and password.',
-  'Add your business details and contact information.',
-  'Create clients, issue invoices, and manage staff records from your dashboard.'
+  'Add your business details, logo, and payment instructions.',
+  'Create clients, products, invoices, expenses, and staff records from your dashboard.'
 ]
 
 const plans = [
@@ -58,6 +66,7 @@ export default function LandingPage() {
           <a href="#features">Features</a>
           <a href="#how-it-works">How it works</a>
           <a href="#pricing">Plans</a>
+          <Link to="/support">Support</Link>
         </div>
         <div className="landing-nav-cta">
           <Link to="/auth" className="landing-link">Log in</Link>
@@ -111,15 +120,15 @@ export default function LandingPage() {
             <div className="landing-demo-list">
               <div>
                 <strong>Invoices</strong>
-                <p>Create line items, apply VAT, export PDF, and mark status as pending, paid, or overdue.</p>
+                <p>Create line items, apply VAT, export PDF, copy a public invoice link, and mark status as pending, paid, or overdue.</p>
               </div>
               <div>
-                <strong>Clients</strong>
-                <p>Keep names, emails, phone numbers, and addresses organised inside the workspace.</p>
+                <strong>Products and expenses</strong>
+                <p>Save services you sell and record what the business spends, so your dashboard becomes more useful.</p>
               </div>
               <div>
-                <strong>Staff</strong>
-                <p>Store roles, salaries, and active status for your business team.</p>
+                <strong>Business settings</strong>
+                <p>Add your logo, contact details, bank details, and optional external payment link for invoices.</p>
               </div>
             </div>
           </div>
@@ -165,9 +174,9 @@ export default function LandingPage() {
           <div className="landing-section-head">
             <span>Plans</span>
             <h2>Choose the onboarding path that fits your business</h2>
-            <p>
-              Billing checkout is not yet exposed publicly in the app, so the current experience focuses on account creation and guided onboarding.
-            </p>
+          <p>
+            Billing checkout is not yet exposed publicly in the app, so the current experience focuses on account creation, business records, and guided onboarding.
+          </p>
           </div>
           <div className="landing-grid">
             {plans.map((plan) => (
@@ -203,6 +212,10 @@ export default function LandingPage() {
         <div className="landing-footer-links">
           <Link to="/auth">Log in</Link>
           <Link to="/auth">Create account</Link>
+          <Link to="/support">Support</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/refund-policy">Refund policy</Link>
           <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>
         </div>
       </footer>
