@@ -20,6 +20,9 @@ export default function PublicInvoice() {
 
   const fmt = (n) => '₦' + Number(n || 0).toLocaleString()
   const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
+  const business = invoice?.business_snapshot || {}
+  const client = invoice?.client_snapshot || {}
+  const items = invoice?.items || []
 
   async function copyInvoiceLink() {
     await navigator.clipboard.writeText(currentUrl)
@@ -34,10 +37,6 @@ export default function PublicInvoice() {
 
   if (loading) return <div className="empty-state"><h3>Loading invoice...</h3></div>
   if (!invoice) return <div className="empty-state"><h3>Invoice not found</h3><p>Please confirm the invoice link and try again.</p></div>
-
-  const business = invoice.business_snapshot || {}
-  const client = invoice.client_snapshot || {}
-  const items = invoice.items || []
 
   return (
     <div className="public-invoice-shell">
