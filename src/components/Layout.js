@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import ThemeToggle from './ThemeToggle'
 
 const nav = [
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
@@ -49,6 +50,9 @@ export default function Layout({ children, session, business }) {
         </nav>
 
         <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ padding: '0 12px 12px' }}>
+            <ThemeToggle />
+          </div>
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', padding: '0 12px', marginBottom: 8 }}>
             {session?.user?.email}
           </div>
