@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import ThemeToggle from './ThemeToggle'
 
 const nav = [
-  { path: '/home', icon: '🏠', label: 'Public Page' },
+  { path: '/home', icon: '🏠', label: 'Homepage' },
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
   { path: '/invoices', icon: '🧾', label: 'Invoices' },
   { path: '/clients', icon: '🤝', label: 'Clients' },
@@ -25,6 +25,7 @@ export default function Layout({ children, session, business }) {
 
   return (
     <div className="app-layout">
+      {menuOpen && <button className="sidebar-scrim" type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} />}
       <aside className={`app-sidebar ${menuOpen ? 'open' : ''}`}>
         <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -65,8 +66,12 @@ export default function Layout({ children, session, business }) {
 
       <main className="app-main">
         <div className="mobile-header">
-          <button onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? 'Close' : 'Menu'}</button>
-          <Link to="/home" className="mobile-home-link">Public Page</Link>
+          <button onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen}>{menuOpen ? 'Close' : 'Menu'}</button>
+          <div className="mobile-header-brand">
+            <strong>BizFlow NG</strong>
+            <span>{business?.name || 'My Business'}</span>
+          </div>
+          <Link to="/home" className="mobile-home-link">Homepage</Link>
         </div>
 
         {children}
