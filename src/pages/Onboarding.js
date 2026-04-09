@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export default function Onboarding({ setBusiness }) {
@@ -21,6 +22,9 @@ export default function Onboarding({ setBusiness }) {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0faf5 0%, #e8f4ff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ width: '100%', maxWidth: 520 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#0d7c4f', textDecoration: 'none', fontWeight: 700, fontSize: 13, marginBottom: 18 }}>
+            ← Back to homepage
+          </Link>
           <div style={{ width: 52, height: 52, background: '#0d7c4f', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
           </div>

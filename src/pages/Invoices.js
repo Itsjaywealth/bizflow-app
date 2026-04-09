@@ -111,7 +111,6 @@ export default function Invoices({ business }) {
         <button className="btn-primary" onClick={() => setShowModal(true)}>+ New Invoice</button>
       </div>
 
-      {/* Summary */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: 14, marginBottom: 24 }}>
         {[
           { label: 'Total Invoiced', value: fmt(invoices.reduce((s, i) => s + (i.total || 0), 0)), color: '#0d7c4f' },
@@ -145,8 +144,7 @@ export default function Invoices({ business }) {
                       <td style={{ fontWeight: 700 }}>₦{Number(inv.total).toLocaleString()}</td>
                       <td>{inv.due_date ? new Date(inv.due_date).toLocaleDateString() : '—'}</td>
                       <td>
-                        <select value={inv.status} onChange={e => updateStatus(inv.id, e.target.value)}
-                          style={{ border: 'none', background: 'transparent', fontWeight: 600, fontSize: 12, cursor: 'pointer', color: inv.status === 'paid' ? '#15803d' : inv.status === 'overdue' ? '#b91c1c' : '#a16207' }}>
+                        <select value={inv.status} onChange={e => updateStatus(inv.id, e.target.value)} style={{ border: 'none', background: 'transparent', fontWeight: 600, fontSize: 12, cursor: 'pointer', color: inv.status === 'paid' ? '#15803d' : inv.status === 'overdue' ? '#b91c1c' : '#a16207' }}>
                           <option value="pending">Pending</option>
                           <option value="paid">Paid</option>
                           <option value="overdue">Overdue</option>
@@ -167,7 +165,6 @@ export default function Invoices({ business }) {
         }
       </div>
 
-      {/* Create Invoice Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
           <div className="modal" style={{ maxWidth: 640 }}>
