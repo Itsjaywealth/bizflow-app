@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function PublicInvoice() {
   const { token } = useParams()
@@ -41,6 +42,8 @@ export default function PublicInvoice() {
   return (
     <div className="public-invoice-shell">
       <div className="public-invoice-actions">
+        <Link to="/home" className="btn-outline public-home-button">Homepage</Link>
+        <ThemeToggle compact />
         <button className="btn-outline" onClick={copyInvoiceLink}>{copied ? 'Copied' : 'Copy Link'}</button>
         <button className="btn-outline" onClick={shareWhatsApp}>Share on WhatsApp</button>
         <button className="btn-primary" onClick={() => window.print()}>Print Invoice</button>

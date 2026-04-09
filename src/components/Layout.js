@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import ThemeToggle from './ThemeToggle'
 
 const nav = [
+  { path: '/home', icon: '🏠', label: 'Website' },
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
   { path: '/invoices', icon: '🧾', label: 'Invoices' },
   { path: '/clients', icon: '🤝', label: 'Clients' },
@@ -23,8 +24,8 @@ export default function Layout({ children, session, business }) {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <aside style={{ width: 240, background: '#0a1628', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 50, transition: 'transform .3s', transform: menuOpen ? 'translateX(0)' : undefined }}>
+    <div className="app-layout">
+      <aside className={`app-sidebar ${menuOpen ? 'open' : ''}`}>
         <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 36, height: 36, background: '#0d7c4f', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -62,20 +63,14 @@ export default function Layout({ children, session, business }) {
         </div>
       </aside>
 
-      <main style={{ flex: 1, marginLeft: 240, padding: 28, maxWidth: '100%' }}>
-        <div style={{ display: 'none' }} className="mobile-header">
-          <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
+      <main className="app-main">
+        <div className="mobile-header">
+          <button onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? 'Close' : 'Menu'}</button>
+          <Link to="/home" className="mobile-home-link">Website</Link>
         </div>
 
         {children}
       </main>
-
-      <style>{`
-        @media(max-width:768px){
-          aside { transform: translateX(-100%); }
-          main { margin-left: 0 !important; padding: 16px !important; }
-        }
-      `}</style>
     </div>
   )
 }

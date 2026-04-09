@@ -57,7 +57,7 @@ export default function LandingPage() {
   return (
     <div className="landing-shell">
       <header className="landing-nav">
-        <Link to="/" className="landing-logo">
+        <Link to="/home" className="landing-logo">
           <div className="landing-logo-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
           </div>
@@ -102,44 +102,124 @@ export default function LandingPage() {
               <span className="landing-card-note">Current product capabilities</span>
             </div>
             <div className="landing-kpis">
-              <div className="landing-kpi"><small>Revenue recorded</small><strong>₦245,000</strong></div>
-              <div className="landing-kpi"><small>Pending invoices</small><strong>4</strong></div>
-              <div className="landing-kpi"><small>Clients</small><strong>12</strong></div>
-              <div className="landing-kpi"><small>Staff records</small><strong>6</strong></div>
+              <div className="landing-kpi">
+                <small>Revenue recorded</small>
+                <strong>₦245,000</strong>
+              </div>
+              <div className="landing-kpi">
+                <small>Pending invoices</small>
+                <strong>4</strong>
+              </div>
+              <div className="landing-kpi">
+                <small>Clients</small>
+                <strong>12</strong>
+              </div>
+              <div className="landing-kpi">
+                <small>Staff records</small>
+                <strong>6</strong>
+              </div>
             </div>
             <div className="landing-demo-list">
-              <div><strong>Invoices</strong><p>Create line items, apply VAT, export PDF, copy a public invoice link, and mark status as pending, paid, or overdue.</p></div>
-              <div><strong>Products and expenses</strong><p>Save services you sell and record what the business spends, so your dashboard becomes more useful.</p></div>
-              <div><strong>Business settings</strong><p>Add your logo, contact details, bank details, and optional external payment link for invoices.</p></div>
+              <div>
+                <strong>Invoices</strong>
+                <p>Create line items, apply VAT, export PDF, copy a public invoice link, and mark status as pending, paid, or overdue.</p>
+              </div>
+              <div>
+                <strong>Products and expenses</strong>
+                <p>Save services you sell and record what the business spends, so your dashboard becomes more useful.</p>
+              </div>
+              <div>
+                <strong>Business settings</strong>
+                <p>Add your logo, contact details, bank details, and optional external payment link for invoices.</p>
+              </div>
             </div>
           </div>
         </section>
 
         <section className="landing-section" id="features">
-          <div className="landing-section-head"><span>Core features</span><h2>What BizFlow NG can help you do right now</h2><p>Everything below is based on the product as it exists today, without inflated promises.</p></div>
-          <div className="landing-grid">{features.map((feature) => <article key={feature.title} className="landing-panel"><h3>{feature.title}</h3><p>{feature.body}</p></article>)}</div>
+          <div className="landing-section-head">
+            <span>Core features</span>
+            <h2>What BizFlow NG can help you do right now</h2>
+            <p>
+              Everything below is based on the product as it exists today, without inflated promises.
+            </p>
+          </div>
+          <div className="landing-grid">
+            {features.map((feature) => (
+              <article key={feature.title} className="landing-panel">
+                <h3>{feature.title}</h3>
+                <p>{feature.body}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="landing-section landing-section-alt" id="how-it-works">
-          <div className="landing-section-head"><span>Getting started</span><h2>From signup to first invoice in a few clear steps</h2><p>The onboarding flow is designed to be light: create an account, add your business, then start using the dashboard.</p></div>
-          <div className="landing-steps">{steps.map((step, index) => <div key={step} className="landing-step"><div className="landing-step-num">{index + 1}</div><p>{step}</p></div>)}</div>
+          <div className="landing-section-head">
+            <span>Getting started</span>
+            <h2>From signup to first invoice in a few clear steps</h2>
+            <p>
+              The onboarding flow is designed to be light: create an account, add your business, then start using the dashboard.
+            </p>
+          </div>
+          <div className="landing-steps">
+            {steps.map((step, index) => (
+              <div key={step} className="landing-step">
+                <div className="landing-step-num">{index + 1}</div>
+                <p>{step}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="landing-section" id="pricing">
-          <div className="landing-section-head"><span>Plans</span><h2>Choose the onboarding path that fits your business</h2><p>Billing checkout is not yet exposed publicly in the app, so the current experience focuses on account creation, business records, and guided onboarding.</p></div>
-          <div className="landing-grid">{plans.map((plan) => <article key={plan.name} className="landing-panel landing-plan"><h3>{plan.name}</h3><p>{plan.note}</p><ul>{plan.details.map((item) => <li key={item}>{item}</li>)}</ul><Link to="/auth" className="btn-primary">Create account</Link></article>)}</div>
+          <div className="landing-section-head">
+            <span>Plans</span>
+            <h2>Choose the onboarding path that fits your business</h2>
+          <p>
+            Billing checkout is not yet exposed publicly in the app, so the current experience focuses on account creation, business records, and guided onboarding.
+          </p>
+          </div>
+          <div className="landing-grid">
+            {plans.map((plan) => (
+              <article key={plan.name} className="landing-panel landing-plan">
+                <h3>{plan.name}</h3>
+                <p>{plan.note}</p>
+                <ul>
+                  {plan.details.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+                <Link to="/auth" className="btn-primary">Create account</Link>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="landing-cta">
           <h2>Put BizFlow NG to work for your business.</h2>
-          <p>Create your account, set up your business details, and start managing invoices, clients, and staff records in one place.</p>
-          <div className="landing-actions"><Link to="/auth" className="btn-primary landing-hero-btn">Create account</Link><a href="https://brandverseventures.com" className="btn-outline landing-hero-btn" target="_blank" rel="noreferrer">Visit BrandVerse Ventures</a></div>
+          <p>
+            Create your account, set up your business details, and start managing invoices, clients, and staff records in one place.
+          </p>
+          <div className="landing-actions">
+            <Link to="/auth" className="btn-primary landing-hero-btn">Create account</Link>
+            <a href="https://brandverseventures.com" className="btn-outline landing-hero-btn" target="_blank" rel="noreferrer">Visit BrandVerse Ventures</a>
+          </div>
         </section>
       </main>
 
       <footer className="landing-footer">
-        <div><div className="landing-logo-text">BizFlow <span>NG</span></div><p>A product by <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>.</p></div>
-        <div className="landing-footer-links"><Link to="/auth">Log in</Link><Link to="/auth">Create account</Link><Link to="/support">Support</Link><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><Link to="/refund-policy">Refund policy</Link><a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a></div>
+        <div>
+          <div className="landing-logo-text">BizFlow <span>NG</span></div>
+          <p>A product by <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>.</p>
+        </div>
+        <div className="landing-footer-links">
+          <Link to="/auth">Log in</Link>
+          <Link to="/auth">Create account</Link>
+          <Link to="/support">Support</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/refund-policy">Refund policy</Link>
+          <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>
+        </div>
       </footer>
     </div>
   )

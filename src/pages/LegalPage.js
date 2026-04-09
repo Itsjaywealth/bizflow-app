@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import PageUtilityNav from '../components/PageUtilityNav'
 
 const content = {
   terms: {
@@ -39,7 +39,7 @@ export default function LegalPage({ type }) {
   return (
     <div className="legal-shell">
       <div className="legal-card">
-        <Link to="/" className="auth-back">← Back to homepage</Link>
+        <PageUtilityNav />
         <h1>{page.title}</h1>
         <p className="legal-intro">{page.intro}</p>
         {page.sections.map(([title, body]) => (

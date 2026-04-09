@@ -72,6 +72,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
+        <Route path="/home" element={<LandingPage />} />
         <Route path="/invoice/:token" element={<PublicInvoice />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/terms" element={<LegalPage type="terms" />} />

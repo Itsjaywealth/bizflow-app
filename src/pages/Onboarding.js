@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import PageUtilityNav from '../components/PageUtilityNav'
 
 export default function Onboarding({ setBusiness }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '' })
@@ -19,12 +19,10 @@ export default function Onboarding({ setBusiness }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0faf5 0%, #e8f4ff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+    <div className="auth-shell">
       <div style={{ width: '100%', maxWidth: 520 }}>
+        <PageUtilityNav />
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#0d7c4f', textDecoration: 'none', fontWeight: 700, fontSize: 13, marginBottom: 18 }}>
-            ← Back to homepage
-          </Link>
           <div style={{ width: 52, height: 52, background: '#0d7c4f', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
           </div>
@@ -32,7 +30,7 @@ export default function Onboarding({ setBusiness }) {
           <p style={{ color: '#64748b', fontSize: 15, marginTop: 8 }}>Tell us about your business to get started. This takes less than 2 minutes.</p>
         </div>
 
-        <div style={{ background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 8px 32px rgba(10,22,40,0.1)' }}>
+        <div className="auth-panel">
           <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
             {['Business Info', 'Done!'].map((step, i) => (
               <div key={i} style={{ flex: 1, textAlign: 'center' }}>
