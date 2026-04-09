@@ -12,6 +12,9 @@ import Expenses from './pages/Expenses'
 import Settings from './pages/Settings'
 import PublicInvoice from './pages/PublicInvoice'
 import LandingPage from './pages/LandingPage'
+import ResetPassword from './pages/ResetPassword'
+import LegalPage from './pages/LegalPage'
+import SupportPage from './pages/SupportPage'
 import Layout from './components/Layout'
 import './App.css'
 
@@ -66,9 +69,22 @@ export default function App() {
       <Routes>
         <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
         <Route path="/invoice/:token" element={<PublicInvoice />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/terms" element={<LegalPage type="terms" />} />
+        <Route path="/privacy" element={<LegalPage type="privacy" />} />
+        <Route path="/refund-policy" element={<LegalPage type="refund" />} />
+        <Route path="/support" element={<SupportPage />} />
         <Route path="/auth" element={!session ? <Auth /> : <Navigate to={getAppHome()} replace />} />
-        <Route path="/onboarding" element={!session ? <Navigate to="/auth" replace /> : business ? <Navigate to="/dashboard" replace /> : <Onboarding setBusiness={setBusiness} />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard business={business} /></ProtectedRoute>} />
+        <Route path="/onboarding" element={
+          !session ? <Navigate to="/auth" replace /> :
+          business ? <Navigate to="/dashboard" replace /> :
+          <Onboarding setBusiness={setBusiness} />
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard business={business} />
+          </ProtectedRoute>
+        } />
         <Route path="/invoices" element={<ProtectedRoute><Invoices business={business} /></ProtectedRoute>} />
         <Route path="/clients" element={<ProtectedRoute><Clients business={business} /></ProtectedRoute>} />
         <Route path="/staff" element={<ProtectedRoute><Staff business={business} /></ProtectedRoute>} />
