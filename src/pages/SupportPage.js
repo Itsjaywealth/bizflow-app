@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import PageUtilityNav from '../components/PageUtilityNav'
 
 const supportItems = [
   ['Account help', 'Login, email confirmation, password reset, and onboarding support.'],
@@ -11,7 +12,7 @@ export default function SupportPage() {
   return (
     <div className="legal-shell">
       <div className="legal-card support-card">
-        <Link to="/" className="auth-back">← Back to homepage</Link>
+        <PageUtilityNav />
         <div className="landing-eyebrow">BizFlow NG Support</div>
         <h1>How can we help?</h1>
         <p className="legal-intro">
