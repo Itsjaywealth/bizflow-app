@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle'
 
@@ -54,6 +54,12 @@ const plans = [
 ]
 
 export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  function closeMobileMenu() {
+    setMobileMenuOpen(false)
+  }
+
   return (
     <div className="landing-shell">
       <header className="landing-nav">
@@ -74,7 +80,28 @@ export default function LandingPage() {
           <Link to="/auth" className="landing-link">Log in</Link>
           <Link to="/auth" className="btn-primary">Create account</Link>
         </div>
+        <button
+          className="landing-menu-button"
+          type="button"
+          onClick={() => setMobileMenuOpen(open => !open)}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="landing-mobile-menu"
+        >
+          {mobileMenuOpen ? 'Close' : 'Menu'}
+        </button>
       </header>
+
+      <div id="landing-mobile-menu" className={`landing-mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
+        <a href="#features" onClick={closeMobileMenu}>Features</a>
+        <a href="#how-it-works" onClick={closeMobileMenu}>How it works</a>
+        <a href="#pricing" onClick={closeMobileMenu}>Plans</a>
+        <Link to="/support" onClick={closeMobileMenu}>Support</Link>
+        <div className="landing-mobile-actions">
+          <ThemeToggle />
+          <Link to="/auth" className="btn-outline landing-mobile-cta" onClick={closeMobileMenu}>Log in</Link>
+          <Link to="/auth" className="btn-primary landing-mobile-cta" onClick={closeMobileMenu}>Create account</Link>
+        </div>
+      </div>
 
       <main>
         <section className="landing-hero">
