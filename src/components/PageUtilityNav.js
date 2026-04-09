@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 
-export default function PageUtilityNav({ backTo = '/home', backLabel = 'Homepage' }) {
+export default function PageUtilityNav({ backTo = '/home', backLabel = 'Back to BizFlow NG' }) {
   return (
     <div className="page-utility-nav">
       <Link to={backTo} className="home-link">

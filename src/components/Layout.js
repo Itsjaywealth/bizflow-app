@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import ThemeToggle from './ThemeToggle'
 
 const nav = [
-  { path: '/home', icon: '🏠', label: 'Website' },
+  { path: '/home', icon: '🏠', label: 'Public Page' },
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
   { path: '/invoices', icon: '🧾', label: 'Invoices' },
   { path: '/clients', icon: '🤝', label: 'Clients' },
@@ -66,7 +66,7 @@ export default function Layout({ children, session, business }) {
       <main className="app-main">
         <div className="mobile-header">
           <button onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? 'Close' : 'Menu'}</button>
-          <Link to="/home" className="mobile-home-link">Website</Link>
+          <Link to="/home" className="mobile-home-link">Public Page</Link>
         </div>
 
         {children}
