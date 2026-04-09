@@ -42,7 +42,7 @@ export default function PublicInvoice() {
   return (
     <div className="public-invoice-shell">
       <div className="public-invoice-actions">
-        <Link to="/home" className="btn-outline public-home-button">Homepage</Link>
+        <Link to="/home" className="btn-outline public-home-button">Back to BizFlow NG</Link>
         <ThemeToggle compact />
         <button className="btn-outline" onClick={copyInvoiceLink}>{copied ? 'Copied' : 'Copy Link'}</button>
         <button className="btn-outline" onClick={shareWhatsApp}>Share on WhatsApp</button>
