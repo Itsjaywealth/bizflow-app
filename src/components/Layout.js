@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const nav = [
-  { path: '/', icon: '📊', label: 'Dashboard' },
+  { path: '/dashboard', icon: '📊', label: 'Dashboard' },
   { path: '/invoices', icon: '🧾', label: 'Invoices' },
   { path: '/clients', icon: '🤝', label: 'Clients' },
   { path: '/staff', icon: '👥', label: 'My Team' },
@@ -19,7 +19,6 @@ export default function Layout({ children, session, business }) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar */}
       <aside style={{ width: 240, background: '#0a1628', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 50, transition: 'transform .3s', transform: menuOpen ? 'translateX(0)' : undefined }}>
         <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -37,8 +36,7 @@ export default function Layout({ children, session, business }) {
           {nav.map(item => {
             const active = pathname === item.path
             return (
-              <Link key={item.path} to={item.path} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 10, marginBottom: 4, textDecoration: 'none', background: active ? 'rgba(13,124,79,0.25)' : 'transparent', color: active ? '#34d399' : 'rgba(255,255,255,0.6)', fontWeight: active ? 700 : 500, fontSize: 14, transition: 'all .2s', borderLeft: active ? '3px solid #0d7c4f' : '3px solid transparent' }}
-                onClick={() => setMenuOpen(false)}>
+              <Link key={item.path} to={item.path} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 10, marginBottom: 4, textDecoration: 'none', background: active ? 'rgba(13,124,79,0.25)' : 'transparent', color: active ? '#34d399' : 'rgba(255,255,255,0.6)', fontWeight: active ? 700 : 500, fontSize: 14, transition: 'all .2s', borderLeft: active ? '3px solid #0d7c4f' : '3px solid transparent' }} onClick={() => setMenuOpen(false)}>
                 <span style={{ fontSize: 18 }}>{item.icon}</span>
                 {item.label}
               </Link>
@@ -56,9 +54,7 @@ export default function Layout({ children, session, business }) {
         </div>
       </aside>
 
-      {/* Main content */}
       <main style={{ flex: 1, marginLeft: 240, padding: 28, maxWidth: '100%' }}>
-        {/* Mobile header */}
         <div style={{ display: 'none' }} className="mobile-header">
           <button onClick={() => setMenuOpen(!menuOpen)}>☰</button>
         </div>

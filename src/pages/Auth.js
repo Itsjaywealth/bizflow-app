@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export default function Auth() {
@@ -28,6 +29,9 @@ export default function Auth() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f0faf5 0%, #e8f4ff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ width: '100%', maxWidth: 440 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: '#0d7c4f', textDecoration: 'none', fontWeight: 700, fontSize: 13, marginBottom: 18 }}>
+            ← Back to homepage
+          </Link>
           <div style={{ width: 52, height: 52, background: '#0d7c4f', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
           </div>
@@ -38,8 +42,7 @@ export default function Auth() {
         <div style={{ background: 'white', borderRadius: 20, padding: 32, boxShadow: '0 8px 32px rgba(10,22,40,0.1)' }}>
           <div style={{ display: 'flex', background: '#f8fafc', borderRadius: 10, padding: 4, marginBottom: 28 }}>
             {['signup', 'login'].map(m => (
-              <button key={m} onClick={() => { setMode(m); setError(''); setMessage('') }}
-                style={{ flex: 1, padding: '9px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 14, cursor: 'pointer', transition: 'all .2s', background: mode === m ? 'white' : 'transparent', color: mode === m ? '#0a1628' : '#94a3b8', boxShadow: mode === m ? '0 2px 8px rgba(0,0,0,0.08)' : 'none' }}>
+              <button key={m} onClick={() => { setMode(m); setError(''); setMessage('') }} style={{ flex: 1, padding: '9px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 14, cursor: 'pointer', transition: 'all .2s', background: mode === m ? 'white' : 'transparent', color: mode === m ? '#0a1628' : '#94a3b8', boxShadow: mode === m ? '0 2px 8px rgba(0,0,0,0.08)' : 'none' }}>
                 {m === 'signup' ? 'Create Account' : 'Log In'}
               </button>
             ))}

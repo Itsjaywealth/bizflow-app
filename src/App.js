@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Invoices from './pages/Invoices'
 import Clients from './pages/Clients'
 import Staff from './pages/Staff'
+import LandingPage from './pages/LandingPage'
 import Layout from './components/Layout'
 import './App.css'
 
@@ -35,6 +36,16 @@ export default function App() {
     setLoading(false)
   }
 
+  function getAppHome() {
+    return business ? '/dashboard' : '/onboarding'
+  }
+
+  function ProtectedRoute({ children }) {
+    if (!session) return <Navigate to="/auth" replace />
+    if (!business) return <Navigate to="/onboarding" replace />
+    return <Layout session={session} business={business}>{children}</Layout>
+  }
+
   if (loading) return (
     <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',background:'#f8fafc'}}>
       <div style={{textAlign:'center'}}>
@@ -49,25 +60,22 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth" element={!session ? <Auth /> : <Navigate to="/" />} />
-        <Route path="/onboarding" element={session ? <Onboarding setBusiness={setBusiness} /> : <Navigate to="/auth" />} />
-        <Route path="/" element={
-          !session ? <Navigate to="/auth" /> :
-          !business ? <Navigate to="/onboarding" /> :
-          <Layout session={session} business={business}><Dashboard business={business} /></Layout>
+        <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
+        <Route path="/auth" element={!session ? <Auth /> : <Navigate to={getAppHome()} replace />} />
+        <Route path="/onboarding" element={
+          !session ? <Navigate to="/auth" replace /> :
+          business ? <Navigate to="/dashboard" replace /> :
+          <Onboarding setBusiness={setBusiness} />
         } />
-        <Route path="/invoices" element={
-          !session ? <Navigate to="/auth" /> :
-          <Layout session={session} business={business}><Invoices business={business} /></Layout>
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard business={business} />
+          </ProtectedRoute>
         } />
-        <Route path="/clients" element={
-          !session ? <Navigate to="/auth" /> :
-          <Layout session={session} business={business}><Clients business={business} /></Layout>
-        } />
-        <Route path="/staff" element={
-          !session ? <Navigate to="/auth" /> :
-          <Layout session={session} business={business}><Staff business={business} /></Layout>
-        } />
+        <Route path="/invoices" element={<ProtectedRoute><Invoices business={business} /></ProtectedRoute>} />
+        <Route path="/clients" element={<ProtectedRoute><Clients business={business} /></ProtectedRoute>} />
+        <Route path="/staff" element={<ProtectedRoute><Staff business={business} /></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
       </Routes>
     </BrowserRouter>
   )

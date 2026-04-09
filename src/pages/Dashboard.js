@@ -37,7 +37,6 @@ export default function Dashboard({ business }) {
         <Link to="/invoices"><button className="btn-primary">+ New Invoice</button></Link>
       </div>
 
-      {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 16, marginBottom: 28 }}>
         <div className="stat-card">
           <div className="stat-label">Total Revenue</div>
@@ -61,7 +60,6 @@ export default function Dashboard({ business }) {
         </div>
       </div>
 
-      {/* Quick actions */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 14, marginBottom: 28 }}>
         {[
           { label: 'Create Invoice', desc: 'Send a new invoice', icon: '🧾', to: '/invoices', color: '#0d7c4f' },
@@ -69,9 +67,7 @@ export default function Dashboard({ business }) {
           { label: 'Add Staff', desc: 'Add a team member', icon: '👥', to: '/staff', color: '#8b5cf6' },
         ].map(a => (
           <Link key={a.label} to={a.to} style={{ textDecoration: 'none' }}>
-            <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: 20, transition: 'all .2s', cursor: 'pointer' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = a.color; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.transform = 'translateY(0)' }}>
+            <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: 20, transition: 'all .2s', cursor: 'pointer' }} onMouseEnter={e => { e.currentTarget.style.borderColor = a.color; e.currentTarget.style.transform = 'translateY(-2px)' }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.transform = 'translateY(0)' }}>
               <div style={{ fontSize: 28, marginBottom: 10 }}>{a.icon}</div>
               <div style={{ fontWeight: 700, fontSize: 14, color: '#0a1628', marginBottom: 3 }}>{a.label}</div>
               <div style={{ fontSize: 12, color: '#64748b' }}>{a.desc}</div>
@@ -80,7 +76,6 @@ export default function Dashboard({ business }) {
         ))}
       </div>
 
-      {/* Recent invoices */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div style={{ fontWeight: 800, fontSize: 16, color: '#0a1628' }}>Recent Invoices</div>
