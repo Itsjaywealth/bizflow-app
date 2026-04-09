@@ -24,6 +24,10 @@ export default function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem('bizflow-theme')
+    const preferredTheme = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    document.documentElement.dataset.theme = savedTheme || preferredTheme
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       if (session) loadBusiness(session.user.id)
