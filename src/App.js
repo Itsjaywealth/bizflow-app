@@ -7,6 +7,10 @@ import Dashboard from './pages/Dashboard'
 import Invoices from './pages/Invoices'
 import Clients from './pages/Clients'
 import Staff from './pages/Staff'
+import Products from './pages/Products'
+import Expenses from './pages/Expenses'
+import Settings from './pages/Settings'
+import PublicInvoice from './pages/PublicInvoice'
 import LandingPage from './pages/LandingPage'
 import Layout from './components/Layout'
 import './App.css'
@@ -61,20 +65,16 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
+        <Route path="/invoice/:token" element={<PublicInvoice />} />
         <Route path="/auth" element={!session ? <Auth /> : <Navigate to={getAppHome()} replace />} />
-        <Route path="/onboarding" element={
-          !session ? <Navigate to="/auth" replace /> :
-          business ? <Navigate to="/dashboard" replace /> :
-          <Onboarding setBusiness={setBusiness} />
-        } />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard business={business} />
-          </ProtectedRoute>
-        } />
+        <Route path="/onboarding" element={!session ? <Navigate to="/auth" replace /> : business ? <Navigate to="/dashboard" replace /> : <Onboarding setBusiness={setBusiness} />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard business={business} /></ProtectedRoute>} />
         <Route path="/invoices" element={<ProtectedRoute><Invoices business={business} /></ProtectedRoute>} />
         <Route path="/clients" element={<ProtectedRoute><Clients business={business} /></ProtectedRoute>} />
         <Route path="/staff" element={<ProtectedRoute><Staff business={business} /></ProtectedRoute>} />
+        <Route path="/products" element={<ProtectedRoute><Products business={business} /></ProtectedRoute>} />
+        <Route path="/expenses" element={<ProtectedRoute><Expenses business={business} /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><Settings business={business} setBusiness={setBusiness} /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
       </Routes>
     </BrowserRouter>
