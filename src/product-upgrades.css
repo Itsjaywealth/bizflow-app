@@ -1,4 +1,23 @@
 .badge-sent { background: #dbeafe; color: #1d4ed8; }
+.badge-on.leave,
+.badge-on\ leave {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.avatar-badge {
+  width: 34px;
+  height: 34px;
+  background: var(--green-pale);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--green);
+  flex: 0 0 auto;
+}
 
 .table-toolbar {
   display: grid;
