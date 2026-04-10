@@ -1,14 +1,116 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export default function Dashboard({ business }) {
-  const [stats, setStats] = useState({ paid: 0, pending: 0, expenses: 0, profit: 0, staff: 0, clients: 0, invoiceCount: 0 })
+  const [stats, setStats] = useState({ paid: 0, pending: 0, expenses: 0, profit: 0, staff: 0, clients: 0, products: 0, invoiceCount: 0 })
   const [recentInvoices, setRecentInvoices] = useState([])
   const [topClients, setTopClients] = useState([])
+  const [monthly, setMonthly] = useState([])
   const [loading, setLoading] = useState(true)
+
   useEffect(() => { if (business) loadData() }, [business])
-  async function loadData() { const [invRes, staffRes, clientRes, expenseRes] = await Promise.all([supabase.from('invoices').select('*, clients(name)').eq('business_id', business.id), supabase.from('staff').select('id').eq('business_id', business.id), supabase.from('clients').select('id,name').eq('business_id', business.id), supabase.from('expenses').select('*').eq('business_id', business.id)]); const invoices = invRes.data || []; const expenses = expenseRes.data || []; const paid = invoices.filter(i => i.status === 'paid').reduce((s, i) => s + (i.total || 0), 0); const pending = invoices.filter(i => i.status === 'pending').reduce((s, i) => s + (i.total || 0), 0); const expenseTotal = expenses.reduce((s, e) => s + (e.amount || 0), 0); const clientTotals = invoices.reduce((acc, inv) => { const name = inv.clients?.name || inv.client_snapshot?.name || 'Unassigned'; acc[name] = (acc[name] || 0) + (inv.total || 0); return acc }, {}); setStats({ paid, pending, expenses: expenseTotal, profit: paid - expenseTotal, staff: staffRes.data?.length || 0, clients: clientRes.data?.length || 0, invoiceCount: invoices.length }); setRecentInvoices(invoices.slice(-5).reverse()); setTopClients(Object.entries(clientTotals).sort((a, b) => b[1] - a[1]).slice(0, 4)); setLoading(false) }
-  const fmt = (n) => '₦' + Number(n || 0).toLocaleString(); const hour = new Date().getHours(); const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
-  return <div><div className="page-header"><div><div className="page-title">{greeting}!</div><div className="page-sub">Here's how {business.name} is doing today</div></div><Link to="/invoices"><button className="btn-primary">+ New Invoice</button></Link></div><div className="section-grid"><div className="stat-card"><div className="stat-label">Revenue Paid</div><div className="stat-value" style={{ color: '#0d7c4f' }}>{fmt(stats.paid)}</div><div className="stat-change up">{stats.invoiceCount} invoices total</div></div><div className="stat-card"><div className="stat-label">Awaiting Payment</div><div className="stat-value" style={{ color: '#f59e0b' }}>{fmt(stats.pending)}</div><div className="stat-change" style={{ color: '#64748b' }}>Follow up needed</div></div><div className="stat-card"><div className="stat-label">Expenses</div><div className="stat-value" style={{ color: '#b91c1c' }}>{fmt(stats.expenses)}</div><div className="stat-change dn">Costs recorded</div></div><div className="stat-card"><div className="stat-label">Estimated Profit</div><div className="stat-value" style={{ color: stats.profit >= 0 ? '#0d7c4f' : '#b91c1c' }}>{fmt(stats.profit)}</div><div className="stat-change up">Paid revenue minus expenses</div></div></div><div className="quick-action-grid">{[{ label: 'Create Invoice', desc: 'Send a branded invoice', icon: '🧾', to: '/invoices', color: '#0d7c4f' }, { label: 'Add Client', desc: 'Save customer details', icon: '🤝', to: '/clients', color: '#3b82f6' }, { label: 'Add Product', desc: 'Save common services', icon: '📦', to: '/products', color: '#8b5cf6' }, { label: 'Record Expense', desc: 'Track business costs', icon: '💸', to: '/expenses', color: '#ef4444' }].map(a => <Link key={a.label} to={a.to} style={{ textDecoration: 'none' }}><div className="quick-action-card" style={{ borderColor: '#e2e8f0' }} onMouseEnter={e => { e.currentTarget.style.borderColor = a.color; e.currentTarget.style.transform = 'translateY(-2px)' }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.transform = 'translateY(0)' }}><div style={{ fontSize: 28, marginBottom: 10 }}>{a.icon}</div><div style={{ fontWeight: 700, fontSize: 14, color: '#0a1628', marginBottom: 3 }}>{a.label}</div><div style={{ fontSize: 12, color: '#64748b' }}>{a.desc}</div></div></Link>)}</div><div className="dashboard-bottom-grid"><div className="card"><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}><div style={{ fontWeight: 800, fontSize: 16, color: '#0a1628' }}>Recent Invoices</div><Link to="/invoices" style={{ fontSize: 13, color: '#0d7c4f', fontWeight: 600, textDecoration: 'none' }}>View all →</Link></div>{loading ? <p style={{ color: '#94a3b8', fontSize: 14 }}>Loading...</p> : recentInvoices.length === 0 ? <div className="empty-state"><div className="empty-icon">🧾</div><h3>No invoices yet</h3><p>Create your first invoice to start getting paid</p><Link to="/invoices"><button className="btn-primary">Create Invoice</button></Link></div> : <div style={{ overflowX: 'auto' }}><table><thead><tr><th>Invoice #</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>{recentInvoices.map(inv => <tr key={inv.id}><td style={{ fontWeight: 600 }}>{inv.invoice_number}</td><td>{inv.clients?.name || inv.client_snapshot?.name || '—'}</td><td style={{ fontWeight: 700 }}>{fmt(inv.total)}</td><td><span className={`badge badge-${inv.status}`}>{inv.status}</span></td></tr>)}</tbody></table></div>}</div><div className="card"><div style={{ fontWeight: 800, fontSize: 16, color: '#0a1628', marginBottom: 16 }}>Top Clients</div>{topClients.length === 0 ? <p style={{ color: '#94a3b8', fontSize: 14 }}>No client activity yet.</p> : topClients.map(([name, value]) => <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid #f1f5f9' }}><span style={{ color: '#64748b' }}>{name}</span><strong>{fmt(value)}</strong></div>)}</div></div></div>
+
+  async function loadData() {
+    const [invRes, staffRes, clientRes, expenseRes, productRes] = await Promise.all([
+      supabase.from('invoices').select('*, clients(name)').eq('business_id', business.id).order('created_at', { ascending: true }),
+      supabase.from('staff').select('id').eq('business_id', business.id),
+      supabase.from('clients').select('id,name').eq('business_id', business.id),
+      supabase.from('expenses').select('*').eq('business_id', business.id),
+      supabase.from('products').select('id').eq('business_id', business.id)
+    ])
+    const invoices = invRes.data || []
+    const expenses = expenseRes.data || []
+    const paid = invoices.filter(i => i.status === 'paid').reduce((s, i) => s + (i.total || 0), 0)
+    const pending = invoices.filter(i => ['sent', 'pending', 'overdue'].includes(i.status)).reduce((s, i) => s + (i.total || 0), 0)
+    const expenseTotal = expenses.reduce((s, e) => s + (e.amount || 0), 0)
+    const clientTotals = invoices.reduce((acc, inv) => {
+      const name = inv.clients?.name || inv.client_snapshot?.name || 'Unassigned'
+      acc[name] = (acc[name] || 0) + (inv.total || 0)
+      return acc
+    }, {})
+    const monthMap = {}
+    invoices.forEach(inv => {
+      const key = (inv.created_at || '').slice(0, 7)
+      if (!key) return
+      monthMap[key] = monthMap[key] || { month: key, revenue: 0, expenses: 0 }
+      if (inv.status === 'paid') monthMap[key].revenue += inv.total || 0
+    })
+    expenses.forEach(exp => {
+      const key = (exp.expense_date || exp.created_at || '').slice(0, 7)
+      if (!key) return
+      monthMap[key] = monthMap[key] || { month: key, revenue: 0, expenses: 0 }
+      monthMap[key].expenses += exp.amount || 0
+    })
+    setStats({ paid, pending, expenses: expenseTotal, profit: paid - expenseTotal, staff: staffRes.data?.length || 0, clients: clientRes.data?.length || 0, products: productRes.data?.length || 0, invoiceCount: invoices.length })
+    setRecentInvoices(invoices.slice(-5).reverse())
+    setTopClients(Object.entries(clientTotals).sort((a, b) => b[1] - a[1]).slice(0, 4))
+    setMonthly(Object.values(monthMap).sort((a, b) => a.month.localeCompare(b.month)).slice(-6))
+    setLoading(false)
+  }
+
+  const fmt = (n) => '₦' + Number(n || 0).toLocaleString()
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const checklist = [
+    { label: 'Add business phone or email', done: Boolean(business.phone || business.email), to: '/settings' },
+    { label: 'Add logo or brand details', done: Boolean(business.logo_url), to: '/settings' },
+    { label: 'Add bank/payment details', done: Boolean(business.bank_name || business.payment_link), to: '/settings' },
+    { label: 'Create first invoice', done: stats.invoiceCount > 0, to: '/invoices' },
+    { label: 'Add a product or service', done: stats.products > 0, to: '/products' }
+  ]
+  const maxChart = Math.max(...monthly.map(row => Math.max(row.revenue, row.expenses)), 1)
+
+  return (
+    <div>
+      <div className="page-header">
+        <div>
+          <div className="page-title">{greeting}!</div>
+          <div className="page-sub">Here's how {business.name} is doing today</div>
+        </div>
+        <Link to="/invoices"><button className="btn-primary">+ New Invoice</button></Link>
+      </div>
+
+      <div className="section-grid">
+        <div className="stat-card"><div className="stat-label">Revenue Paid</div><div className="stat-value" style={{ color: '#0d7c4f' }}>{fmt(stats.paid)}</div><div className="stat-change up">{stats.invoiceCount} invoices total</div></div>
+        <div className="stat-card"><div className="stat-label">Awaiting Payment</div><div className="stat-value" style={{ color: '#f59e0b' }}>{fmt(stats.pending)}</div><div className="stat-change" style={{ color: '#64748b' }}>Follow up needed</div></div>
+        <div className="stat-card"><div className="stat-label">Expenses</div><div className="stat-value" style={{ color: '#b91c1c' }}>{fmt(stats.expenses)}</div><div className="stat-change dn">Costs recorded</div></div>
+        <div className="stat-card"><div className="stat-label">Estimated Profit</div><div className="stat-value" style={{ color: stats.profit >= 0 ? '#0d7c4f' : '#b91c1c' }}>{fmt(stats.profit)}</div><div className="stat-change up">Paid revenue minus expenses</div></div>
+      </div>
+
+      <div className="quick-action-grid">
+        {[
+          { label: 'Create Invoice', desc: 'Send a branded invoice', icon: '🧾', to: '/invoices' },
+          { label: 'Add Client', desc: 'Save customer details', icon: '🤝', to: '/clients' },
+          { label: 'Add Product', desc: 'Save common services', icon: '📦', to: '/products' },
+          { label: 'Record Expense', desc: 'Track business costs', icon: '💸', to: '/expenses' },
+          { label: 'View Plan', desc: 'Review billing options', icon: '💳', to: '/billing' }
+        ].map(a => <Link key={a.label} to={a.to} style={{ textDecoration: 'none' }}><div className="quick-action-card"><div style={{ fontSize: 28, marginBottom: 10 }}>{a.icon}</div><div style={{ fontWeight: 700, fontSize: 14, color: 'var(--dark)', marginBottom: 3 }}>{a.label}</div><div style={{ fontSize: 12, color: 'var(--text2)' }}>{a.desc}</div></div></Link>)}
+      </div>
+
+      <div className="dashboard-bottom-grid">
+        <div className="card">
+          <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--dark)', marginBottom: 16 }}>Setup Checklist</div>
+          <div className="setup-checklist">
+            {checklist.map(item => <Link key={item.label} to={item.to} className={`setup-check-item ${item.done ? 'done' : ''}`} style={{ textDecoration: 'none' }}><span>{item.done ? '✓' : '○'} {item.label}</span><strong>{item.done ? 'Done' : 'Open'}</strong></Link>)}
+          </div>
+        </div>
+        <div className="card">
+          <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--dark)', marginBottom: 16 }}>Revenue vs Expenses</div>
+          {monthly.length === 0 ? <p style={{ color: '#94a3b8', fontSize: 14 }}>Create invoices and expenses to see monthly trends.</p> : <div className="chart-list">{monthly.map(row => <div key={row.month}><div className="chart-row"><span>{row.month}</span><div className="chart-track"><div className="chart-fill" style={{ width: `${Math.max(4, (row.revenue / maxChart) * 100)}%` }} /></div><strong>{fmt(row.revenue)}</strong></div><div className="chart-row"><span>Expenses</span><div className="chart-track"><div className="chart-fill expense" style={{ width: `${Math.max(4, (row.expenses / maxChart) * 100)}%` }} /></div><strong>{fmt(row.expenses)}</strong></div></div>)}</div>}
+        </div>
+      </div>
+
+      <div className="dashboard-bottom-grid" style={{ marginTop: 18 }}>
+        <div className="card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}><div style={{ fontWeight: 800, fontSize: 16, color: 'var(--dark)' }}>Recent Invoices</div><Link to="/invoices" style={{ fontSize: 13, color: '#0d7c4f', fontWeight: 600, textDecoration: 'none' }}>View all →</Link></div>
+          {loading ? <p style={{ color: '#94a3b8', fontSize: 14 }}>Loading...</p> : recentInvoices.length === 0 ? <div className="empty-state"><div className="empty-icon">🧾</div><h3>No invoices yet</h3><p>Create your first invoice to start getting paid</p><Link to="/invoices"><button className="btn-primary">Create Invoice</button></Link></div> : <div style={{ overflowX: 'auto' }}><table><thead><tr><th>Invoice #</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>{recentInvoices.map(inv => <tr key={inv.id}><td style={{ fontWeight: 600 }}>{inv.invoice_number}</td><td>{inv.clients?.name || inv.client_snapshot?.name || '—'}</td><td style={{ fontWeight: 700 }}>{fmt(inv.total)}</td><td><span className={`badge badge-${inv.status}`}>{inv.status}</span></td></tr>)}</tbody></table></div>}
+        </div>
+        <div className="card">
+          <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--dark)', marginBottom: 16 }}>Top Clients</div>
+          {topClients.length === 0 ? <p style={{ color: '#94a3b8', fontSize: 14 }}>No client activity yet.</p> : topClients.map(([name, value]) => <div key={name} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border)' }}><span style={{ color: 'var(--text2)' }}>{name}</span><strong>{fmt(value)}</strong></div>)}
+        </div>
+      </div>
+    </div>
+  )
 }
