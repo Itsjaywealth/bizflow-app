@@ -53,6 +53,13 @@ const plans = [
   }
 ]
 
+const mobileNavItems = [
+  { label: 'Product overview', href: '#features', description: 'See what BizFlow NG does' },
+  { label: 'How it works', href: '#how-it-works', description: 'From signup to first invoice' },
+  { label: 'Plans', href: '#pricing', description: 'Choose an onboarding path' },
+  { label: 'Support center', to: '/support', description: 'Get help and contact BrandVerse' }
+]
+
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -86,16 +93,28 @@ export default function LandingPage() {
           onClick={() => setMobileMenuOpen(open => !open)}
           aria-expanded={mobileMenuOpen}
           aria-controls="landing-mobile-menu"
+          aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'}
         >
-          {mobileMenuOpen ? 'Close' : 'Menu'}
+          <span>{mobileMenuOpen ? 'x' : '☰'}</span>
         </button>
       </header>
 
       <div id="landing-mobile-menu" className={`landing-mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
-        <a href="#features" onClick={closeMobileMenu}>Features</a>
-        <a href="#how-it-works" onClick={closeMobileMenu}>How it works</a>
-        <a href="#pricing" onClick={closeMobileMenu}>Plans</a>
-        <Link to="/support" onClick={closeMobileMenu}>Support</Link>
+        <div className="landing-mobile-menu-head">
+          <strong>Explore BizFlow NG</strong>
+          <p>Move around the product, learn the features, or create your account.</p>
+        </div>
+        {mobileNavItems.map(item => item.to ? (
+          <Link key={item.label} to={item.to} onClick={closeMobileMenu}>
+            <strong>{item.label}</strong>
+            <span>{item.description}</span>
+          </Link>
+        ) : (
+          <a key={item.label} href={item.href} onClick={closeMobileMenu}>
+            <strong>{item.label}</strong>
+            <span>{item.description}</span>
+          </a>
+        ))}
         <div className="landing-mobile-actions">
           <ThemeToggle />
           <Link to="/auth" className="btn-outline landing-mobile-cta" onClick={closeMobileMenu}>Log in</Link>
