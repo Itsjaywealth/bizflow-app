@@ -43,15 +43,17 @@ export default function Reports({ business }) {
   }
 
   const fmt = (n) => '₦' + Number(n || 0).toLocaleString()
-  const paidRevenue = invoices.filter(i => i.status === 'paid').reduce((sum, inv) => sum + (inv.total || 0), 0)
-  const pendingRevenue = invoices.filter(i => ['sent', 'pending', 'overdue'].includes(i.status)).reduce((sum, inv) => sum + (inv.total || 0), 0)
+  const getPaidAmount = (inv) => Number(inv.amount_paid ?? (inv.status === 'paid' ? inv.total : 0) ?? 0)
+  const getBalance = (inv) => Math.max(Number(inv.total || 0) - getPaidAmount(inv), 0)
+  const paidRevenue = invoices.reduce((sum, inv) => sum + getPaidAmount(inv), 0)
+  const pendingRevenue = invoices.filter(i => i.status !== 'cancelled').reduce((sum, inv) => sum + getBalance(inv), 0)
   const draftRevenue = invoices.filter(i => i.status === 'draft').reduce((sum, inv) => sum + (inv.total || 0), 0)
   const expenseTotal = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0)
   const estimatedProfit = paidRevenue - expenseTotal
-  const collectionRate = invoices.length ? Math.round((invoices.filter(i => i.status === 'paid').length / invoices.length) * 100) : 0
+  const collectionRate = invoices.length ? Math.round((paidRevenue / Math.max(invoices.reduce((sum, inv) => sum + (inv.total || 0), 0), 1)) * 100) : 0
   const activeStaff = staff.filter(member => member.status !== 'inactive').length
 
-  const statusRows = ['paid', 'sent', 'pending', 'overdue', 'draft'].map(status => {
+  const statusRows = ['paid', 'partial', 'sent', 'pending', 'overdue', 'draft', 'cancelled'].map(status => {
     const list = invoices.filter(inv => inv.status === status)
     return {
       status,
@@ -65,8 +67,8 @@ export default function Reports({ business }) {
     const key = (inv.created_at || '').slice(0, 7)
     if (!key) return
     monthMap[key] = monthMap[key] || { month: key, revenue: 0, pending: 0, expenses: 0 }
-    if (inv.status === 'paid') monthMap[key].revenue += inv.total || 0
-    if (['sent', 'pending', 'overdue'].includes(inv.status)) monthMap[key].pending += inv.total || 0
+    monthMap[key].revenue += getPaidAmount(inv)
+    if (inv.status !== 'cancelled') monthMap[key].pending += getBalance(inv)
   })
   expenses.forEach(expense => {
     const key = (expense.expense_date || expense.created_at || '').slice(0, 7)
@@ -82,7 +84,7 @@ export default function Reports({ business }) {
     acc[name] = acc[name] || { name, total: 0, count: 0, paid: 0 }
     acc[name].total += inv.total || 0
     acc[name].count += 1
-    if (inv.status === 'paid') acc[name].paid += inv.total || 0
+    acc[name].paid += getPaidAmount(inv)
     return acc
   }, {})
   const topClients = Object.values(clientTotals).sort((a, b) => b.total - a.total).slice(0, 5)
