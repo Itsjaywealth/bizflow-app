@@ -73,23 +73,62 @@ export default function Dashboard({ business }) {
     { label: 'Create first invoice', done: stats.invoiceCount > 0, to: '/invoices' },
     { label: 'Add a product or service', done: stats.products > 0, to: '/products' }
   ]
+  const completedSetup = checklist.filter(item => item.done).length
+  const setupPercent = Math.round((completedSetup / checklist.length) * 100)
+  const unpaidCount = recentInvoices.filter(inv => ['sent', 'pending', 'overdue'].includes(inv.status)).length
+  const focusItems = [
+    {
+      label: 'Setup progress',
+      value: `${setupPercent}%`,
+      body: completedSetup === checklist.length ? 'Your workspace is ready for daily use.' : `${checklist.length - completedSetup} setup step${checklist.length - completedSetup === 1 ? '' : 's'} left.`
+    },
+    {
+      label: 'Payment follow-up',
+      value: unpaidCount,
+      body: unpaidCount ? 'Review recent invoices and send reminders where needed.' : 'No recent invoice needs follow-up right now.'
+    },
+    {
+      label: 'Saved records',
+      value: stats.clients + stats.products + stats.staff,
+      body: 'Clients, products, and team records available in this workspace.'
+    }
+  ]
   const maxChart = Math.max(...monthly.map(row => Math.max(row.revenue, row.expenses)), 1)
 
   return (
     <div>
-      <div className="page-header">
+      <section className="dashboard-command">
         <div>
-          <div className="page-title">{greeting}!</div>
-          <div className="page-sub">Here's how {business.name} is doing today</div>
+          <div className="landing-eyebrow">Business command center</div>
+          <h1>{greeting}, {business.name}.</h1>
+          <p>Track cash movement, create invoices, organize customers, and keep your business records moving from one workspace.</p>
+          <div className="dashboard-command-actions">
+            <Link to="/invoices" className="btn-primary">+ New Invoice</Link>
+            <Link to="/expenses" className="btn-outline">Record Expense</Link>
+          </div>
         </div>
-        <Link to="/invoices"><button className="btn-primary">+ New Invoice</button></Link>
-      </div>
+        <div className="dashboard-focus-panel">
+          <div className="dashboard-focus-head">
+            <strong>Today’s focus</strong>
+            <span>Realtime-ready</span>
+          </div>
+          {focusItems.map(item => (
+            <div className="dashboard-focus-item" key={item.label}>
+              <div>
+                <span>{item.label}</span>
+                <p>{item.body}</p>
+              </div>
+              <strong>{item.value}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <div className="section-grid">
-        <div className="stat-card"><div className="stat-label">Revenue Paid</div><div className="stat-value" style={{ color: '#0d7c4f' }}>{fmt(stats.paid)}</div><div className="stat-change up">{stats.invoiceCount} invoices total</div></div>
-        <div className="stat-card"><div className="stat-label">Awaiting Payment</div><div className="stat-value" style={{ color: '#f59e0b' }}>{fmt(stats.pending)}</div><div className="stat-change" style={{ color: '#64748b' }}>Follow up needed</div></div>
-        <div className="stat-card"><div className="stat-label">Expenses</div><div className="stat-value" style={{ color: '#b91c1c' }}>{fmt(stats.expenses)}</div><div className="stat-change dn">Costs recorded</div></div>
-        <div className="stat-card"><div className="stat-label">Estimated Profit</div><div className="stat-value" style={{ color: stats.profit >= 0 ? '#0d7c4f' : '#b91c1c' }}>{fmt(stats.profit)}</div><div className="stat-change up">Paid revenue minus expenses</div></div>
+        <div className="stat-card premium-stat"><div className="stat-label">Revenue Paid</div><div className="stat-value" style={{ color: '#0d7c4f' }}>{fmt(stats.paid)}</div><div className="stat-change up">{stats.invoiceCount} invoices total</div></div>
+        <div className="stat-card premium-stat amber-stat"><div className="stat-label">Awaiting Payment</div><div className="stat-value" style={{ color: '#f59e0b' }}>{fmt(stats.pending)}</div><div className="stat-change" style={{ color: '#64748b' }}>Follow up needed</div></div>
+        <div className="stat-card premium-stat red-stat"><div className="stat-label">Expenses</div><div className="stat-value" style={{ color: '#b91c1c' }}>{fmt(stats.expenses)}</div><div className="stat-change dn">Costs recorded</div></div>
+        <div className="stat-card premium-stat"><div className="stat-label">Estimated Profit</div><div className="stat-value" style={{ color: stats.profit >= 0 ? '#0d7c4f' : '#b91c1c' }}>{fmt(stats.profit)}</div><div className="stat-change up">Paid revenue minus expenses</div></div>
       </div>
 
       <div className="quick-action-grid">
@@ -99,7 +138,7 @@ export default function Dashboard({ business }) {
           { label: 'Add Product', desc: 'Save common services', icon: '📦', to: '/products' },
           { label: 'Record Expense', desc: 'Track business costs', icon: '💸', to: '/expenses' },
           { label: 'View Plan', desc: 'Review billing options', icon: '💳', to: '/billing' }
-        ].map(a => <Link key={a.label} to={a.to} style={{ textDecoration: 'none' }}><div className="quick-action-card"><div style={{ fontSize: 28, marginBottom: 10 }}>{a.icon}</div><div style={{ fontWeight: 700, fontSize: 14, color: 'var(--dark)', marginBottom: 3 }}>{a.label}</div><div style={{ fontSize: 12, color: 'var(--text2)' }}>{a.desc}</div></div></Link>)}
+        ].map(a => <Link key={a.label} to={a.to} style={{ textDecoration: 'none' }}><div className="quick-action-card premium-action"><div style={{ fontSize: 28, marginBottom: 10 }}>{a.icon}</div><div style={{ fontWeight: 700, fontSize: 14, color: 'var(--dark)', marginBottom: 3 }}>{a.label}</div><div style={{ fontSize: 12, color: 'var(--text2)' }}>{a.desc}</div></div></Link>)}
       </div>
 
       <div className="dashboard-bottom-grid">
