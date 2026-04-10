@@ -24,6 +24,8 @@ export default function PublicInvoice() {
   const business = invoice?.business_snapshot || {}
   const client = invoice?.client_snapshot || {}
   const items = invoice?.items || []
+  const isPaid = invoice?.status === 'paid'
+  const isOverdue = invoice?.due_date && !isPaid && new Date(invoice.due_date) < new Date(new Date().toDateString())
 
   async function copyInvoiceLink() {
     await navigator.clipboard.writeText(currentUrl)
@@ -70,8 +72,16 @@ export default function PublicInvoice() {
             <div style={{ fontWeight: 800, color: '#0a1628' }}>{invoice.invoice_number}</div>
             <div style={{ color: '#64748b', fontSize: 13 }}>Date: {new Date(invoice.created_at).toLocaleDateString()}</div>
             {invoice.due_date && <div style={{ color: '#64748b', fontSize: 13 }}>Due: {new Date(invoice.due_date).toLocaleDateString()}</div>}
-            <div style={{ marginTop: 10 }}><span className={`badge badge-${invoice.status}`}>{invoice.status}</span></div>
+            <div style={{ marginTop: 10 }}><span className={`badge badge-${isOverdue ? 'overdue' : invoice.status}`}>{isPaid ? 'paid' : isOverdue ? 'overdue' : invoice.status}</span></div>
           </div>
+        </div>
+
+        <div className={`notice ${isPaid ? 'success' : isOverdue ? 'error' : 'success'}`} style={{ marginBottom: 22 }}>
+          {isPaid
+            ? 'Payment has been marked as received by the issuing business.'
+            : isOverdue
+              ? 'This invoice appears to be past its due date. Please contact the issuing business if payment has already been made.'
+              : 'Please review the invoice details below and use the payment information provided by the issuing business.'}
         </div>
 
         <div style={{ background: '#f8fafc', borderRadius: 14, padding: 18, marginBottom: 22 }}>
@@ -120,6 +130,11 @@ export default function PublicInvoice() {
         )}
 
         {invoice.notes && <p style={{ marginTop: 20, color: '#64748b' }}>{invoice.notes}</p>}
+        {!business.bank_name && !business.payment_link && !isPaid && (
+          <div className="notice" style={{ marginTop: 20 }}>
+            Payment details have not been added to this invoice yet. Please contact {business.name || 'the issuing business'} for payment instructions.
+          </div>
+        )}
         <div className="public-invoice-footer">
           Generated with BizFlow NG. For questions about this invoice, contact {business.name || 'the issuing business'} directly.
         </div>
