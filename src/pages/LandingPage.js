@@ -4,20 +4,28 @@ import ThemeToggle from '../components/ThemeToggle'
 
 const features = [
   {
-    title: 'Invoices',
-    body: 'Create invoices, add line items, calculate VAT, export PDF copies, and share invoice links.'
+    title: 'Fast invoice creation',
+    body: 'Create clean invoices with line items, VAT, due dates, PDF export, public links, and WhatsApp sharing.'
   },
   {
-    title: 'Clients',
-    body: 'Save customer details while creating invoices or add them separately from your client page.'
+    title: 'Client records that grow with you',
+    body: 'Save customer details while creating invoices or add them separately, then review their invoice history later.'
   },
   {
-    title: 'Products and expenses',
-    body: 'Save common products or services and record business spending so your records stay organised.'
+    title: 'Products, services, and expenses',
+    body: 'Save common services, reuse prices on invoices, and record spending so business records stay organised.'
   },
   {
-    title: 'Staff records',
-    body: 'Keep staff names, roles, salaries, and status in one simple workspace.'
+    title: 'Business dashboard',
+    body: 'See paid revenue, pending invoices, expenses, estimated profit, clients, and team records from one dashboard.'
+  },
+  {
+    title: 'Staff and team records',
+    body: 'Keep staff names, roles, salaries, phone numbers, and active status in one simple workspace.'
+  },
+  {
+    title: 'Customer payment details',
+    body: 'Add bank details and an optional payment link so customers know how to pay from the invoice page.'
   }
 ]
 

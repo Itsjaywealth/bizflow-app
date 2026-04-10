@@ -8,12 +8,15 @@ const pages = {
     title: 'Everything BizFlow NG helps your business manage',
     intro: 'BizFlow NG brings the everyday records of a small business into one simple workspace.',
     cards: [
-      ['Invoices', 'Create invoices with line items, VAT, due dates, PDF export, public links, and WhatsApp sharing.'],
-      ['Clients', 'Save customer details, view invoice history, and keep follow-up information organised.'],
-      ['Products and services', 'Store your regular services or products so invoice creation is faster.'],
-      ['Expenses', 'Record business spending and compare it with paid invoice revenue on the dashboard.'],
-      ['Staff records', 'Keep staff roles, salary information, and status in one place.'],
-      ['Business profile', 'Add your business details, bank details, logo link, and optional invoice payment link.']
+      ['Fast invoice creation', 'Create invoices with line items, VAT, due dates, PDF export, public invoice links, and WhatsApp sharing.'],
+      ['New client inside invoice', 'A new user does not need to add clients first. Type the customer details while creating the invoice and BizFlow saves the client automatically.'],
+      ['Client history', 'Save customer details, view invoice history, and keep follow-up information organised.'],
+      ['Products and services', 'Store your regular services or products so invoice creation is faster and prices stay consistent.'],
+      ['Expense tracking', 'Record business spending and compare it with paid invoice revenue on the dashboard.'],
+      ['Business dashboard', 'See paid revenue, pending invoices, expenses, estimated profit, clients, and team records in one place.'],
+      ['Staff records', 'Keep staff roles, salary information, phone numbers, and active status in one place.'],
+      ['Payment details on invoices', 'Add bank details and an optional payment link so customers know how to pay from the invoice page.'],
+      ['Light and dark mode', 'Let users switch between a clean white interface and a darker interface depending on their preference.']
     ]
   },
   how: {
