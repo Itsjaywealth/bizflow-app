@@ -59,7 +59,7 @@ const plans = [
     name: 'Setup Support',
     price: 'From ₦50,000',
     period: 'one-time',
-    note: 'For businesses that want guided setup with BrandVerse Ventures.',
+    note: 'For businesses that want guided setup and onboarding support.',
     details: ['Business profile setup', 'Client and product setup support', 'Workflow review', 'Team onboarding guidance']
   }
 ]
@@ -68,7 +68,7 @@ const mobileNavItems = [
   { label: 'How it works', href: '#how-it-works', description: 'From signup to first invoice' },
   { label: 'Product overview', href: '#features', description: 'See what BizFlow NG does' },
   { label: 'Pricing', href: '#pricing', description: 'See available service plans' },
-  { label: 'Support center', to: '/support', description: 'Get help and contact BrandVerse' }
+  { label: 'Support center', to: '/support', description: 'Get help using BizFlow NG' }
 ]
 
 export default function LandingPage() {
@@ -149,7 +149,7 @@ export default function LandingPage() {
             <div className="landing-meta">
               <span>Simple setup</span>
               <span>Invoice links</span>
-              <span>Built by BrandVerse</span>
+              <span>For Nigerian SMEs</span>
             </div>
           </div>
 
@@ -217,7 +217,7 @@ export default function LandingPage() {
             <span>Pricing</span>
             <h2>Simple pricing for small Nigerian businesses</h2>
             <p>
-              Start with the plan that fits your current workflow. If you need help setting up clients, products, and team records, BrandVerse Ventures can support the rollout.
+              Start with the plan that fits your current workflow. If you need help setting up clients, products, and team records, setup support is available.
             </p>
           </div>
           <div className="landing-grid">
@@ -245,7 +245,7 @@ export default function LandingPage() {
           </p>
           <div className="landing-actions">
             <Link to="/auth" className="btn-primary landing-hero-btn">Create account</Link>
-            <a href="https://brandverseventures.com" className="btn-outline landing-hero-btn" target="_blank" rel="noreferrer">Visit BrandVerse Ventures</a>
+            <Link to="/support" className="btn-outline landing-hero-btn">Contact support</Link>
           </div>
         </section>
       </main>
@@ -259,7 +259,6 @@ export default function LandingPage() {
           <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
           <Link to="/support">Support</Link>
-          <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>
         </div>
       </footer>
     </div>
