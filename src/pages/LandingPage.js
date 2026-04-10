@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle'
 
@@ -75,6 +75,13 @@ const productHighlights = [
   ['Operating records', 'Manage products, services, expenses, staff, and client records as the business grows.']
 ]
 
+const previewMetrics = [
+  { revenue: 125000, pending: 48000 },
+  { revenue: 310000, pending: 85000 },
+  { revenue: 675000, pending: 120000 },
+  { revenue: 920000, pending: 65000 }
+]
+
 const plans = [
   {
     name: 'Starter',
@@ -108,10 +115,25 @@ const mobileNavItems = [
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [previewIndex, setPreviewIndex] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPreviewIndex(index => (index + 1) % previewMetrics.length)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
 
   function closeMobileMenu() {
     setMobileMenuOpen(false)
   }
+
+  function formatNaira(value) {
+    return `₦${Number(value).toLocaleString()}`
+  }
+
+  const preview = previewMetrics[previewIndex]
 
   return (
     <div className="landing-shell">
@@ -191,17 +213,17 @@ export default function LandingPage() {
           <div className="world-product-preview" aria-label="BizFlow NG product preview">
             <div className="preview-window-bar">
               <span></span><span></span><span></span>
-              <strong>BizFlow NG Command Center</strong>
+              <strong>BizFlow NG Business Overview</strong>
             </div>
             <div className="preview-hero-strip">
               <div>
                 <small>Revenue paid</small>
-                <strong>₦0</strong>
+                <strong>{formatNaira(preview.revenue)}</strong>
                 <span>Updates as invoices are marked paid</span>
               </div>
               <div>
                 <small>Awaiting payment</small>
-                <strong>₦0</strong>
+                <strong>{formatNaira(preview.pending)}</strong>
                 <span>Follow up from invoice records</span>
               </div>
             </div>
