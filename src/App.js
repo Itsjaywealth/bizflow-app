@@ -9,6 +9,7 @@ import Clients from './pages/Clients'
 import Staff from './pages/Staff'
 import Products from './pages/Products'
 import Expenses from './pages/Expenses'
+import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import PublicInvoice from './pages/PublicInvoice'
 import LandingPage from './pages/LandingPage'
@@ -104,6 +105,7 @@ export default function App() {
         <Route path="/staff" element={<ProtectedRoute><Staff business={business} /></ProtectedRoute>} />
         <Route path="/products" element={<ProtectedRoute><Products business={business} /></ProtectedRoute>} />
         <Route path="/expenses" element={<ProtectedRoute><Expenses business={business} /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><Reports business={business} /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings business={business} setBusiness={setBusiness} /></ProtectedRoute>} />
         <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
