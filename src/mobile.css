@@ -22,31 +22,6 @@ table {
   display: none;
 }
 
-.mobile-header-brand {
-  display: none;
-  min-width: 0;
-  flex: 1;
-}
-
-.mobile-header-brand strong,
-.mobile-header-brand span {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mobile-header-brand strong {
-  color: var(--dark);
-  font-size: 14px;
-}
-
-.mobile-header-brand span {
-  color: var(--text2);
-  font-size: 11px;
-  margin-top: 1px;
-}
-
 .quick-action-grid,
 .dashboard-bottom-grid {
   display: grid;
@@ -380,25 +355,18 @@ table {
   }
 
   .mobile-header {
-    display: flex;
+    display: grid;
     position: sticky;
     top: 8px;
     z-index: 35;
-    flex-wrap: wrap;
   }
 
   .mobile-header-brand {
     display: block;
   }
 
-  .mobile-home-link {
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
   .mobile-header-actions {
-    width: 100%;
-    justify-content: flex-end;
+    width: auto;
     flex-wrap: nowrap;
   }
 
@@ -571,11 +539,6 @@ table {
     padding: 7px;
   }
 
-  .mobile-home-link {
-    max-width: 82px;
-    justify-content: center;
-  }
-
   .stat-value {
     font-size: 22px;
   }
@@ -619,9 +582,7 @@ table {
   }
 
   .mobile-header-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    gap: 6px;
   }
 
   .page-header {
@@ -849,11 +810,12 @@ table {
     grid-template-columns: 1fr;
   }
 
-  .mobile-header-brand span {
-    display: none;
+  .mobile-menu-button {
+    min-width: 62px;
   }
 
   .mobile-signout-button {
+    min-width: 74px;
     padding-left: 10px;
     padding-right: 10px;
     font-size: 11px;
