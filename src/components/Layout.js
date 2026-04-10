@@ -11,7 +11,7 @@ const nav = [
   { path: '/products', icon: '📦', label: 'Products' },
   { path: '/expenses', icon: '💸', label: 'Expenses' },
   { path: '/staff', icon: '👥', label: 'My Team' },
-  { path: '/settings', icon: '⚙️', label: 'Settings' },
+  { path: '/settings', icon: '⚙️', label: 'Business Profile' },
   { path: '/support', icon: '💬', label: 'Support' },
 ]
 
@@ -71,7 +71,10 @@ export default function Layout({ children, session, business }) {
             <strong>BizFlow NG</strong>
             <span>{business?.name || 'My Business'}</span>
           </div>
-          <Link to="/home" className="mobile-home-link">Homepage</Link>
+          <div className="mobile-header-actions">
+            <ThemeToggle compact />
+            <Link to="/home" className="mobile-home-link">Homepage</Link>
+          </div>
         </div>
 
         {children}
