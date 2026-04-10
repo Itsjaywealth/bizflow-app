@@ -17,6 +17,7 @@ import LegalPage from './pages/LegalPage'
 import SupportPage from './pages/SupportPage'
 import Layout from './components/Layout'
 import './App.css'
+import './sidebar-theme.css'
 import './mobile.css'
 
 export default function App() {
