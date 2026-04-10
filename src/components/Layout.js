@@ -75,7 +75,6 @@ export default function Layout({ children, session, business }) {
           </div>
           <div className="mobile-header-actions">
             <ThemeToggle compact />
-            <Link to="/home" className="mobile-home-link">Homepage</Link>
             <button onClick={signOut} className="mobile-signout-button" type="button">Sign Out</button>
           </div>
         </div>

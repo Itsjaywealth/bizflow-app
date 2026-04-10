@@ -398,13 +398,12 @@ table {
 
   .mobile-header-actions {
     width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
-  .mobile-signout-button,
-  .mobile-home-link {
-    flex: 1 1 140px;
+  .mobile-signout-button {
+    flex: 0 0 auto;
   }
 
   .page-header {
@@ -622,10 +621,7 @@ table {
   .mobile-header-actions {
     display: flex;
     align-items: center;
-  }
-
-  .mobile-home-link {
-    display: none;
+    justify-content: flex-end;
   }
 
   .page-header {
@@ -855,5 +851,11 @@ table {
 
   .mobile-header-brand span {
     display: none;
+  }
+
+  .mobile-signout-button {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 11px;
   }
 }
