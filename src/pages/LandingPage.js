@@ -4,35 +4,40 @@ import ThemeToggle from '../components/ThemeToggle'
 
 const features = [
   {
-    title: 'Create professional invoices',
-    body: 'Generate invoices, calculate VAT automatically, export PDF copies, create public invoice links, and share reminders through WhatsApp.'
+    title: 'Invoices',
+    body: 'Create invoices, add line items, calculate VAT, export PDF copies, and share invoice links.'
   },
   {
-    title: 'Keep client records organised',
-    body: 'Store client names, contact details, and invoice history in one place so you can follow up faster.'
+    title: 'Clients',
+    body: 'Save customer details while creating invoices or add them separately from your client page.'
   },
   {
-    title: 'Save products and services',
-    body: 'Keep a simple price list for the services or products you sell, then add them to invoices faster.'
+    title: 'Products and expenses',
+    body: 'Save common products or services and record business spending so your records stay organised.'
   },
   {
-    title: 'Track expenses',
-    body: 'Record business spending and compare expenses against recorded invoice revenue on your dashboard.'
-  },
-  {
-    title: 'Manage staff records',
-    body: 'Track roles, salaries, and staff status without jumping between notebooks and spreadsheets.'
-  },
-  {
-    title: 'See business activity clearly',
-    body: 'Monitor outstanding invoices, total revenue recorded, client count, and team size from one dashboard.'
+    title: 'Staff records',
+    body: 'Keep staff names, roles, salaries, and status in one simple workspace.'
   }
 ]
 
 const steps = [
-  'Create your account with email and password.',
-  'Add your business details, logo, and payment instructions.',
-  'Create clients, products, invoices, expenses, and staff records from your dashboard.'
+  {
+    title: 'Create your workspace',
+    body: 'Sign up, confirm your email, and add your business name, contact details, and invoice information.'
+  },
+  {
+    title: 'Create your first invoice',
+    body: 'Type a new customer directly on the invoice or choose a saved client if you already have one.'
+  },
+  {
+    title: 'Share with your customer',
+    body: 'Copy the invoice link, download a PDF, or send a WhatsApp reminder from the invoice table.'
+  },
+  {
+    title: 'Keep records together',
+    body: 'Add products, expenses, and staff records as your business grows, then track activity from the dashboard.'
+  }
 ]
 
 const plans = [
@@ -60,8 +65,8 @@ const plans = [
 ]
 
 const mobileNavItems = [
-  { label: 'Product overview', href: '#features', description: 'See what BizFlow NG does' },
   { label: 'How it works', href: '#how-it-works', description: 'From signup to first invoice' },
+  { label: 'Product overview', href: '#features', description: 'See what BizFlow NG does' },
   { label: 'Pricing', href: '#pricing', description: 'See available service plans' },
   { label: 'Support center', to: '/support', description: 'Get help and contact BrandVerse' }
 ]
@@ -83,8 +88,8 @@ export default function LandingPage() {
           <div className="landing-logo-text">BizFlow <span>NG</span></div>
         </Link>
         <div className="landing-nav-links">
-          <a href="#features">Features</a>
           <a href="#how-it-works">How it works</a>
+          <a href="#features">Features</a>
           <a href="#pricing">Pricing</a>
           <Link to="/support">Support</Link>
         </div>
@@ -134,66 +139,67 @@ export default function LandingPage() {
             <div className="landing-eyebrow">Built for Nigerian SMEs</div>
             <h1>Run invoicing, client records, and team admin from one calm dashboard.</h1>
             <p>
-              BizFlow NG helps small businesses stay organised with invoicing, PDF exports,
-              WhatsApp sharing, staff records, and a simple view of business activity.
+              BizFlow NG helps small businesses create invoices, save client details,
+              manage staff records, and keep daily business information in one place.
             </p>
             <div className="landing-actions">
               <Link to="/auth" className="btn-primary landing-hero-btn">Start with your business email</Link>
-              <a href="#features" className="btn-outline landing-hero-btn">See what it does</a>
+              <a href="#how-it-works" className="btn-outline landing-hero-btn">See how it works</a>
             </div>
             <div className="landing-meta">
-              <span>No setup fee</span>
-              <span>Simple onboarding</span>
-              <span>BrandVerse support</span>
+              <span>Simple setup</span>
+              <span>Invoice links</span>
+              <span>Built by BrandVerse</span>
             </div>
           </div>
 
           <div className="landing-hero-card">
             <div className="landing-card-top">
-              <span className="landing-card-pill">Dashboard snapshot</span>
-              <span className="landing-card-note">Current product capabilities</span>
-            </div>
-            <div className="landing-kpis">
-              <div className="landing-kpi">
-                <small>Revenue recorded</small>
-                <strong>₦245,000</strong>
-              </div>
-              <div className="landing-kpi">
-                <small>Pending invoices</small>
-                <strong>4</strong>
-              </div>
-              <div className="landing-kpi">
-                <small>Clients</small>
-                <strong>12</strong>
-              </div>
-              <div className="landing-kpi">
-                <small>Staff records</small>
-                <strong>6</strong>
-              </div>
+              <span className="landing-card-pill">How BizFlow works</span>
+              <span className="landing-card-note">Simple daily workflow</span>
             </div>
             <div className="landing-demo-list">
               <div>
-                <strong>Invoices</strong>
-                <p>Create line items, apply VAT, export PDF, copy a public invoice link, and mark status as pending, paid, or overdue.</p>
+                <strong>1. Add business details</strong>
+                <p>Set your business name, contact information, bank details, logo link, and optional customer payment link.</p>
               </div>
               <div>
-                <strong>Products and expenses</strong>
-                <p>Save services you sell and record what the business spends, so your dashboard becomes more useful.</p>
+                <strong>2. Create an invoice</strong>
+                <p>Enter a customer name, add invoice items, set a due date, and save the invoice.</p>
               </div>
               <div>
-                <strong>Business settings</strong>
-                <p>Add your logo, contact details, bank details, and optional external payment link for invoices.</p>
+                <strong>3. Share and follow up</strong>
+                <p>Send the invoice link, download a PDF, and update the status when payment is made.</p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="landing-section landing-section-alt" id="how-it-works">
+          <div className="landing-section-head">
+            <span>How it works</span>
+            <h2>From signup to first invoice in a few clear steps</h2>
+            <p>
+              New users do not need to set up everything first. You can create a customer while making your first invoice.
+            </p>
+          </div>
+          <div className="landing-steps">
+            {steps.map((step, index) => (
+              <div key={step.title} className="landing-step">
+                <div className="landing-step-num">{index + 1}</div>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
+            ))}
           </div>
         </section>
 
         <section className="landing-section" id="features">
           <div className="landing-section-head">
             <span>Core features</span>
-            <h2>What BizFlow NG can help you do right now</h2>
+            <h2>The main tools inside BizFlow NG</h2>
             <p>
-              Everything below is based on the product as it exists today, without inflated promises.
+              A focused workspace for invoicing, records, and everyday business admin.
             </p>
           </div>
           <div className="landing-grid">
@@ -202,24 +208,6 @@ export default function LandingPage() {
                 <h3>{feature.title}</h3>
                 <p>{feature.body}</p>
               </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="landing-section landing-section-alt" id="how-it-works">
-          <div className="landing-section-head">
-            <span>Getting started</span>
-            <h2>From signup to first invoice in a few clear steps</h2>
-            <p>
-              The onboarding flow is designed to be light: create an account, add your business, then start using the dashboard.
-            </p>
-          </div>
-          <div className="landing-steps">
-            {steps.map((step, index) => (
-              <div key={step} className="landing-step">
-                <div className="landing-step-num">{index + 1}</div>
-                <p>{step}</p>
-              </div>
             ))}
           </div>
         </section>

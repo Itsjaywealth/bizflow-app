@@ -241,16 +241,21 @@ export default function Invoices({ business }) {
             <form onSubmit={saveInvoice}>
               <div className="invoice-form-section">
                 <div>
-                  <h3>Client details</h3>
-                  <p>Choose an existing client or type a new client below.</p>
+                  <h3>Who is this invoice for?</h3>
+                  <p>If this is a new customer, enter their details below. BizFlow will save them automatically for next time.</p>
                 </div>
                 {clients.length > 0 && (
                   <div className="form-group">
-                    <label>Existing Client</label>
+                    <label>Use a saved client (optional)</label>
                     <select value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value, new_client: e.target.value ? emptyClient : f.new_client }))}>
-                      <option value="">Create or enter a new client...</option>
+                      <option value="">No saved client - type details below</option>
                       {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
+                  </div>
+                )}
+                {clients.length === 0 && (
+                  <div className="notice success">
+                    You do not need to add clients first. Type the customer details here and BizFlow will create the client record with this invoice.
                   </div>
                 )}
                 {!form.client_id && (
