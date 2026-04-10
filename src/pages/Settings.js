@@ -14,6 +14,7 @@ export default function Settings({ business, setBusiness }) {
     payment_link: business.payment_link || ''
   })
   const [saving, setSaving] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
   const [message, setMessage] = useState('')
 
   function update(field, value) {
@@ -39,6 +40,29 @@ export default function Settings({ business, setBusiness }) {
     setSaving(false)
   }
 
+  async function uploadLogo(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setMessage('Please choose an image file.')
+      return
+    }
+    setUploadingLogo(true)
+    setMessage('')
+    const ext = file.name.split('.').pop()
+    const path = `${business.id}/logo-${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('business-logos').upload(path, file, { upsert: true })
+    if (error) {
+      setMessage('Logo upload needs a Supabase Storage bucket named business-logos.')
+      setUploadingLogo(false)
+      return
+    }
+    const { data } = supabase.storage.from('business-logos').getPublicUrl(path)
+    update('logo_url', data.publicUrl)
+    setMessage('Logo uploaded. Click Save Business Profile to keep it.')
+    setUploadingLogo(false)
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -55,9 +79,11 @@ export default function Settings({ business, setBusiness }) {
             <input value={form.name} onChange={e => update('name', e.target.value)} required />
           </div>
           <div className="form-group">
-            <label>Logo URL</label>
-            <input placeholder="https://..." value={form.logo_url} onChange={e => update('logo_url', e.target.value)} />
-            <small className="field-help">Paste a direct online link to your logo. This logo will appear on your invoices.</small>
+            <label>Business Logo</label>
+            <input type="file" accept="image/*" onChange={uploadLogo} />
+            <small className="field-help">Upload your logo so it can appear on invoices. If upload is not available yet, paste a direct logo link below.</small>
+            <input style={{ marginTop: 8 }} placeholder="https://..." value={form.logo_url} onChange={e => update('logo_url', e.target.value)} />
+            {uploadingLogo && <small className="field-help">Uploading logo...</small>}
           </div>
         </div>
 

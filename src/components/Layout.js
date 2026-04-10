@@ -12,6 +12,7 @@ const nav = [
   { path: '/expenses', icon: '💸', label: 'Expenses' },
   { path: '/staff', icon: '👥', label: 'My Team' },
   { path: '/settings', icon: '⚙️', label: 'Business Profile' },
+  { path: '/billing', icon: '💳', label: 'Plan & Billing' },
   { path: '/support', icon: '💬', label: 'Support' },
 ]
 
