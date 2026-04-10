@@ -9,7 +9,21 @@ export default function Dashboard({ business }) {
   const [monthly, setMonthly] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { if (business) loadData() }, [business])
+  useEffect(() => {
+    if (!business) return undefined
+    loadData()
+
+    const channel = supabase
+      .channel(`dashboard-realtime-${business.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'invoices', filter: `business_id=eq.${business.id}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses', filter: `business_id=eq.${business.id}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients', filter: `business_id=eq.${business.id}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'staff', filter: `business_id=eq.${business.id}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products', filter: `business_id=eq.${business.id}` }, loadData)
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [business])
 
   async function loadData() {
     const [invRes, staffRes, clientRes, expenseRes, productRes] = await Promise.all([
