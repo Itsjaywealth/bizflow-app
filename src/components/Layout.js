@@ -71,7 +71,6 @@ export default function Layout({ children, session, business }) {
           <button onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen}>{menuOpen ? 'Close' : 'Menu'}</button>
           <div className="mobile-header-brand">
             <strong>BizFlow NG</strong>
-            <span>{business?.name || 'My Business'}</span>
           </div>
           <div className="mobile-header-actions">
             <ThemeToggle compact />
