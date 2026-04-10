@@ -172,7 +172,7 @@ export default function LandingPage() {
         <section className="landing-hero world-hero">
           <div className="landing-hero-copy">
             <div className="landing-eyebrow">Built for Nigerian SMEs</div>
-            <h1>Manage your business operations with clarity and confidence.</h1>
+            <h1>Streamline invoicing, records, and team operations in one workspace.</h1>
             <p>
               BizFlow NG gives growing businesses a polished workspace for invoices,
               clients, staff records, products, expenses, and daily business decisions.
