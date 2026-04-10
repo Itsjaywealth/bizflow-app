@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle'
 const nav = [
   { path: '/home', icon: '🏠', label: 'Homepage' },
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
+  { path: '/reports', icon: '📈', label: 'Reports' },
   { path: '/invoices', icon: '🧾', label: 'Invoices' },
   { path: '/clients', icon: '🤝', label: 'Clients' },
   { path: '/products', icon: '📦', label: 'Products' },
