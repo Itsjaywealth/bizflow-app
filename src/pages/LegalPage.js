@@ -48,9 +48,6 @@ export default function LegalPage({ type }) {
             <p>{body}</p>
           </section>
         ))}
-        <div className="legal-note">
-          This page is a practical starter policy for the MVP. Before taking paid customers at scale, have a qualified legal professional review it.
-        </div>
       </div>
     </div>
   )
