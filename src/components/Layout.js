@@ -27,23 +27,23 @@ export default function Layout({ children, session, business }) {
     <div className="app-layout">
       {menuOpen && <button className="sidebar-scrim" type="button" aria-label="Close menu" onClick={() => setMenuOpen(false)} />}
       <aside className={`app-sidebar ${menuOpen ? 'open' : ''}`}>
-        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 36, height: 36, background: '#0d7c4f', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="sidebar-brand">
+          <div className="sidebar-brand-row">
+            <div className="sidebar-logo">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
             </div>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: 'white' }}>BizFlow <span style={{ color: '#34d399' }}>NG</span></div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 1 }}>{business?.name || 'My Business'}</div>
+              <div className="sidebar-title">BizFlow <span>NG</span></div>
+              <div className="sidebar-business-name">{business?.name || 'My Business'}</div>
             </div>
           </div>
         </div>
 
-        <nav style={{ flex: 1, padding: '16px 12px' }}>
+        <nav className="sidebar-nav">
           {nav.map(item => {
             const active = pathname === item.path
             return (
-              <Link key={item.path} to={item.path} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 10, marginBottom: 4, textDecoration: 'none', background: active ? 'rgba(13,124,79,0.25)' : 'transparent', color: active ? '#34d399' : 'rgba(255,255,255,0.6)', fontWeight: active ? 700 : 500, fontSize: 14, transition: 'all .2s', borderLeft: active ? '3px solid #0d7c4f' : '3px solid transparent' }} onClick={() => setMenuOpen(false)}>
+              <Link key={item.path} to={item.path} className={`sidebar-link ${active ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
                 <span style={{ fontSize: 18 }}>{item.icon}</span>
                 {item.label}
               </Link>
@@ -51,14 +51,14 @@ export default function Layout({ children, session, business }) {
           })}
         </nav>
 
-        <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ padding: '0 12px 12px' }}>
+        <div className="sidebar-footer">
+          <div className="sidebar-theme">
             <ThemeToggle />
           </div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', padding: '0 12px', marginBottom: 8 }}>
+          <div className="sidebar-email">
             {session?.user?.email}
           </div>
-          <button onClick={signOut} style={{ width: '100%', background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)', border: 'none', padding: '10px 12px', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button onClick={signOut} className="sidebar-signout">
             <span>🚪</span> Sign Out
           </button>
         </div>
