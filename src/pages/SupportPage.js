@@ -16,7 +16,7 @@ export default function SupportPage() {
         <div className="landing-eyebrow">BizFlow NG Support</div>
         <h1>How can we help?</h1>
         <p className="legal-intro">
-          Get help setting up and using BizFlow NG. For now, support is handled directly by BrandVerse Ventures.
+          Get help setting up and using BizFlow NG.
         </p>
 
         <div className="support-grid">
@@ -29,8 +29,7 @@ export default function SupportPage() {
         </div>
 
         <div className="support-actions">
-          <a className="btn-primary" href="https://brandverseventures.com" target="_blank" rel="noreferrer">Visit BrandVerse Ventures</a>
-          <a className="btn-outline" href="mailto:support@brandverseventures.com">Email Support</a>
+          <a className="btn-primary" href="mailto:support@brandverseventures.com">Email Support</a>
           <Link className="btn-outline" to="/auth">Log in to BizFlow</Link>
         </div>
       </div>

@@ -19,7 +19,7 @@ const content = {
       ['Information you provide', 'The app stores account, business, client, invoice, product, expense, and staff information so your workspace can function.'],
       ['How information is used', 'Your information is used to provide the app experience: authentication, dashboard records, invoices, and business management tools.'],
       ['Security', 'Authentication and database storage are handled through Supabase. You should still avoid entering unnecessary sensitive information into notes fields.'],
-      ['Contact', 'For privacy requests or corrections, contact BrandVerse Ventures through the support page.']
+      ['Contact', 'For privacy requests or corrections, contact support through the support page.']
     ]
   },
   refund: {
@@ -27,7 +27,7 @@ const content = {
     intro: 'BizFlow NG is currently positioned as early access with guided onboarding. Public checkout is not enabled in the app yet.',
     sections: [
       ['Current billing status', 'If no payment has been collected inside BizFlow NG, no in-app refund process applies.'],
-      ['Manual payments', 'If you pay BrandVerse Ventures directly for setup or support, refund terms should be agreed in writing before work begins.'],
+      ['Manual payments', 'If you pay directly for setup or support, refund terms should be agreed in writing before work begins.'],
       ['Future subscriptions', 'When subscription billing is launched, this page should be updated with plan-specific cancellation and refund rules.']
     ]
   }
