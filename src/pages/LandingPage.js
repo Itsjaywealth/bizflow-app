@@ -37,26 +37,32 @@ const steps = [
 
 const plans = [
   {
-    name: 'Early Access',
-    note: 'Best for solo founders and small teams getting started.',
-    details: ['Invoice creation', 'PDF export', 'WhatsApp sharing', 'Client records']
+    name: 'Starter',
+    price: '₦5,000',
+    period: '/ month',
+    note: 'For solo founders and small businesses that need clean invoicing and customer records.',
+    details: ['Invoice creation', 'PDF export', 'WhatsApp sharing', 'Client records', 'Products and services list']
   },
   {
     name: 'Growth',
-    note: 'For businesses managing recurring invoices and staff records.',
-    details: ['Everything in Early Access', 'Staff management', 'Business dashboard', 'Priority onboarding support']
+    price: '₦12,000',
+    period: '/ month',
+    note: 'For growing teams that want staff records, expense tracking, and clearer business activity.',
+    details: ['Everything in Starter', 'Staff management', 'Expense tracking', 'Business dashboard', 'Priority onboarding support']
   },
   {
-    name: 'Custom Rollout',
+    name: 'Setup Support',
+    price: 'From ₦50,000',
+    period: 'one-time',
     note: 'For businesses that want guided setup with BrandVerse Ventures.',
-    details: ['Guided onboarding', 'Workflow review', 'Team setup support', 'Custom deployment planning']
+    details: ['Business profile setup', 'Client and product setup support', 'Workflow review', 'Team onboarding guidance']
   }
 ]
 
 const mobileNavItems = [
   { label: 'Product overview', href: '#features', description: 'See what BizFlow NG does' },
   { label: 'How it works', href: '#how-it-works', description: 'From signup to first invoice' },
-  { label: 'Plans', href: '#pricing', description: 'Choose an onboarding path' },
+  { label: 'Pricing', href: '#pricing', description: 'See available service plans' },
   { label: 'Support center', to: '/support', description: 'Get help and contact BrandVerse' }
 ]
 
@@ -79,7 +85,7 @@ export default function LandingPage() {
         <div className="landing-nav-links">
           <a href="#features">Features</a>
           <a href="#how-it-works">How it works</a>
-          <a href="#pricing">Plans</a>
+          <a href="#pricing">Pricing</a>
           <Link to="/support">Support</Link>
         </div>
         <div className="landing-nav-cta">
@@ -220,16 +226,20 @@ export default function LandingPage() {
 
         <section className="landing-section" id="pricing">
           <div className="landing-section-head">
-            <span>Plans</span>
-            <h2>Choose the onboarding path that fits your business</h2>
-          <p>
-            Billing checkout is not yet exposed publicly in the app, so the current experience focuses on account creation, business records, and guided onboarding.
-          </p>
+            <span>Pricing</span>
+            <h2>Simple pricing for small Nigerian businesses</h2>
+            <p>
+              Start with the plan that fits your current workflow. If you need help setting up clients, products, and team records, BrandVerse Ventures can support the rollout.
+            </p>
           </div>
           <div className="landing-grid">
             {plans.map((plan) => (
               <article key={plan.name} className="landing-panel landing-plan">
                 <h3>{plan.name}</h3>
+                <div className="landing-price">
+                  <strong>{plan.price}</strong>
+                  <span>{plan.period}</span>
+                </div>
                 <p>{plan.note}</p>
                 <ul>
                   {plan.details.map((item) => <li key={item}>{item}</li>)}
@@ -258,12 +268,9 @@ export default function LandingPage() {
           <p>A product by <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>.</p>
         </div>
         <div className="landing-footer-links">
-          <Link to="/auth">Log in</Link>
-          <Link to="/auth">Create account</Link>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
           <Link to="/support">Support</Link>
-          <Link to="/terms">Terms</Link>
-          <Link to="/privacy">Privacy</Link>
-          <Link to="/refund-policy">Refund policy</Link>
           <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>
         </div>
       </footer>
