@@ -24,7 +24,9 @@ export default function PublicInvoice() {
   const business = invoice?.business_snapshot || {}
   const client = invoice?.client_snapshot || {}
   const items = invoice?.items || []
-  const isPaid = invoice?.status === 'paid'
+  const amountPaid = Number(invoice?.amount_paid ?? (invoice?.status === 'paid' ? invoice?.total : 0) ?? 0)
+  const balanceDue = Math.max(Number(invoice?.total || 0) - amountPaid, 0)
+  const isPaid = balanceDue <= 0 || invoice?.status === 'paid'
   const isOverdue = invoice?.due_date && !isPaid && new Date(invoice.due_date) < new Date(new Date().toDateString())
 
   async function copyInvoiceLink() {
@@ -34,7 +36,12 @@ export default function PublicInvoice() {
   }
 
   function shareWhatsApp() {
-    const msg = `Hello, please find invoice ${invoice.invoice_number} from ${business.name || 'our business'}.\n\nAmount: ${fmt(invoice.total)}\nLink: ${currentUrl}`
+    const msg = `Hello, please find invoice ${invoice.invoice_number} from ${business.name || 'our business'}.
+
+Amount: ${fmt(invoice.total)}
+Paid: ${fmt(amountPaid)}
+Balance: ${fmt(balanceDue)}
+Link: ${currentUrl}`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
@@ -109,6 +116,8 @@ export default function PublicInvoice() {
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', color: '#64748b' }}><span>Subtotal</span><strong>{fmt(invoice.subtotal)}</strong></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', color: '#64748b' }}><span>VAT 7.5%</span><strong>{fmt(invoice.tax)}</strong></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderTop: '1px solid #e2e8f0', fontSize: 20, color: '#0a1628' }}><span>Total</span><strong>{fmt(invoice.total)}</strong></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', color: '#15803d' }}><span>Amount paid</span><strong>{fmt(amountPaid)}</strong></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', color: balanceDue > 0 ? '#a16207' : '#15803d', fontWeight: 800 }}><span>Balance due</span><strong>{fmt(balanceDue)}</strong></div>
           </div>
         </div>
 

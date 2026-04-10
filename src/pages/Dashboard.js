@@ -35,8 +35,10 @@ export default function Dashboard({ business }) {
     ])
     const invoices = invRes.data || []
     const expenses = expenseRes.data || []
-    const paid = invoices.filter(i => i.status === 'paid').reduce((s, i) => s + (i.total || 0), 0)
-    const pending = invoices.filter(i => ['sent', 'pending', 'overdue'].includes(i.status)).reduce((s, i) => s + (i.total || 0), 0)
+    const paid = invoices.reduce((s, i) => s + Number(i.amount_paid ?? (i.status === 'paid' ? i.total : 0) ?? 0), 0)
+    const pending = invoices
+      .filter(i => i.status !== 'cancelled')
+      .reduce((s, i) => s + Math.max(Number(i.total || 0) - Number(i.amount_paid ?? (i.status === 'paid' ? i.total : 0) ?? 0), 0), 0)
     const expenseTotal = expenses.reduce((s, e) => s + (e.amount || 0), 0)
     const clientTotals = invoices.reduce((acc, inv) => {
       const name = inv.clients?.name || inv.client_snapshot?.name || 'Unassigned'
@@ -48,7 +50,7 @@ export default function Dashboard({ business }) {
       const key = (inv.created_at || '').slice(0, 7)
       if (!key) return
       monthMap[key] = monthMap[key] || { month: key, revenue: 0, expenses: 0 }
-      if (inv.status === 'paid') monthMap[key].revenue += inv.total || 0
+      monthMap[key].revenue += Number(inv.amount_paid ?? (inv.status === 'paid' ? inv.total : 0) ?? 0)
     })
     expenses.forEach(exp => {
       const key = (exp.expense_date || exp.created_at || '').slice(0, 7)
@@ -75,7 +77,7 @@ export default function Dashboard({ business }) {
   ]
   const completedSetup = checklist.filter(item => item.done).length
   const setupPercent = Math.round((completedSetup / checklist.length) * 100)
-  const unpaidCount = recentInvoices.filter(inv => ['sent', 'pending', 'overdue'].includes(inv.status)).length
+  const unpaidCount = recentInvoices.filter(inv => inv.status !== 'cancelled' && Math.max(Number(inv.total || 0) - Number(inv.amount_paid ?? (inv.status === 'paid' ? inv.total : 0) ?? 0), 0) > 0).length
   const focusItems = [
     {
       label: 'Setup progress',

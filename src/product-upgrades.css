@@ -5,6 +5,9 @@
   color: #c2410c;
 }
 
+.badge-partial { background: #dbeafe; color: #1d4ed8; }
+.badge-cancelled { background: #fee2e2; color: #991b1b; }
+
 .avatar-badge {
   width: 34px;
   height: 34px;
@@ -121,6 +124,61 @@
   background: var(--red);
 }
 
+.payment-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.payment-summary-grid div,
+.payment-history-box {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-soft);
+  padding: 14px;
+}
+
+.payment-summary-grid span {
+  display: block;
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+
+.payment-summary-grid strong {
+  color: var(--dark);
+  font-size: 18px;
+}
+
+.payment-history-box {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.payment-history-box > strong {
+  color: var(--dark);
+  font-size: 14px;
+}
+
+.payment-history-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text2);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.payment-history-row b {
+  color: var(--green);
+}
+
 @media(max-width:600px) {
   .table-toolbar {
     grid-template-columns: 1fr;
@@ -129,5 +187,9 @@
   .chart-row {
     grid-template-columns: 1fr;
     gap: 6px;
+  }
+
+  .payment-summary-grid {
+    grid-template-columns: 1fr;
   }
 }

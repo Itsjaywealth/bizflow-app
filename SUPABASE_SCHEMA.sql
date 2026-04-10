@@ -36,6 +36,8 @@ create table if not exists invoices (
   subtotal numeric default 0,
   tax numeric default 0,
   total numeric default 0,
+  amount_paid numeric default 0,
+  payment_history jsonb default '[]'::jsonb,
   due_date date,
   notes text,
   public_token text default gen_random_uuid()::text,
@@ -77,6 +79,9 @@ create table if not exists expenses (
 );
 
 create unique index if not exists invoices_public_token_idx on invoices(public_token);
+
+alter table invoices add column if not exists amount_paid numeric default 0;
+alter table invoices add column if not exists payment_history jsonb default '[]'::jsonb;
 
 alter table businesses enable row level security;
 alter table clients enable row level security;

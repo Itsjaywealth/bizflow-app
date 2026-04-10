@@ -4,7 +4,8 @@ import { supabase } from '../lib/supabase'
 const emptyClient = { name: '', email: '', phone: '', address: '' }
 const emptyItem = { description: '', qty: 1, price: 0 }
 const emptyForm = { client_id: '', due_date: '', notes: '', items: [emptyItem], new_client: emptyClient, status: 'draft' }
-const statuses = ['draft', 'sent', 'pending', 'paid', 'overdue']
+const statuses = ['draft', 'sent', 'pending', 'partial', 'paid', 'overdue', 'cancelled']
+const emptyPayment = { amount: '', method: 'Bank transfer', date: new Date().toISOString().slice(0, 10), note: '' }
 
 export default function Invoices({ business }) {
   const [invoices, setInvoices] = useState([])
@@ -18,6 +19,9 @@ export default function Invoices({ business }) {
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [form, setForm] = useState(emptyForm)
+  const [paymentInvoice, setPaymentInvoice] = useState(null)
+  const [paymentForm, setPaymentForm] = useState(emptyPayment)
+  const [savingPayment, setSavingPayment] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -48,6 +52,9 @@ export default function Invoices({ business }) {
   const tax = subtotal * 0.075
   const total = subtotal + tax
   const fmt = (n) => '₦' + Number(n || 0).toLocaleString()
+  const getPaidAmount = (inv) => Number(inv.amount_paid ?? (inv.status === 'paid' ? inv.total : 0) ?? 0)
+  const getBalance = (inv) => Math.max(Number(inv.total || 0) - getPaidAmount(inv), 0)
+  const getPaymentHistory = (inv) => Array.isArray(inv.payment_history) ? inv.payment_history : []
 
   const filteredInvoices = invoices.filter(inv => {
     const clientName = inv.clients?.name || inv.client_snapshot?.name || ''
@@ -97,7 +104,7 @@ export default function Invoices({ business }) {
   }
 
   function openEdit(inv) {
-    const canEdit = ['draft', 'sent', 'pending', 'overdue'].includes(inv.status)
+    const canEdit = ['draft', 'sent', 'pending', 'partial', 'overdue'].includes(inv.status)
     if (!canEdit) {
       alert('Paid invoices should not be edited. Create a new invoice or receipt instead.')
       return
@@ -174,8 +181,64 @@ export default function Invoices({ business }) {
   }
 
   async function updateStatus(id, status) {
-    await supabase.from('invoices').update({ status }).eq('id', id)
+    const invoice = invoices.find(inv => inv.id === id)
+    const payload = { status }
+    if (invoice && status === 'paid') payload.amount_paid = invoice.total || 0
+    if (invoice && ['draft', 'sent', 'pending', 'overdue', 'cancelled'].includes(status) && getPaidAmount(invoice) === 0) payload.amount_paid = 0
+    await supabase.from('invoices').update(payload).eq('id', id)
     loadData()
+  }
+
+  function openPayment(inv) {
+    const balance = getBalance(inv)
+    setPaymentInvoice(inv)
+    setPaymentForm({ ...emptyPayment, amount: balance || inv.total || '' })
+  }
+
+  async function recordPayment(e) {
+    e.preventDefault()
+    if (!paymentInvoice) return
+    const amount = Number(paymentForm.amount)
+    if (!amount || amount <= 0) {
+      alert('Enter a valid payment amount.')
+      return
+    }
+    const balance = getBalance(paymentInvoice)
+    if (amount > balance) {
+      alert(`Payment cannot be more than the balance due: ${fmt(balance)}.`)
+      return
+    }
+
+    setSavingPayment(true)
+    try {
+      const existingHistory = getPaymentHistory(paymentInvoice)
+      const nextPaid = getPaidAmount(paymentInvoice) + amount
+      const nextStatus = nextPaid >= Number(paymentInvoice.total || 0) ? 'paid' : 'partial'
+      const paymentRecord = {
+        id: crypto.randomUUID(),
+        amount,
+        method: paymentForm.method,
+        date: paymentForm.date || new Date().toISOString().slice(0, 10),
+        note: paymentForm.note,
+        recorded_at: new Date().toISOString()
+      }
+      const { error } = await supabase
+        .from('invoices')
+        .update({
+          amount_paid: nextPaid,
+          payment_history: [...existingHistory, paymentRecord],
+          status: nextStatus
+        })
+        .eq('id', paymentInvoice.id)
+      if (error) throw error
+      await loadData()
+      setPaymentInvoice(null)
+      setPaymentForm(emptyPayment)
+    } catch (error) {
+      alert(error.message)
+    } finally {
+      setSavingPayment(false)
+    }
   }
 
   async function deleteInvoice(id) {
@@ -217,20 +280,36 @@ export default function Invoices({ business }) {
     doc.text(`VAT (7.5%): ${fmt(inv.tax)}`, 140, y + 6)
     doc.setFont('helvetica', 'bold')
     doc.text(`Total: ${fmt(inv.total)}`, 140, y + 14)
-    if (type === 'receipt') doc.text('Payment received. Thank you.', 14, y + 28)
-    else if (inv.public_token) doc.text(`View online: ${publicUrl(inv)}`, 14, y + 28)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Amount paid: ${fmt(getPaidAmount(inv))}`, 140, y + 22)
+    doc.text(`Balance due: ${fmt(getBalance(inv))}`, 140, y + 28)
+    if (type === 'receipt') doc.text('Payment received. Thank you.', 14, y + 36)
+    else if (inv.public_token) doc.text(`View online: ${publicUrl(inv)}`, 14, y + 36)
     doc.save(type === 'receipt' ? `receipt-${inv.invoice_number}.pdf` : `${inv.invoice_number}.pdf`)
   }
 
   function shareWhatsApp(inv) {
     const client = inv.client_snapshot || inv.clients || {}
-    const msg = `Hi${client.name ? ' ' + client.name : ''},\n\nPlease view your invoice below:\n\nInvoice: ${inv.invoice_number}\nAmount: ${fmt(inv.total)}\nDue: ${inv.due_date || 'Upon receipt'}\nLink: ${publicUrl(inv)}\n\nThank you.\n\n- ${business.name}`
+    const msg = `Hi${client.name ? ' ' + client.name : ''},
+
+Please view your invoice below:
+
+Invoice: ${inv.invoice_number}
+Amount: ${fmt(inv.total)}
+Paid: ${fmt(getPaidAmount(inv))}
+Balance: ${fmt(getBalance(inv))}
+Due: ${inv.due_date || 'Upon receipt'}
+Link: ${publicUrl(inv)}
+
+Thank you.
+
+- ${business.name}`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
   function paymentReminder(inv) {
     const client = inv.client_snapshot || inv.clients || {}
-    const msg = `Hello${client.name ? ' ' + client.name : ''}, this is a friendly reminder for invoice ${inv.invoice_number} from ${business.name}. Amount due: ${fmt(inv.total)}. Please view it here: ${publicUrl(inv)}`
+    const msg = `Hello${client.name ? ' ' + client.name : ''}, this is a friendly reminder for invoice ${inv.invoice_number} from ${business.name}. Balance due: ${fmt(getBalance(inv))}. Please view it here: ${publicUrl(inv)}`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
@@ -271,8 +350,8 @@ export default function Invoices({ business }) {
 
       <div className="section-grid">
         <div className="stat-card"><div className="stat-label">Total Invoiced</div><div className="stat-value" style={{ color: '#0d7c4f' }}>{fmt(invoices.reduce((s, i) => s + (i.total || 0), 0))}</div></div>
-        <div className="stat-card"><div className="stat-label">Paid</div><div className="stat-value" style={{ color: '#15803d' }}>{fmt(invoices.filter(i => i.status === 'paid').reduce((s, i) => s + (i.total || 0), 0))}</div></div>
-        <div className="stat-card"><div className="stat-label">Awaiting Payment</div><div className="stat-value" style={{ color: '#a16207' }}>{fmt(invoices.filter(i => ['sent', 'pending', 'overdue'].includes(i.status)).reduce((s, i) => s + (i.total || 0), 0))}</div></div>
+        <div className="stat-card"><div className="stat-label">Amount Paid</div><div className="stat-value" style={{ color: '#15803d' }}>{fmt(invoices.reduce((s, i) => s + getPaidAmount(i), 0))}</div></div>
+        <div className="stat-card"><div className="stat-label">Balance Due</div><div className="stat-value" style={{ color: '#a16207' }}>{fmt(invoices.filter(i => i.status !== 'cancelled').reduce((s, i) => s + getBalance(i), 0))}</div></div>
       </div>
 
       <div className="card">
@@ -288,12 +367,70 @@ export default function Invoices({ business }) {
             <div className="empty-state"><div className="empty-icon">🧾</div><h3>No invoices found</h3><p>Create your first invoice. You can add the client while creating it.</p><button className="btn-primary" onClick={openAdd}>Create Invoice</button></div> :
             <div style={{ overflowX: 'auto' }}>
               <table>
-                <thead><tr><th>Invoice #</th><th>Client</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
-                <tbody>{filteredInvoices.map(inv => <tr key={inv.id}><td style={{ fontWeight: 700 }}>{inv.invoice_number}</td><td>{inv.clients?.name || inv.client_snapshot?.name || '—'}</td><td style={{ fontWeight: 700 }}>{fmt(inv.total)}</td><td>{inv.due_date ? new Date(inv.due_date).toLocaleDateString() : '—'}</td><td><select value={inv.status} onChange={e => updateStatus(inv.id, e.target.value)}>{statuses.map(s => <option key={s} value={s}>{s}</option>)}</select></td><td><div className="action-row"><a className="mini-action green" href={publicUrl(inv)} target="_blank" rel="noreferrer">View</a><button className="mini-action" onClick={() => openEdit(inv)}>Edit</button><button className="mini-action" onClick={() => copyLink(inv)}>Copy</button><button className="mini-action" onClick={() => makePDF(inv)}>PDF</button><button className="mini-action green" onClick={() => shareWhatsApp(inv)}>Share</button><button className="mini-action" onClick={() => paymentReminder(inv)}>Reminder</button>{inv.status === 'paid' && <button className="mini-action green" onClick={() => makePDF(inv, 'receipt')}>Receipt</button>}<button className="mini-action red" onClick={() => deleteInvoice(inv.id)}>Delete</button></div></td></tr>)}</tbody>
+                <thead><tr><th>Invoice #</th><th>Client</th><th>Total</th><th>Paid</th><th>Balance</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>{filteredInvoices.map(inv => <tr key={inv.id}><td style={{ fontWeight: 700 }}>{inv.invoice_number}</td><td>{inv.clients?.name || inv.client_snapshot?.name || '—'}</td><td style={{ fontWeight: 700 }}>{fmt(inv.total)}</td><td style={{ color: '#15803d', fontWeight: 800 }}>{fmt(getPaidAmount(inv))}</td><td style={{ color: getBalance(inv) > 0 ? '#a16207' : '#15803d', fontWeight: 800 }}>{fmt(getBalance(inv))}</td><td>{inv.due_date ? new Date(inv.due_date).toLocaleDateString() : '—'}</td><td><select value={inv.status} onChange={e => updateStatus(inv.id, e.target.value)}>{statuses.map(s => <option key={s} value={s}>{s}</option>)}</select></td><td><div className="action-row"><a className="mini-action green" href={publicUrl(inv)} target="_blank" rel="noreferrer">View</a>{getBalance(inv) > 0 && inv.status !== 'cancelled' && <button className="mini-action green" onClick={() => openPayment(inv)}>Record Payment</button>}<button className="mini-action" onClick={() => openEdit(inv)}>Edit</button><button className="mini-action" onClick={() => copyLink(inv)}>Copy</button><button className="mini-action" onClick={() => makePDF(inv)}>PDF</button><button className="mini-action green" onClick={() => shareWhatsApp(inv)}>Share</button>{getBalance(inv) > 0 && <button className="mini-action" onClick={() => paymentReminder(inv)}>Reminder</button>}{getPaidAmount(inv) > 0 && <button className="mini-action green" onClick={() => makePDF(inv, 'receipt')}>Receipt</button>}<button className="mini-action red" onClick={() => deleteInvoice(inv.id)}>Delete</button></div></td></tr>)}</tbody>
               </table>
             </div>
         }
       </div>
+
+      {paymentInvoice && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setPaymentInvoice(null)}>
+          <div className="modal" style={{ maxWidth: 560 }}>
+            <div className="modal-header">
+              <div>
+                <div className="modal-title">Record Payment</div>
+                <p className="modal-subtitle">Add a manual payment received for {paymentInvoice.invoice_number}.</p>
+              </div>
+              <button className="modal-close" onClick={() => setPaymentInvoice(null)}>x</button>
+            </div>
+            <div className="payment-summary-grid">
+              <div><span>Total</span><strong>{fmt(paymentInvoice.total)}</strong></div>
+              <div><span>Paid</span><strong>{fmt(getPaidAmount(paymentInvoice))}</strong></div>
+              <div><span>Balance</span><strong>{fmt(getBalance(paymentInvoice))}</strong></div>
+            </div>
+            <form onSubmit={recordPayment}>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Amount Received</label>
+                  <input type="number" min="1" max={getBalance(paymentInvoice)} value={paymentForm.amount} onChange={e => setPaymentForm(f => ({ ...f, amount: e.target.value }))} required />
+                </div>
+                <div className="form-group">
+                  <label>Payment Date</label>
+                  <input type="date" value={paymentForm.date} onChange={e => setPaymentForm(f => ({ ...f, date: e.target.value }))} required />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Payment Method</label>
+                <select value={paymentForm.method} onChange={e => setPaymentForm(f => ({ ...f, method: e.target.value }))}>
+                  <option>Bank transfer</option>
+                  <option>Cash</option>
+                  <option>POS</option>
+                  <option>Mobile money</option>
+                  <option>Payment link</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Note or Reference</label>
+                <textarea rows={2} placeholder="Transfer reference, bank name, or internal note" value={paymentForm.note} onChange={e => setPaymentForm(f => ({ ...f, note: e.target.value }))} />
+              </div>
+              {getPaymentHistory(paymentInvoice).length > 0 && (
+                <div className="payment-history-box">
+                  <strong>Previous payments</strong>
+                  {getPaymentHistory(paymentInvoice).map(payment => (
+                    <div key={payment.id || payment.recorded_at} className="payment-history-row">
+                      <span>{payment.date} · {payment.method}</span>
+                      <b>{fmt(payment.amount)}</b>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: 13 }} disabled={savingPayment}>{savingPayment ? 'Saving payment...' : 'Save Payment'}</button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showModal && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowModal(false)}>

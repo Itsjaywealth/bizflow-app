@@ -30,7 +30,17 @@ export default function Clients({ business }) {
   function openEdit(c) { setEditing(c.id); setForm({ name: c.name, email: c.email || '', phone: c.phone || '', address: c.address || '' }); setShowModal(true) }
   async function save(e) { e.preventDefault(); setSaving(true); if (editing) await supabase.from('clients').update(form).eq('id', editing); else await supabase.from('clients').insert({ ...form, business_id: business.id }); await loadClients(); setShowModal(false); setSaving(false) }
   async function deleteClient(id) { if (window.confirm('Delete this client?')) { await supabase.from('clients').delete().eq('id', id); loadClients() } }
-  function clientSummary(client) { const records = invoices.filter(inv => inv.client_id === client.id); return { count: records.length, paid: records.filter(inv => inv.status === 'paid').reduce((sum, inv) => sum + (inv.total || 0), 0), pending: records.filter(inv => inv.status !== 'paid').reduce((sum, inv) => sum + (inv.total || 0), 0), records } }
+  function clientSummary(client) {
+    const records = invoices.filter(inv => inv.client_id === client.id)
+    const paidAmount = (inv) => Number(inv.amount_paid ?? (inv.status === 'paid' ? inv.total : 0) ?? 0)
+    const balance = (inv) => Math.max(Number(inv.total || 0) - paidAmount(inv), 0)
+    return {
+      count: records.length,
+      paid: records.reduce((sum, inv) => sum + paidAmount(inv), 0),
+      pending: records.filter(inv => inv.status !== 'cancelled').reduce((sum, inv) => sum + balance(inv), 0),
+      records
+    }
+  }
   const fmt = (n) => '₦' + Number(n || 0).toLocaleString()
   const filtered = clients.filter(c => `${c.name} ${c.email || ''} ${c.phone || ''}`.toLowerCase().includes(query.toLowerCase()))
 
