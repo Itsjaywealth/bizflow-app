@@ -99,7 +99,7 @@ export default function Dashboard({ business }) {
     <div>
       <section className="dashboard-command">
         <div>
-          <div className="landing-eyebrow">Business command center</div>
+          <div className="landing-eyebrow">Business overview</div>
           <h1>{greeting}, {business.name}.</h1>
           <p>Track cash movement, create invoices, organize customers, and keep your business records moving from one workspace.</p>
           <div className="dashboard-command-actions">
