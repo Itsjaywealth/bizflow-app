@@ -21,6 +21,7 @@ import Layout from './components/Layout'
 import './App.css'
 import './sidebar-theme.css'
 import './product-upgrades.css'
+import './worldclass.css'
 import './mobile.css'
 
 export default function App() {
