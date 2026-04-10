@@ -35,14 +35,14 @@ export default function Auth() {
           <div style={{ width: 52, height: 52, background: '#0d7c4f', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
           </div>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: '#0a1628' }}>BizFlow <span style={{ color: '#0d7c4f' }}>NG</span></h1>
-          <p style={{ color: '#64748b', fontSize: 14, marginTop: 4 }}>Smart tools for Nigerian businesses</p>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: 'var(--dark)' }}>BizFlow <span style={{ color: 'var(--green)' }}>NG</span></h1>
+          <p style={{ color: 'var(--text2)', fontSize: 14, marginTop: 4 }}>Smart tools for Nigerian businesses</p>
         </div>
 
         <div className="auth-panel">
-          <div style={{ display: 'flex', background: '#f8fafc', borderRadius: 10, padding: 4, marginBottom: 28 }}>
+          <div style={{ display: 'flex', background: 'var(--surface-soft)', border: '1px solid var(--border)', borderRadius: 10, padding: 4, marginBottom: 28 }}>
             {['signup', 'login'].map(m => (
-              <button key={m} onClick={() => { setMode(m); setError(''); setMessage('') }} style={{ flex: 1, padding: '9px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 14, cursor: 'pointer', transition: 'all .2s', background: mode === m ? 'white' : 'transparent', color: mode === m ? '#0a1628' : '#94a3b8', boxShadow: mode === m ? '0 2px 8px rgba(0,0,0,0.08)' : 'none' }}>
+              <button key={m} onClick={() => { setMode(m); setError(''); setMessage('') }} style={{ flex: 1, padding: '9px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 14, cursor: 'pointer', transition: 'all .2s', background: mode === m ? 'var(--surface)' : 'transparent', color: mode === m ? 'var(--dark)' : 'var(--text3)', boxShadow: mode === m ? 'var(--shadow)' : 'none' }}>
                 {m === 'signup' ? 'Create Account' : 'Log In'}
               </button>
             ))}
@@ -63,7 +63,7 @@ export default function Auth() {
               <label>Password</label>
               <div style={{ position: 'relative' }}>
                 <input type={showPassword ? 'text' : 'password'} placeholder={mode === 'signup' ? 'At least 8 characters' : 'Your password'} value={password} onChange={e => setPassword(e.target.value)} required minLength={8} style={{ paddingRight: 74 }} />
-                <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: 'absolute', right: 8, top: 7, border: 'none', background: '#f8fafc', color: '#0d7c4f', borderRadius: 7, padding: '5px 9px', fontSize: 12, fontWeight: 700 }}>
+                <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: 'absolute', right: 8, top: 7, border: '1px solid var(--border)', background: 'var(--surface-soft)', color: 'var(--green)', borderRadius: 7, padding: '5px 9px', fontSize: 12, fontWeight: 700 }}>
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
@@ -79,14 +79,14 @@ export default function Auth() {
 
           {mode === 'login' && (
             <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <Link to="/reset-password" style={{ color: '#0d7c4f', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+              <Link to="/reset-password" style={{ color: 'var(--green)', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
                 Forgot your password?
               </Link>
             </div>
           )}
 
-          <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 20 }}>
-            By signing up you agree to our <Link to="/terms" style={{ color: '#0d7c4f', fontWeight: 700 }}>Terms</Link> and <Link to="/privacy" style={{ color: '#0d7c4f', fontWeight: 700 }}>Privacy Policy</Link>.
+          <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text3)', marginTop: 20 }}>
+            By signing up you agree to our <Link to="/terms" style={{ color: 'var(--green)', fontWeight: 700 }}>Terms</Link> and <Link to="/privacy" style={{ color: 'var(--green)', fontWeight: 700 }}>Privacy Policy</Link>.
           </p>
         </div>
       </div>
