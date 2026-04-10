@@ -86,6 +86,17 @@
   border-left: 3px solid transparent;
 }
 
+.sidebar-link-button {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  border-right: none;
+  border-bottom: none;
+  margin-top: 10px;
+  padding-top: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .sidebar-link:hover {
   background: var(--surface-soft);
   color: var(--green);
@@ -100,6 +111,10 @@
 
 :root[data-theme='dark'] .sidebar-link {
   color: rgba(255,255,255,0.62);
+}
+
+:root[data-theme='dark'] .sidebar-link-button {
+  border-top-color: rgba(255,255,255,0.08);
 }
 
 :root[data-theme='dark'] .sidebar-link:hover {

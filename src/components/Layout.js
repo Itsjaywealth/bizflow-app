@@ -50,6 +50,10 @@ export default function Layout({ children, session, business }) {
               </Link>
             )
           })}
+          <button onClick={signOut} className="sidebar-link sidebar-link-button">
+            <span style={{ fontSize: 18 }}>🚪</span>
+            Sign Out
+          </button>
         </nav>
 
         <div className="sidebar-footer">

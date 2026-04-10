@@ -139,3 +139,7 @@ grant execute on function get_public_invoice(text) to anon, authenticated;
 -- Optional logo upload setup:
 -- In Supabase Storage, create a public bucket named: business-logos.
 -- The app uses this bucket for Business Profile logo uploads.
+
+-- Optional realtime setup:
+-- In Supabase Dashboard, enable Realtime for invoices, expenses, clients,
+-- staff, and products so the dashboard and invoice table refresh instantly.

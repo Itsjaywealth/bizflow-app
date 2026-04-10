@@ -19,7 +19,18 @@ export default function Invoices({ business }) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [form, setForm] = useState(emptyForm)
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => {
+    loadData()
+
+    const channel = supabase
+      .channel(`invoices-realtime-${business.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'invoices', filter: `business_id=eq.${business.id}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients', filter: `business_id=eq.${business.id}` }, loadData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products', filter: `business_id=eq.${business.id}` }, loadData)
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [business.id])
 
   async function loadData() {
     const [invRes, clientRes, productRes] = await Promise.all([
