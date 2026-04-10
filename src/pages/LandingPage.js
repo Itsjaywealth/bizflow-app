@@ -48,6 +48,15 @@ const steps = [
   }
 ]
 
+const smeTypes = [
+  ['Retail & online sellers', 'Save customers, create invoices, and track expenses without a spreadsheet.'],
+  ['Service providers', 'Reuse common services, send invoice links, and follow up from WhatsApp.'],
+  ['Food, beauty & lifestyle businesses', 'Keep simple records for customers, staff, supplies, and monthly costs.'],
+  ['Agencies & consultants', 'Manage retainers, one-off projects, client billing, and receipts in one workspace.'],
+  ['Logistics & local operations', 'Record repeat charges, dispatch costs, salaries, and pending payments clearly.'],
+  ['Growing teams', 'Keep staff records, business details, and daily admin organized as the business expands.']
+]
+
 const plans = [
   {
     name: 'Starter',
@@ -180,6 +189,25 @@ export default function LandingPage() {
                 <p>Send the invoice link, download a PDF, and update the status when payment is made.</p>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="landing-section">
+          <div className="landing-section-head">
+            <span>Made for real business work</span>
+            <h2>Built for every Nigerian SME that needs clearer records</h2>
+            <p>
+              Whether you sell products, offer services, manage staff, or run daily operations,
+              BizFlow NG gives you a simple way to keep business activity organized.
+            </p>
+          </div>
+          <div className="landing-grid">
+            {smeTypes.map(([title, body]) => (
+              <article key={title} className="landing-panel">
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </article>
+            ))}
           </div>
         </section>
 

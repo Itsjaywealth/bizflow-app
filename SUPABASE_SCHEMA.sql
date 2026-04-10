@@ -64,3 +64,7 @@ create policy "Users own businesses" on businesses for all using (auth.uid() = u
 create policy "Business owns clients" on clients for all using (business_id in (select id from businesses where user_id = auth.uid()));
 create policy "Business owns invoices" on invoices for all using (business_id in (select id from businesses where user_id = auth.uid()));
 create policy "Business owns staff" on staff for all using (business_id in (select id from businesses where user_id = auth.uid()));
+
+-- Optional logo upload setup
+-- In Supabase Storage, create a public bucket named: business-logos
+-- The app uses this bucket for Business Profile logo uploads.

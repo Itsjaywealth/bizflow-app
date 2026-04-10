@@ -16,9 +16,11 @@ import ResetPassword from './pages/ResetPassword'
 import LegalPage from './pages/LegalPage'
 import SupportPage from './pages/SupportPage'
 import InfoPage from './pages/InfoPage'
+import Billing from './pages/Billing'
 import Layout from './components/Layout'
 import './App.css'
 import './sidebar-theme.css'
+import './product-upgrades.css'
 import './mobile.css'
 
 export default function App() {
@@ -102,6 +104,7 @@ export default function App() {
         <Route path="/products" element={<ProtectedRoute><Products business={business} /></ProtectedRoute>} />
         <Route path="/expenses" element={<ProtectedRoute><Expenses business={business} /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings business={business} setBusiness={setBusiness} /></ProtectedRoute>} />
+        <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
       </Routes>
     </BrowserRouter>
