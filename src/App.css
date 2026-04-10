@@ -253,6 +253,17 @@ tr:hover td { background: var(--surface-soft); }
   font-weight: 800;
 }
 
+.mobile-header .theme-toggle {
+  box-shadow: none;
+}
+
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .mobile-header-brand {
   display: none;
   min-width: 0;

@@ -545,6 +545,16 @@ table {
     padding: 8px 10px;
   }
 
+  .mobile-header-actions {
+    gap: 6px;
+  }
+
+  .mobile-header-actions .theme-toggle-compact {
+    min-width: 38px;
+    height: 38px;
+    padding: 7px;
+  }
+
   .mobile-home-link {
     max-width: 82px;
     justify-content: center;

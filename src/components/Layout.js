@@ -71,7 +71,10 @@ export default function Layout({ children, session, business }) {
             <strong>BizFlow NG</strong>
             <span>{business?.name || 'My Business'}</span>
           </div>
-          <Link to="/home" className="mobile-home-link">Homepage</Link>
+          <div className="mobile-header-actions">
+            <ThemeToggle compact />
+            <Link to="/home" className="mobile-home-link">Homepage</Link>
+          </div>
         </div>
 
         {children}
