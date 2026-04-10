@@ -55,7 +55,7 @@ export default function PublicInvoice() {
             <div className="landing-logo-text">BizFlow <span>NG</span></div>
             <p>Secure invoice page</p>
           </div>
-          <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">A product by BrandVerse Ventures</a>
+          <Link to="/home">Powered by BizFlow NG</Link>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', marginBottom: 28 }}>
