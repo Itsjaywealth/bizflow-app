@@ -128,6 +128,25 @@ table {
   font-size: 18px;
 }
 
+.landing-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 12px 0 12px;
+}
+
+.landing-price strong {
+  color: var(--dark);
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  letter-spacing: -0.04em;
+}
+
+.landing-price span {
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 @media (max-width: 920px) {
   .landing-nav {
     padding: 16px 20px;
