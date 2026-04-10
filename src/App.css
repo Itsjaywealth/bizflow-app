@@ -267,6 +267,20 @@ tr:hover td { background: var(--surface-soft); }
   gap: 8px;
 }
 
+.mobile-signout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
 .mobile-header-brand {
   display: none;
   min-width: 0;
@@ -315,6 +329,11 @@ tr:hover td { background: var(--surface-soft); }
 
 .dashboard-bottom-grid {
   grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+}
+
+.dashboard-shell {
+  display: grid;
+  gap: 24px;
 }
 
 .invoice-item-row {

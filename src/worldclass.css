@@ -315,6 +315,22 @@
   box-shadow: var(--shadow-lg);
 }
 
+.dashboard-shell {
+  position: relative;
+}
+
+.dashboard-shell::before {
+  content: '';
+  position: absolute;
+  inset: -24px 0 auto auto;
+  width: min(34vw, 320px);
+  height: min(34vw, 320px);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(13, 124, 79, 0.12), transparent 68%);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
 .dashboard-command h1 {
   max-width: 760px;
   margin: 16px 0 10px;
@@ -394,6 +410,34 @@
 
 .premium-stat.red-stat::before {
   background: var(--red);
+}
+
+.dashboard-section-head {
+  margin-bottom: 18px;
+}
+
+.dashboard-quick-link,
+.dashboard-health-card {
+  box-shadow: var(--shadow);
+}
+
+.dashboard-quick-link.primary {
+  border-color: rgba(13, 124, 79, 0.22);
+}
+
+.dashboard-health-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-health-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -26px -30px auto;
+  width: 90px;
+  height: 90px;
+  border-radius: 999px;
+  background: rgba(13, 124, 79, 0.08);
 }
 
 .reports-hero h1 {
