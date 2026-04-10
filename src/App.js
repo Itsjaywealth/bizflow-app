@@ -15,6 +15,7 @@ import LandingPage from './pages/LandingPage'
 import ResetPassword from './pages/ResetPassword'
 import LegalPage from './pages/LegalPage'
 import SupportPage from './pages/SupportPage'
+import InfoPage from './pages/InfoPage'
 import Layout from './components/Layout'
 import './App.css'
 import './sidebar-theme.css'
@@ -80,6 +81,9 @@ export default function App() {
         <Route path="/terms" element={<LegalPage type="terms" />} />
         <Route path="/privacy" element={<LegalPage type="privacy" />} />
         <Route path="/refund-policy" element={<LegalPage type="refund" />} />
+        <Route path="/features" element={<InfoPage type="features" />} />
+        <Route path="/how-it-works" element={<InfoPage type="how" />} />
+        <Route path="/pricing" element={<InfoPage type="pricing" />} />
         <Route path="/support" element={<SupportPage />} />
         <Route path="/auth" element={!session ? <Auth /> : <Navigate to={getAppHome()} replace />} />
         <Route path="/onboarding" element={

@@ -65,9 +65,9 @@ const plans = [
 ]
 
 const mobileNavItems = [
-  { label: 'How it works', href: '#how-it-works', description: 'From signup to first invoice' },
-  { label: 'Product overview', href: '#features', description: 'See what BizFlow NG does' },
-  { label: 'Pricing', href: '#pricing', description: 'See available service plans' },
+  { label: 'Product overview', to: '/features', description: 'See what BizFlow NG does' },
+  { label: 'How it works', to: '/how-it-works', description: 'From signup to first invoice' },
+  { label: 'Pricing', to: '/pricing', description: 'See available service plans' },
   { label: 'Support center', to: '/support', description: 'Get help using BizFlow NG' }
 ]
 
@@ -88,9 +88,9 @@ export default function LandingPage() {
           <div className="landing-logo-text">BizFlow <span>NG</span></div>
         </Link>
         <div className="landing-nav-links">
-          <a href="#how-it-works">How it works</a>
-          <a href="#features">Features</a>
-          <a href="#pricing">Pricing</a>
+          <Link to="/features">Features</Link>
+          <Link to="/how-it-works">How it works</Link>
+          <Link to="/pricing">Pricing</Link>
           <Link to="/support">Support</Link>
         </div>
         <div className="landing-nav-cta">
@@ -144,7 +144,7 @@ export default function LandingPage() {
             </p>
             <div className="landing-actions">
               <Link to="/auth" className="btn-primary landing-hero-btn">Start with your business email</Link>
-              <a href="#how-it-works" className="btn-outline landing-hero-btn">See how it works</a>
+              <Link to="/how-it-works" className="btn-outline landing-hero-btn">See how it works</Link>
             </div>
             <div className="landing-meta">
               <span>Simple setup</span>
@@ -256,8 +256,8 @@ export default function LandingPage() {
           <p>A product by <a href="https://brandverseventures.com" target="_blank" rel="noreferrer">BrandVerse Ventures</a>.</p>
         </div>
         <div className="landing-footer-links">
-          <a href="#features">Features</a>
-          <a href="#pricing">Pricing</a>
+          <Link to="/features">Features</Link>
+          <Link to="/pricing">Pricing</Link>
           <Link to="/support">Support</Link>
         </div>
       </footer>
