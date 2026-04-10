@@ -6,13 +6,13 @@ import ThemeToggle from './ThemeToggle'
 const nav = [
   { path: '/home', icon: '🏠', label: 'Homepage' },
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
-  { path: '/reports', icon: '📈', label: 'Reports' },
   { path: '/invoices', icon: '🧾', label: 'Invoices' },
   { path: '/clients', icon: '🤝', label: 'Clients' },
   { path: '/products', icon: '📦', label: 'Products' },
   { path: '/expenses', icon: '💸', label: 'Expenses' },
+  { path: '/reports', icon: '📈', label: 'Reports' },
   { path: '/staff', icon: '👥', label: 'My Team' },
-  { path: '/settings', icon: '⚙️', label: 'Business Profile' },
+  { path: '/settings', icon: '⚙️', label: 'Settings' },
   { path: '/billing', icon: '💳', label: 'Plan & Billing' },
   { path: '/support', icon: '💬', label: 'Support' },
 ]
@@ -51,10 +51,6 @@ export default function Layout({ children, session, business }) {
               </Link>
             )
           })}
-          <button onClick={signOut} className="sidebar-link sidebar-link-button">
-            <span style={{ fontSize: 18 }}>🚪</span>
-            Sign Out
-          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -80,6 +76,7 @@ export default function Layout({ children, session, business }) {
           <div className="mobile-header-actions">
             <ThemeToggle compact />
             <Link to="/home" className="mobile-home-link">Homepage</Link>
+            <button onClick={signOut} className="mobile-signout-button" type="button">Sign Out</button>
           </div>
         </div>
 

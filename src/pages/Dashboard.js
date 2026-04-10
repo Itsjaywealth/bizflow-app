@@ -80,7 +80,7 @@ export default function Dashboard({ business }) {
   const unpaidCount = recentInvoices.filter(inv => inv.status !== 'cancelled' && Math.max(Number(inv.total || 0) - Number(inv.amount_paid ?? (inv.status === 'paid' ? inv.total : 0) ?? 0), 0) > 0).length
   const focusItems = [
     {
-      label: 'Setup progress',
+      label: 'Workspace progress',
       value: `${setupPercent}%`,
       body: completedSetup === checklist.length ? 'Your workspace is ready for daily use.' : `${checklist.length - completedSetup} setup step${checklist.length - completedSetup === 1 ? '' : 's'} left.`
     },
@@ -96,23 +96,33 @@ export default function Dashboard({ business }) {
     }
   ]
   const maxChart = Math.max(...monthly.map(row => Math.max(row.revenue, row.expenses)), 1)
+  const businessHealth = [
+    { label: 'Clients', value: stats.clients, note: stats.clients ? 'Customers saved in BizFlow' : 'No clients saved yet', to: '/clients' },
+    { label: 'Catalog', value: stats.products, note: stats.products ? 'Products and services ready for invoices' : 'Add your common items', to: '/products' },
+    { label: 'Team', value: stats.staff, note: stats.staff ? 'Staff records in one place' : 'Add staff when you are ready', to: '/staff' },
+  ]
+  const recentActions = [
+    { label: 'Create invoice', body: 'Bill a client and share instantly', to: '/invoices', tone: 'primary' },
+    { label: 'Add product', body: 'Save repeat items for faster invoicing', to: '/products', tone: 'outline' },
+    { label: 'Record expense', body: 'Keep profit and cashflow accurate', to: '/expenses', tone: 'outline' },
+  ]
 
   return (
-    <div>
+    <div className="dashboard-shell">
       <section className="dashboard-command">
         <div>
           <div className="landing-eyebrow">Business overview</div>
           <h1>{greeting}, {business.name}.</h1>
-          <p>Track cash movement, create invoices, organize customers, and keep your business records moving from one workspace.</p>
+          <p>Run your invoices, customer records, products, staff, and expenses from one calm workspace built for everyday business operations.</p>
           <div className="dashboard-command-actions">
             <Link to="/invoices" className="btn-primary">+ New Invoice</Link>
-            <Link to="/expenses" className="btn-outline">Record Expense</Link>
+            <Link to="/products" className="btn-outline">Manage Catalog</Link>
           </div>
         </div>
         <div className="dashboard-focus-panel">
           <div className="dashboard-focus-head">
-            <strong>Today’s focus</strong>
-            <span>Realtime-ready</span>
+            <strong>Business snapshot</strong>
+            <span>Live workspace</span>
           </div>
           {focusItems.map(item => (
             <div className="dashboard-focus-item" key={item.label}>
@@ -131,6 +141,46 @@ export default function Dashboard({ business }) {
         <div className="stat-card premium-stat amber-stat"><div className="stat-label">Awaiting Payment</div><div className="stat-value" style={{ color: '#f59e0b' }}>{fmt(stats.pending)}</div><div className="stat-change" style={{ color: '#64748b' }}>Follow up needed</div></div>
         <div className="stat-card premium-stat red-stat"><div className="stat-label">Expenses</div><div className="stat-value" style={{ color: '#b91c1c' }}>{fmt(stats.expenses)}</div><div className="stat-change dn">Costs recorded</div></div>
         <div className="stat-card premium-stat"><div className="stat-label">Estimated Profit</div><div className="stat-value" style={{ color: stats.profit >= 0 ? '#0d7c4f' : '#b91c1c' }}>{fmt(stats.profit)}</div><div className="stat-change up">Paid revenue minus expenses</div></div>
+      </div>
+
+      <div className="dashboard-split-grid">
+        <div className="card">
+          <div className="dashboard-section-head">
+            <div>
+              <strong>Quick actions</strong>
+              <p>Jump into the tasks business owners use most.</p>
+            </div>
+          </div>
+          <div className="dashboard-quick-stack">
+            {recentActions.map(action => (
+              <Link key={action.label} to={action.to} className={`dashboard-quick-link ${action.tone}`}>
+                <div>
+                  <strong>{action.label}</strong>
+                  <p>{action.body}</p>
+                </div>
+                <span>Open</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="dashboard-section-head">
+            <div>
+              <strong>Business records</strong>
+              <p>See what is already set up in your workspace.</p>
+            </div>
+          </div>
+          <div className="dashboard-health-grid">
+            {businessHealth.map(item => (
+              <Link key={item.label} to={item.to} className="dashboard-health-card">
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+                <p>{item.note}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="quick-action-grid">
