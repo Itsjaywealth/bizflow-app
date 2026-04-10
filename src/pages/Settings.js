@@ -57,7 +57,7 @@ export default function Settings({ business, setBusiness }) {
           <div className="form-group">
             <label>Logo URL</label>
             <input placeholder="https://..." value={form.logo_url} onChange={e => update('logo_url', e.target.value)} />
-            <small className="field-help">Upload your logo to a public location and paste the image link here. This appears on public invoices.</small>
+            <small className="field-help">Paste a direct online link to your logo. This logo will appear on your invoices.</small>
           </div>
         </div>
 
