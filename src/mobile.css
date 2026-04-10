@@ -25,26 +25,63 @@ table {
 .mobile-header-brand {
   display: none;
   min-width: 0;
-  flex: 1;
+  justify-self: center;
+  text-align: center;
 }
 
-.mobile-header-brand strong,
-.mobile-header-brand span {
+.mobile-header-brand strong {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.mobile-header-brand strong {
   color: var(--dark);
   font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-.mobile-header-brand span {
-  color: var(--text2);
-  font-size: 11px;
-  margin-top: 1px;
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mobile-header .theme-toggle,
+.mobile-signout-button {
+  box-shadow: none;
+}
+
+.mobile-header button {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 9px 12px;
+  font-weight: 800;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.mobile-header button:hover {
+  transform: translateY(-1px);
+}
+
+.mobile-menu-button {
+  min-width: 70px;
+  border-color: transparent !important;
+  background: linear-gradient(135deg, var(--green), var(--green-light)) !important;
+  color: white !important;
+  box-shadow: 0 10px 18px rgba(13, 124, 79, 0.18);
+}
+
+.mobile-signout-button {
+  min-width: 84px;
+  justify-content: center;
+  background: var(--surface);
+}
+
+.mobile-signout-button:hover {
+  background: var(--surface-soft);
 }
 
 .quick-action-grid,
@@ -380,25 +417,18 @@ table {
   }
 
   .mobile-header {
-    display: flex;
+    display: grid;
     position: sticky;
     top: 8px;
     z-index: 35;
-    flex-wrap: wrap;
   }
 
   .mobile-header-brand {
     display: block;
   }
 
-  .mobile-home-link {
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
   .mobile-header-actions {
-    width: 100%;
-    justify-content: flex-end;
+    width: auto;
     flex-wrap: nowrap;
   }
 
@@ -571,11 +601,6 @@ table {
     padding: 7px;
   }
 
-  .mobile-home-link {
-    max-width: 82px;
-    justify-content: center;
-  }
-
   .stat-value {
     font-size: 22px;
   }
@@ -619,9 +644,7 @@ table {
   }
 
   .mobile-header-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    gap: 6px;
   }
 
   .page-header {
@@ -759,10 +782,102 @@ table {
   .modal-title {
     font-size: 17px;
   }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+  }
+
+  .form-group {
+    margin-bottom: 13px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-height: 46px;
+    border-radius: 12px;
+  }
+
+  .invoice-item-row,
+  [style*="2fr 80px 110px 32px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .invoice-item-row input:first-child,
+  [style*="2fr 80px 110px 32px"] input:first-child {
+    grid-column: auto;
+  }
+
+  .invoice-total-box {
+    text-align: left;
+  }
+
+  .invoice-preview-card {
+    padding: 12px;
+  }
+
+  .public-invoice-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 4px;
+  }
+
+  .public-invoice-actions .public-home-button,
+  .public-invoice-actions .btn-primary {
+    grid-column: 1 / -1;
+  }
+
+  .public-invoice-card,
+  .legal-card {
+    padding: 16px;
+    border-radius: 20ppx;
+  }
+
+  .public-invoice-card h1 {
+    font-size: 23px !important;
+  }
+
+  .public-invoice-card [style*="text-align: right"] {
+    text-align: left !important;
+  }
+
+  .payment-details-box {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .landing-hero-copy h1 {
+    font-size: clamp(2rem, 11vw, 2.7rem);
+  }
+
+  .landing-section {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .landing-grid,
+  .landing-steps {
+    gap: 12px;
+  }
 }
 
 @media(max-width:380px) {
+  .quick-action-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .public-invoice-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-menu-button {
+    min-width: 62px;
+  }
+
   .mobile-signout-button {
+    min-width: 74px;
     padding-left: 10px;
     padding-right: 10px;
     font-size: 11px;

@@ -68,7 +68,9 @@ export default function Layout({ children, session, business }) {
 
       <main className="app-main">
         <div className="mobile-header">
-          <button onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen}>{menuOpen ? 'Close' : 'Menu'}</button>
+          <button className="mobile-menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen}>
+            {menuOpen ? 'Close' : 'Menu'}
+          </button>
           <div className="mobile-header-brand">
             <strong>BizFlow NG</strong>
           </div>
