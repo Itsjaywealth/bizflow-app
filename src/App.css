@@ -89,6 +89,8 @@ input, select, textarea { font-family: 'Plus Jakarta Sans', sans-serif; }
 .badge-active { background: #dcfce7; color: #15803d; }
 .badge-inactive { background: #f1f5f9; color: #64748b; }
 .badge-draft { background: #f1f5f9; color: #475569; }
+.badge-partial { background: #dbeafe; color: #1d4ed8; }
+.badge-cancelled { background: #fee2e2; color: #991b1b; }
 .badge-on.leave { background: #fff7ed; color: #c2410c; }
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px; }
