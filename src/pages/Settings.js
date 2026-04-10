@@ -43,8 +43,8 @@ export default function Settings({ business, setBusiness }) {
     <div>
       <div className="page-header">
         <div>
-          <div className="page-title">Settings</div>
-          <div className="page-sub">Manage business branding, contact details and payment instructions</div>
+          <div className="page-title">Business Profile</div>
+          <div className="page-sub">Manage your business details, invoice branding and customer payment information</div>
         </div>
       </div>
 
@@ -94,9 +94,9 @@ export default function Settings({ business, setBusiness }) {
             <input value={form.account_name} onChange={e => update('account_name', e.target.value)} />
           </div>
           <div className="form-group">
-            <label>Payment Link (optional)</label>
-            <input placeholder="Paystack payment page or checkout link" value={form.payment_link} onChange={e => update('payment_link', e.target.value)} />
-            <small className="field-help">Use a tested payment page link only. Do not paste Paystack secret keys here.</small>
+            <label>Online Payment Link (optional)</label>
+            <input placeholder="Paste your customer payment link" value={form.payment_link} onChange={e => update('payment_link', e.target.value)} />
+            <small className="field-help">Add a payment link customers can open from their invoice, such as your business checkout or payment page.</small>
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export default function Settings({ business, setBusiness }) {
         )}
 
         {message && <div style={{ marginBottom: 16, color: message.includes('saved') ? '#0d7c4f' : '#b91c1c', fontSize: 13, fontWeight: 700 }}>{message}</div>}
-        <button className="btn-primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Settings'}</button>
+        <button className="btn-primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Business Profile'}</button>
       </form>
     </div>
   )

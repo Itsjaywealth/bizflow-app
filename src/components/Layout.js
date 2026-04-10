@@ -11,7 +11,7 @@ const nav = [
   { path: '/products', icon: '📦', label: 'Products' },
   { path: '/expenses', icon: '💸', label: 'Expenses' },
   { path: '/staff', icon: '👥', label: 'My Team' },
-  { path: '/settings', icon: '⚙️', label: 'Settings' },
+  { path: '/settings', icon: '⚙️', label: 'Business Profile' },
   { path: '/support', icon: '💬', label: 'Support' },
 ]
 
