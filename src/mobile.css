@@ -398,13 +398,12 @@ table {
 
   .mobile-header-actions {
     width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
-  .mobile-signout-button,
-  .mobile-home-link {
-    flex: 1 1 140px;
+  .mobile-signout-button {
+    flex: 0 0 auto;
   }
 
   .page-header {
@@ -622,10 +621,7 @@ table {
   .mobile-header-actions {
     display: flex;
     align-items: center;
-  }
-
-  .mobile-home-link {
-    display: none;
+    justify-content: flex-end;
   }
 
   .page-header {
@@ -763,97 +759,12 @@ table {
   .modal-title {
     font-size: 17px;
   }
-
-  .form-row {
-    grid-template-columns: 1fr !important;
-    gap: 0;
-  }
-
-  .form-group {
-    margin-bottom: 13px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    min-height: 46px;
-    border-radius: 12px;
-  }
-
-  .invoice-item-row,
-  [style*="2fr 80px 110px 32px"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  .invoice-item-row input:first-child,
-  [style*="2fr 80px 110px 32px"] input:first-child {
-    grid-column: auto;
-  }
-
-  .invoice-total-box {
-    text-align: left;
-  }
-
-  .invoice-preview-card {
-    padding: 12px;
-  }
-
-  .public-invoice-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 0 4px;
-  }
-
-  .public-invoice-actions .public-home-button,
-  .public-invoice-actions .btn-primary {
-    grid-column: 1 / -1;
-  }
-
-  .public-invoice-card,
-  .legal-card {
-    padding: 16px;
-    border-radius: 20px;
-  }
-
-  .public-invoice-card h1 {
-    font-size: 23px !important;
-  }
-
-  .public-invoice-card [style*="text-align: right"] {
-    text-align: left !important;
-  }
-
-  .payment-details-box {
-    padding: 14px;
-    border-radius: 16px;
-  }
-
-  .landing-hero-copy h1 {
-    font-size: clamp(2rem, 11vw, 2.7rem);
-  }
-
-  .landing-section {
-    padding-top: 48px;
-    padding-bottom: 48px;
-  }
-
-  .landing-grid,
-  .landing-steps {
-    gap: 12px;
-  }
 }
 
 @media(max-width:380px) {
-  .quick-action-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .public-invoice-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .mobile-header-brand span {
-    display: none;
+  .mobile-signout-button {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 11px;
   }
 }
