@@ -22,6 +22,68 @@ table {
   display: none;
 }
 
+.mobile-header-brand {
+  display: none;
+  min-width: 0;
+  justify-self: center;
+  text-align: center;
+}
+
+.mobile-header-brand strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dark);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.mobile-header .theme-toggle,
+.mobile-signout-button {
+  box-shadow: none;
+}
+
+.mobile-header button {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 9px 12px;
+  font-weight: 800;
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+.mobile-header button:hover {
+  transform: translateY(-1px);
+}
+
+.mobile-menu-button {
+  min-width: 70px;
+  border-color: transparent !important;
+  background: linear-gradient(135deg, var(--green), var(--green-light)) !important;
+  color: white !important;
+  box-shadow: 0 10px 18px rgba(13, 124, 79, 0.18);
+}
+
+.mobile-signout-button {
+  min-width: 84px;
+  justify-content: center;
+  background: var(--surface);
+}
+
+.mobile-signout-button:hover {
+  background: var(--surface-soft);
+}
+
 .quick-action-grid,
 .dashboard-bottom-grid {
   display: grid;
@@ -590,6 +652,12 @@ table {
     gap: 10px;
   }
 
+  .page-header .btn-primary,
+  .launch-helper-actions .btn-outline {
+    width: 100%;
+    justify-content: center;
+  }
+
   .page-title {
     font-size: 21px;
     line-height: 1.18;
@@ -629,6 +697,32 @@ table {
   .card {
     padding: 15px;
     border-radius: 18px;
+  }
+
+  .launch-helper-card,
+  .settings-overview-grid,
+  .settings-preview-grid,
+  .settings-checklist,
+  .invoice-progress-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  .launch-helper-card,
+  .settings-section-head,
+  .settings-preview-head {
+    display: grid;
+    gap: 12px;
+  }
+
+  .customer-mode-row,
+  .launch-helper-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .customer-mode-button {
+    width: 100%;
+    justify-content: center;
   }
 
   .table-toolbar {
@@ -749,6 +843,11 @@ table {
 
   .invoice-total-box {
     text-align: left;
+  }
+
+  .invoice-progress-item,
+  .settings-check-item {
+    padding: 12px;
   }
 
   .invoice-preview-card {

@@ -382,6 +382,98 @@ tr:hover td { background: var(--surface-soft); }
   color: #b91c1c;
 }
 
+.launch-helper-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-soft));
+  box-shadow: var(--shadow);
+}
+
+.launch-helper-card strong,
+.settings-highlight-card strong,
+.settings-section-head strong,
+.settings-preview-head strong,
+.invoice-progress-item strong,
+.customer-mode-button,
+.settings-check-item strong {
+  color: var(--dark);
+}
+
+.launch-helper-card p,
+.settings-highlight-card p,
+.settings-section-head p {
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.launch-helper-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.customer-mode-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.customer-mode-button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  transition: all .2s ease;
+}
+
+.customer-mode-button.active {
+  border-color: color-mix(in srgb, var(--green) 45%, var(--border));
+  background: var(--green-pale);
+  color: var(--green);
+}
+
+.invoice-progress-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.invoice-progress-item {
+  display: grid;
+  gap: 8px;
+  padding: 13px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.invoice-progress-item span {
+  color: var(--text2);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.invoice-progress-item.done {
+  border-color: color-mix(in srgb, var(--green) 40%, var(--border));
+  background: var(--green-pale);
+}
+
+.invoice-progress-item.done span,
+.invoice-progress-item.done strong {
+  color: var(--green);
+}
+
 .password-toggle {
   position: absolute;
   right: 8px;
@@ -424,6 +516,63 @@ tr:hover td { background: var(--surface-soft); }
   border-radius: 20px;
   padding: 32px;
   box-shadow: var(--shadow-lg);
+}
+
+.auth-oauth-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--dark);
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.auth-oauth-button:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--green) 32%, var(--border));
+}
+
+.auth-oauth-button:disabled {
+  opacity: .75;
+  cursor: wait;
+}
+
+.auth-oauth-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 22px;
+  color: var(--text3);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 .auth-card {
@@ -527,6 +676,126 @@ tr:hover td { background: var(--surface-soft); }
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.settings-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.settings-highlight-card,
+.settings-preview-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.settings-highlight-card {
+  padding: 20px;
+}
+
+.settings-highlight-card span,
+.settings-preview-head span,
+.settings-preview-grid label {
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.settings-highlight-card strong {
+  display: block;
+  margin: 10px 0 8px;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.settings-progress {
+  width: 100%;
+  height: 10px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.settings-progress div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+}
+
+.settings-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.settings-preview-card {
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.settings-preview-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.settings-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.settings-preview-grid p {
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.settings-logo-preview {
+  margin-top: 16px;
+}
+
+.settings-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.settings-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: var(--surface-soft);
+}
+
+.settings-check-item span {
+  color: var(--text2);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.settings-check-item.done {
+  border-color: color-mix(in srgb, var(--green) 40%, var(--border));
+  background: var(--green-pale);
+}
+
+.settings-check-item.done span,
+.settings-check-item.done strong {
+  color: var(--green);
 }
 
 .public-invoice-actions {
