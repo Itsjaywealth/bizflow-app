@@ -65,22 +65,6 @@ export default function Auth() {
             ))}
           </div>
 
-          <button type="button" className="auth-oauth-button" onClick={handleGoogleAuth} disabled={googleLoading || loading}>
-            <span className="auth-oauth-icon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path fill="#EA4335" d="M12 11.8v3.9h5.4c-.2 1.3-1.6 3.9-5.4 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 4.9 14.8 4 12 4a8 8 0 1 0 0 16c4.6 0 7.6-3.2 7.6-7.7 0-.5-.1-.9-.1-1.3z"/>
-                <path fill="#34A853" d="M4 7.3l3.2 2.4C8 8.1 9.8 6.8 12 6.8c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 4.9 14.8 4 12 4 8.9 4 6.2 5.8 4.9 8.5z"/>
-                <path fill="#FBBC05" d="M4.9 15.5A8 8 0 0 1 4 12c0-1.2.3-2.4.9-3.5l3.2 2.4c-.2.5-.3 1-.3 1.6s.1 1.1.3 1.6z"/>
-                <path fill="#4285F4" d="M12 20c2.8 0 5.1-.9 6.8-2.5l-3.1-2.5c-.9.6-2 1-3.7 1-2.2 0-4.1-1.4-4.8-3.4L4 15.5C5.3 18.2 8.3 20 12 20z"/>
-              </svg>
-            </span>
-            <span>{googleLoading ? 'Connecting to Google...' : `${mode === 'signup' ? 'Continue' : 'Log in'} with Google`}</span>
-          </button>
-
-          <div className="auth-divider" aria-hidden="true">
-            <span>or use your email</span>
-          </div>
-
           <form onSubmit={handleSubmit}>
             {mode === 'signup' && (
               <div className="form-group">
@@ -109,6 +93,22 @@ export default function Auth() {
               {loading ? 'Please wait...' : mode === 'signup' ? 'Create My Free Account →' : 'Log In to My Account →'}
             </button>
           </form>
+
+          <div className="auth-divider" aria-hidden="true" style={{ marginTop: 22 }}>
+            <span>Or</span>
+          </div>
+
+          <button type="button" className="auth-oauth-button" onClick={handleGoogleAuth} disabled={googleLoading || loading}>
+            <span className="auth-oauth-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M12 11.8v3.9h5.4c-.2 1.3-1.6 3.9-5.4 3.9-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 4.9 14.8 4 12 4a8 8 0 1 0 0 16c4.6 0 7.6-3.2 7.6-7.7 0-.5-.1-.9-.1-1.3z"/>
+                <path fill="#34A853" d="M4 7.3l3.2 2.4C8 8.1 9.8 6.8 12 6.8c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 4.9 14.8 4 12 4 8.9 4 6.2 5.8 4.9 8.5z"/>
+                <path fill="#FBBC05" d="M4.9 15.5A8 8 0 0 1 4 12c0-1.2.3-2.4.9-3.5l3.2 2.4c-.2.5-.3 1-.3 1.6s.1 1.1.3 1.6z"/>
+                <path fill="#4285F4" d="M12 20c2.8 0 5.1-.9 6.8-2.5l-3.1-2.5c-.9.6-2 1-3.7 1-2.2 0-4.1-1.4-4.8-3.4L4 15.5C5.3 18.2 8.3 20 12 20z"/>
+              </svg>
+            </span>
+            <span>{googleLoading ? 'Connecting to Google...' : `${mode === 'signup' ? 'Continue' : 'Log in'} with Google`}</span>
+          </button>
 
           {mode === 'login' && (
             <div style={{ textAlign: 'center', marginTop: 16 }}>
