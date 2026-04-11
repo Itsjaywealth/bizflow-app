@@ -36,6 +36,8 @@ export default function Invoices({ business }) {
   const [savingPayment, setSavingPayment] = useState(false)
   const [catalogQuery, setCatalogQuery] = useState('')
 
+  // Realtime invoice data is keyed by the current business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadData()
 
@@ -473,7 +475,7 @@ export default function Invoices({ business }) {
                 </div>
                 <div className="form-group">
                   <label>Payment Date</label>
-                  <input type="date" value={paymentForm.date} onChange={e => setPaymentForm(f => ({ ...f, date: e.target.value)}))} required />
+                  <input type="date" value={paymentForm.date} onChange={e => setPaymentForm(f => ({ ...f, date: e.target.value }))} required />
                 </div>
               </div>
               <div className="form-group">
