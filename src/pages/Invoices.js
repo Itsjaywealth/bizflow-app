@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const emptyClient = { name: '', email: '', phone: '', address: '' }
@@ -6,6 +7,17 @@ const emptyItem = { description: '', qty: 1, price: 0 }
 const emptyForm = { client_id: '', due_date: '', notes: '', items: [emptyItem], new_client: emptyClient, status: 'draft' }
 const statuses = ['draft', 'sent', 'pending', 'partial', 'paid', 'overdue', 'cancelled']
 const emptyPayment = { amount: '', method: 'Bank transfer', date: new Date().toISOString().slice(0, 10), note: '' }
+const invoiceTemplates = [
+  { label: 'Consulting Session', description: 'Consulting session', qty: 1, price: 25000 },
+  { label: 'Delivery Charge', description: 'Delivery charge', qty: 1, price: 5000 },
+  { label: 'Monthly Retainer', description: 'Monthly service retainer', qty: 1, price: 120000 },
+]
+
+function defaultDueDate(days = 7) {
+  const next = new Date()
+  next.setDate(next.getDate() + days)
+  return next.toISOString().slice(0, 10)
+}
 
 export default function Invoices({ business }) {
   const [invoices, setInvoices] = useState([])
@@ -22,6 +34,7 @@ export default function Invoices({ business }) {
   const [paymentInvoice, setPaymentInvoice] = useState(null)
   const [paymentForm, setPaymentForm] = useState(emptyPayment)
   const [savingPayment, setSavingPayment] = useState(false)
+  const [catalogQuery, setCatalogQuery] = useState('')
 
   useEffect(() => {
     loadData()
@@ -95,7 +108,8 @@ export default function Invoices({ business }) {
   function resetForm() {
     setEditing(null)
     setShowPreview(false)
-    setForm(emptyForm)
+    setCatalogQuery('')
+    setForm({ ...emptyForm, due_date: defaultDueDate() })
   }
 
   function openAdd() {
@@ -122,6 +136,14 @@ export default function Invoices({ business }) {
     setShowModal(true)
   }
 
+  function chooseSavedClient(clientId) {
+    setForm(f => ({ ...f, client_id: clientId, new_client: emptyClient }))
+  }
+
+  function chooseManualClient() {
+    setForm(f => ({ ...f, client_id: '', new_client: f.new_client.name ? f.new_client : emptyClient }))
+  }
+
   function updateItem(i, field, value) {
     const items = [...form.items]
     items[i] = { ...items[i], [field]: value }
@@ -132,10 +154,43 @@ export default function Invoices({ business }) {
     setForm(f => ({ ...f, new_client: { ...f.new_client, [field]: value } }))
   }
 
+  function addEmptyItem() {
+    setForm(f => ({ ...f, items: [...f.items, { ...emptyItem }] }))
+  }
+
+  function removeItem(index) {
+    setForm(f => {
+      if (f.items.length === 1) return f
+      return { ...f, items: f.items.filter((_, idx) => idx !== index) }
+    })
+  }
+
+  function duplicateItem(index) {
+    setForm(f => {
+      const item = f.items[index]
+      if (!item) return f
+      const items = [...f.items]
+      items.splice(index + 1, 0, { ...item })
+      return { ...f, items }
+    })
+  }
+
   function addProduct(productId) {
     const product = products.find(p => p.id === productId)
     if (!product) return
     setForm(f => ({ ...f, items: [...f.items, { description: product.name, qty: 1, price: product.price || 0 }] }))
+  }
+
+  function fillItemFromProduct(index, productId) {
+    const product = products.find(p => p.id === productId)
+    if (!product) return
+    const items = [...form.items]
+    items[index] = {
+      ...items[index],
+      description: product.name,
+      price: product.price || 0
+    }
+    setForm(f => ({ ...f, items }))
   }
 
   async function resolveClient() {
@@ -152,16 +207,28 @@ export default function Invoices({ business }) {
     e.preventDefault()
     setSaving(true)
     try {
+      const cleanItems = form.items
+        .map(item => ({
+          description: (item.description || '').trim(),
+          qty: Number(item.qty || 0),
+          price: Number(item.price || 0)
+        }))
+        .filter(item => item.description && item.qty > 0)
+
+      if (!cleanItems.length) {
+        throw new Error('Add at least one invoice item with a description and quantity.')
+      }
+
       const client = await resolveClient()
       const payload = {
         business_id: business.id,
         client_id: client?.id || null,
         business_snapshot: businessSnapshot(),
         client_snapshot: clientSnapshot(client),
-        items: form.items,
-        subtotal,
-        tax,
-        total,
+        items: cleanItems,
+        subtotal: cleanItems.reduce((sum, item) => sum + item.qty * item.price, 0),
+        tax: cleanItems.reduce((sum, item) => sum + item.qty * item.price, 0) * 0.075,
+        total: cleanItems.reduce((sum, item) => sum + item.qty * item.price, 0) * 1.075,
         due_date: form.due_date || null,
         notes: form.notes,
         status: form.status
@@ -290,20 +357,7 @@ export default function Invoices({ business }) {
 
   function shareWhatsApp(inv) {
     const client = inv.client_snapshot || inv.clients || {}
-    const msg = `Hi${client.name ? ' ' + client.name : ''},
-
-Please view your invoice below:
-
-Invoice: ${inv.invoice_number}
-Amount: ${fmt(inv.total)}
-Paid: ${fmt(getPaidAmount(inv))}
-Balance: ${fmt(getBalance(inv))}
-Due: ${inv.due_date || 'Upon receipt'}
-Link: ${publicUrl(inv)}
-
-Thank you.
-
-- ${business.name}`
+    const msg = `Hi${client.name ? ' ' + client.name : ''},\n\nPlease view your invoice below:\n\nInvoice: ${inv.invoice_number}\nAmount: ${fmt(inv.total)}\nPaid: ${fmt(getPaidAmount(inv))}\nBalance: ${fmt(getBalance(inv))}\nDue: ${inv.due_date || 'Upon receipt'}\nLink: ${publicUrl(inv)}\n\nThank you.\n\n- ${business.name}`
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
@@ -338,6 +392,17 @@ Thank you.
     )
   }
 
+  const filteredProducts = products.filter(product =>
+    `${product.name} ${product.description || ''}`.toLowerCase().includes(catalogQuery.toLowerCase())
+  ).slice(0, 6)
+  const activeClient = form.client_id ? clients.find(client => client.id === form.client_id) : null
+  const isManualClient = !form.client_id
+  const invoiceReadiness = [
+    { label: 'Client selected or typed', done: Boolean(activeClient || form.new_client.name.trim()) },
+    { label: 'At least one item added', done: form.items.some(item => (item.description || '').trim() && Number(item.qty) > 0) },
+    { label: 'Due date selected', done: Boolean(form.due_date) },
+  ]
+
   return (
     <div>
       <div className="page-header">
@@ -346,6 +411,17 @@ Thank you.
           <div className="page-sub">Create, preview, share, edit and track invoices</div>
         </div>
         <button className="btn-primary" onClick={openAdd}>+ New Invoice</button>
+      </div>
+
+      <div className="launch-helper-card">
+        <div>
+          <strong>Create invoices without extra setup</strong>
+          <p>BizFlow lets you type a new customer directly on the invoice, then save them automatically for later use.</p>
+        </div>
+        <div className="launch-helper-actions">
+          <Link className="btn-outline" to="/products">Manage products</Link>
+          <Link className="btn-outline" to="/settings">Update payment details</Link>
+        </div>
       </div>
 
       <div className="section-grid">
@@ -397,7 +473,7 @@ Thank you.
                 </div>
                 <div className="form-group">
                   <label>Payment Date</label>
-                  <input type="date" value={paymentForm.date} onChange={e => setPaymentForm(f => ({ ...f, date: e.target.value }))} required />
+                  <input type="date" value={paymentForm.date} onChange={e => setPaymentForm(f => ({ ...f, date: e.target.value)}))} required />
                 </div>
               </div>
               <div className="form-group">
@@ -446,19 +522,104 @@ Thank you.
               <div className="invoice-form-section">
                 <h3>Who is this invoice for?</h3>
                 <p>If this is a new customer, enter their details below. BizFlow will save them automatically for next time.</p>
-                {clients.length > 0 && <div className="form-group"><label>Use a saved client (optional)</label><select value={form.client_id} onChange={e => setForm(f => ({ ...f, client_id: e.target.value, new_client: e.target.value ? emptyClient : f.new_client }))}><option value="">No saved client - type details below</option>{clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>}
+                {clients.length > 0 && (
+                  <>
+                    <div className="customer-mode-row">
+                      <button type="button" className={`customer-mode-button ${!isManualClient ? 'active' : ''}`} onClick={() => chooseSavedClient(form.client_id || clients[0].id)}>Use saved client</button>
+                      <button type="button" className={`customer-mode-button ${isManualClient ? 'active' : ''}`} onClick={chooseManualClient}>Add new client here</button>
+                    </div>
+                    {!isManualClient && (
+                      <div className="form-group">
+                        <label>Choose a saved client</label>
+                        <select value={form.client_id} onChange={e => chooseSavedClient(e.target.value)}>
+                          <option value="">Select client</option>
+                          {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        </select>
+                        {activeClient && <small className="field-help">Using {activeClient.name}{activeClient.phone ? ` · ${activeClient.phone}` : ''}{activeClient.email ? ` · ${activeClient.email}` : ''}.</small>}
+                      </div>
+                    )}
+                  </>
+                )}
                 {clients.length === 0 && <div className="notice success">You do not need to add clients first. Type the customer details here and BizFlow will create the client record with this invoice.</div>}
-                {!form.client_id && <><div className="form-group"><label>Client Name *</label><input placeholder="Customer or company name" value={form.new_client.name} onChange={e => updateNewClient('name', e.target.value)} required /></div><div className="form-row"><div className="form-group"><label>Email</label><input type="email" placeholder="client@email.com" value={form.new_client.email} onChange={e => updateNewClient('email', e.target.value)} /></div><div className="form-group"><label>Phone</label><input placeholder="+234 800 000 0000" value={form.new_client.phone} onChange={e => updateNewClient('phone', e.target.value)} /></div></div><div className="form-group"><label>Address</label><input placeholder="Client address" value={form.new_client.address} onChange={e => updateNewClient('address', e.target.value)} /></div></>}
+                {isManualClient && <><div className="form-group"><label>Client Name *</label><input placeholder="Customer or company name" value={form.new_client.name} onChange={e => updateNewClient('name', e.target.value)} required /></div><div className="form-row"><div className="form-group"><label>Email</label><input type="email" placeholder="client@email.com" value={form.new_client.email} onChange={e => updateNewClient('email', e.target.value)} /></div><div className="form-group"><label>Phone</label><input placeholder="+234 800 000 0000" value={form.new_client.phone} onChange={e => updateNewClient('phone', e.target.value)} /></div></div><div className="form-group"><label>Address</label><input placeholder="Client address" value={form.new_client.address} onChange={e => updateNewClient('address', e.target.value)} /></div></>}
               </div>
 
               <div className="invoice-form-section">
+                <div className="invoice-progress-strip">
+                  {invoiceReadiness.map(item => (
+                    <div key={item.label} className={`invoice-progress-item ${item.done ? 'done' : ''}`}>
+                      <span>{item.done ? '✓' : '•'}</span>
+                      <strong>{item.label}</strong>
+                    </div>
+                  ))}
+                </div>
                 <div className="form-row">
                   <div className="form-group"><label>Status</label><select value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>{statuses.map(status => <option key={status} value={status}>{status}</option>)}</select></div>
                   <div className="form-group"><label>Due Date</label><input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} /></div>
                 </div>
-                {products.length > 0 && <div className="form-group"><label>Add saved product/service</label><select onChange={e => { addProduct(e.target.value); e.target.value = '' }}><option value="">Choose product...</option>{products.map(p => <option key={p.id} value={p.id}>{p.name} - {fmt(p.price)}</option>)}</select></div>}
-                <div className="action-row" style={{ justifyContent: 'space-between', marginBottom: 10 }}><label style={{ fontWeight: 700, fontSize: 13 }}>Invoice Items</label><button type="button" onClick={() => setForm(f => ({ ...f, items: [...f.items, emptyItem] }))} className="mini-action green">+ Add Item</button></div>
-                {form.items.map((item, i) => <div key={i} className="invoice-item-row"><input placeholder="Description" value={item.description} onChange={e => updateItem(i, 'description', e.target.value)} required /><input type="number" placeholder="Qty" min="1" value={item.qty} onChange={e => updateItem(i, 'qty', e.target.value)} /><input type="number" placeholder="Price (N)" min="0" value={item.price} onChange={e => updateItem(i, 'price', e.target.value)} /><button type="button" onClick={() => setForm(f => ({ ...f, items: f.items.filter((_, idx) => idx !== i) }))}>x</button></div>)}
+                {products.length > 0 && (
+                  <div className="catalog-picker">
+                    <div className="catalog-picker-head">
+                      <div>
+                        <strong>Saved products and services</strong>
+                        <p>Pick from your catalog to fill invoice items faster.</p>
+                      </div>
+                      <input placeholder="Search saved items..." value={catalogQuery} onChange={e => setCatalogQuery(e.target.value)} />
+                    </div>
+                    <div className="catalog-card-grid">
+                      {filteredProducts.map(product => (
+                        <button key={product.id} type="button" className="catalog-card" onClick={() => addProduct(product.id)}>
+                          <span>{product.description || 'Saved product or service'}</span>
+                          <strong>{product.name}</strong>
+                          <b>{fmt(product.price)}</b>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {products.length === 0 && (
+                  <div className="notice success" style={{ marginBottom: 14 }}>
+                    You can create this invoice now. Later, add repeat products or services in Products to speed up future invoices.
+                  </div>
+                )}
+                <div className="quick-chip-row">
+                  {invoiceTemplates.map(template => (
+                    <button
+                      key={template.label}
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, items: [...f.items, { description: template.description, qty: template.qty, price: template.price }] }))}
+                    >
+                      {template.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="action-row" style={{ justifyContent: 'space-between', marginBottom: 10 }}><label style={{ fontWeight: 700, fontSize: 13 }}>Invoice Items</label><button type="button" onClick={addEmptyItem} className="mini-action green">+ Add Item</button></div>
+                {form.items.map((item, i) => (
+                  <div key={i} className="invoice-item-card">
+                    <div className="invoice-item-card-head">
+                      <strong>Item {i + 1}</strong>
+                      <div className="action-row">
+                        <button type="button" className="mini-action" onClick={() => duplicateItem(i)}>Duplicate</button>
+                        <button type="button" className="mini-action red" onClick={() => removeItem(i)} disabled={form.items.length === 1}>Remove</button>
+                      </div>
+                    </div>
+                    {products.length > 0 && (
+                      <div className="form-group">
+                        <label>Fill from saved product or service</label>
+                        <select value="" onChange={e => { fillItemFromProduct(i, e.target.value); e.target.value = '' }}>
+                          <option value="">Choose saved item...</option>
+                          {products.map(p => <option key={p.id} value={p.id}>{p.name} - {fmt(p.price)}</option>)}
+                        </select>
+                      </div>
+                    )}
+                    <div className="invoice-item-row invoice-item-row-advanced">
+                      <input placeholder="Description" value={item.description} onChange={e => updateItem(i, 'description', e.target.value)} required />
+                      <input type="number" placeholder="Qty" min="1" value={item.qty} onChange={e => updateItem(i, 'qty', e.target.value)} />
+                      <input type="number" placeholder="Price (N)" min="0" value={item.price} onChange={e => updateItem(i, 'price', e.target.value)} />
+                      <div className="invoice-line-total">{fmt(Number(item.qty || 0) * Number(item.price || 0))}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="invoice-total-box"><div>Subtotal: {fmt(subtotal)}</div><div>VAT (7.5%): {fmt(tax)}</div><strong>Total: {fmt(total)}</strong></div>

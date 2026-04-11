@@ -652,6 +652,12 @@ table {
     gap: 10px;
   }
 
+  .page-header .btn-primary,
+  .launch-helper-actions .btn-outline {
+    width: 100%;
+    justify-content: center;
+  }
+
   .page-title {
     font-size: 21px;
     line-height: 1.18;
@@ -691,6 +697,32 @@ table {
   .card {
     padding: 15px;
     border-radius: 18px;
+  }
+
+  .launch-helper-card,
+  .settings-overview-grid,
+  .settings-preview-grid,
+  .settings-checklist,
+  .invoice-progress-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  .launch-helper-card,
+  .settings-section-head,
+  .settings-preview-head {
+    display: grid;
+    gap: 12px;
+  }
+
+  .customer-mode-row,
+  .launch-helper-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .customer-mode-button {
+    width: 100%;
+    justify-content: center;
   }
 
   .table-toolbar {
@@ -805,12 +837,17 @@ table {
   }
 
   .invoice-item-row input:first-child,
-  [style*="2fr 80px 110px 32px"] input:first-child {
+  [style*="2fr 80px 110ppx 32px"] input:first-child {
     grid-column: auto;
   }
 
   .invoice-total-box {
     text-align: left;
+  }
+
+  .invoice-progress-item,
+  .settings-check-item {
+    padding: 12px;
   }
 
   .invoice-preview-card {
@@ -819,7 +856,7 @@ table {
 
   .public-invoice-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr ;
     gap: 8px;
     padding: 0 4px;
   }
@@ -832,7 +869,7 @@ table {
   .public-invoice-card,
   .legal-card {
     padding: 16px;
-    border-radius: 20ppx;
+    border-radius: 20px;
   }
 
   .public-invoice-card h1 {
@@ -863,13 +900,13 @@ table {
   }
 }
 
-@media(max-width:380px) {
+@media(max-width:380px){
   .quick-action-grid {
     grid-template-columns: 1fr !important;
   }
 
   .public-invoice-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr ;
   }
 
   .mobile-menu-button {
