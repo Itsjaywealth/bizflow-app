@@ -998,3 +998,111 @@ action-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 :root[data-theme='dark'] .landing-demo-list div {
   background: var(--surface-soft) !important;
 }
+
+/* ── Testimonials ── */
+
+.landing-testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.landing-testimonial-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.landing-testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 56px rgba(10, 22, 40, 0.13);
+}
+
+.landing-testimonial-stars {
+  color: #f59e0b;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.landing-testimonial-quote {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.75;
+  flex: 1;
+}
+
+.landing-testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.landing-testimonial-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white;
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.landing-testimonial-author strong {
+  display: block;
+  color: var(--dark);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.landing-testimonial-author span {
+  color: var(--text2);
+  font-size: 12px;
+}
+
+/* ── FAQ ── */
+
+.landing-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.landing-faq-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.landing-faq-card h3 {
+  color: var(--dark);
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.landing-faq-card p {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+:root[data-theme='dark'] .landing-testimonial-card,
+:root[data-theme='dark'] .landing-faq-card {
+  background: rgba(15, 27, 45, 0.9) !important;
+  border-color: var(--border) !important;
+}

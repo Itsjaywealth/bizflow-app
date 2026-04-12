@@ -75,6 +75,51 @@ const productHighlights = [
   ['Operating records', 'Manage products, services, expenses, staff, and client records as the business grows.']
 ]
 
+const testimonials = [
+  {
+    quote: "BizFlow NG replaced my notebook and WhatsApp voice notes. Now I can see exactly what I've been paid and what's still pending.",
+    name: 'Chioma A.',
+    role: 'Fashion & Beauty Business, Lagos'
+  },
+  {
+    quote: "I used to send invoices as screenshots. Now my clients get a proper link and I can track who has paid without asking.",
+    name: 'Emeka O.',
+    role: 'Logistics & Delivery, Abuja'
+  },
+  {
+    quote: "Setting up took less than 10 minutes. I had my first invoice sent before the end of that same day.",
+    name: 'Funmi B.',
+    role: 'Consulting & Services, Port Harcourt'
+  }
+]
+
+const faqs = [
+  {
+    q: 'Do I need technical knowledge to use BizFlow NG?',
+    a: 'No. If you can use WhatsApp, you can use BizFlow NG. Signup takes under 5 minutes and your first invoice can be created on the same day.'
+  },
+  {
+    q: 'Can I use BizFlow NG on my phone?',
+    a: 'Yes. BizFlow NG works on any device — phone, tablet, or computer — through your browser. No app download is required.'
+  },
+  {
+    q: 'What happens to my data if I stop paying?',
+    a: 'Your data stays safe. You can export your invoices and records at any time. We do not delete your account immediately if a payment is missed.'
+  },
+  {
+    q: 'Can I add my business logo to invoices?',
+    a: 'Yes. You can add a logo link in your business settings and it will appear on your invoices and public invoice pages.'
+  },
+  {
+    q: 'How does WhatsApp sharing work?',
+    a: 'Every invoice gets a unique public link. You can copy it and paste it into any WhatsApp chat, or use the built-in WhatsApp reminder button from the invoice table.'
+  },
+  {
+    q: 'Is there a free trial?',
+    a: 'Yes. You can create an account and explore the workspace before subscribing. The Setup Support plan is a one-time service for businesses that want hands-on help getting started.'
+  }
+]
+
 const previewMetrics = [
   { revenue: 125000, pending: 48000 },
   { revenue: 310000, pending: 85000 },
@@ -88,6 +133,7 @@ const plans = [
     price: '₦5,000',
     period: '/ month',
     note: 'For solo founders and small businesses that need clean invoicing and customer records.',
+    cta: 'Start with Starter',
     details: ['Invoice creation', 'PDF export', 'WhatsApp sharing', 'Client records', 'Products and services list']
   },
   {
@@ -95,6 +141,7 @@ const plans = [
     price: '₦12,000',
     period: '/ month',
     note: 'For growing teams that want staff records, expense tracking, and clearer business activity.',
+    cta: 'Get the Growth plan',
     details: ['Everything in Starter', 'Staff management', 'Expense tracking', 'Business dashboard', 'Priority onboarding support']
   },
   {
@@ -102,6 +149,7 @@ const plans = [
     price: 'From ₦50,000',
     period: 'one-time',
     note: 'For businesses that want guided setup and onboarding support.',
+    cta: 'Talk to us',
     details: ['Business profile setup', 'Client and product setup support', 'Workflow review', 'Team onboarding guidance']
   }
 ]
@@ -362,7 +410,47 @@ export default function LandingPage() {
                 <ul>
                   {plan.details.map((item) => <li key={item}>{item}</li>)}
                 </ul>
-                <Link to="/auth" className="btn-primary">Create account</Link>
+                <Link to="/auth" className="btn-primary">{plan.cta}</Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="landing-section landing-testimonials-section">
+          <div className="landing-section-head">
+            <span>What users say</span>
+            <h2>Real Nigerian businesses, real results</h2>
+            <p>
+              Here is what business owners say after switching to BizFlow NG.
+            </p>
+          </div>
+          <div className="landing-testimonials-grid">
+            {testimonials.map((t) => (
+              <article key={t.name} className="landing-testimonial-card">
+                <div className="landing-testimonial-stars">★★★★★</div>
+                <p className="landing-testimonial-quote">"{t.quote}"</p>
+                <div className="landing-testimonial-author">
+                  <div className="landing-testimonial-avatar">{t.name[0]}</div>
+                  <div>
+                    <strong>{t.name}</strong>
+                    <span>{t.role}</span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="landing-section landing-faq-section">
+          <div className="landing-section-head">
+            <span>FAQ</span>
+            <h2>Questions people ask before signing up</h2>
+          </div>
+          <div className="landing-faq-grid">
+            {faqs.map((faq) => (
+              <article key={faq.q} className="landing-faq-card">
+                <h3>{faq.q}</h3>
+                <p>{faq.a}</p>
               </article>
             ))}
           </div>
@@ -374,8 +462,8 @@ export default function LandingPage() {
             Create your account, set up your business details, and start managing invoices, clients, and staff records in one place.
           </p>
           <div className="landing-actions">
-            <Link to="/auth" className="btn-primary landing-hero-btn">Create account</Link>
-            <Link to="/support" className="btn-outline landing-hero-btn">Contact support</Link>
+            <Link to="/auth" className="btn-primary landing-hero-btn">Start free today</Link>
+            <Link to="/support" className="btn-outline landing-hero-btn">Talk to us first</Link>
           </div>
         </section>
       </main>
