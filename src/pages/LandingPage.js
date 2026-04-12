@@ -6,73 +6,44 @@ const features = [
   {
     icon: '🧾',
     title: 'Fast invoice creation',
-    body: 'Create clean invoices with line items, VAT, due dates, PDF export, public links, and WhatsApp sharing.'
+    body: 'Create polished invoices with line items, due dates, PDF export, public links, and WhatsApp sharing.'
   },
   {
     icon: '🤝',
-    title: 'Client records that grow with you',
-    body: 'Save customer details while creating invoices or add them separately, then review their invoice history later.'
+    title: 'Client records that stay organised',
+    body: 'Save customer details once, review invoice history, and keep follow-up details in one place.'
   },
   {
     icon: '📦',
     title: 'Products, services, and expenses',
-    body: 'Save common services, reuse prices on invoices, and record spending so business records stay organised.'
+    body: 'Reuse saved items, track business spending, and keep everyday records connected.'
   },
   {
     icon: '📊',
-    title: 'Business dashboard',
-    body: 'See paid revenue, pending invoices, expenses, estimated profit, clients, and team records from one dashboard.'
-  },
-  {
-    icon: '👥',
-    title: 'Staff and team records',
-    body: 'Keep staff names, roles, salaries, phone numbers, and active status in one simple workspace.'
-  },
-  {
-    icon: '🏦',
-    title: 'Customer payment details',
-    body: 'Add bank details and an optional payment link so customers know how to pay from the invoice page.'
+    title: 'Live business dashboard',
+    body: 'See paid revenue, pending invoices, expenses, and business activity from one dashboard.'
   }
 ]
 
 const steps = [
   {
     title: 'Create your workspace',
-    body: 'Sign up, confirm your email, and add your business name, contact details, and invoice information.'
+    body: 'Sign up, confirm your email, and add your business details.'
   },
   {
     title: 'Create your first invoice',
-    body: 'Type a new customer directly on the invoice or choose a saved client if you already have one.'
+    body: 'Add a customer, choose line items, and generate your first invoice.'
   },
   {
     title: 'Share with your customer',
-    body: 'Copy the invoice link, download a PDF, or send a WhatsApp reminder from the invoice table.'
-  },
-  {
-    title: 'Keep records together',
-    body: 'Add products, expenses, and staff records as your business grows, then track activity from the dashboard.'
+    body: 'Send the invoice by link, PDF, or WhatsApp and keep records up to date.'
   }
 ]
 
-const smeTypes = [
-  ['Retail & online sellers', 'Save customers, create invoices, and track expenses without a spreadsheet.'],
-  ['Service providers', 'Reuse common services, send invoice links, and follow up from WhatsApp.'],
-  ['Food, beauty & lifestyle businesses', 'Keep simple records for customers, staff, supplies, and monthly costs.'],
-  ['Agencies & consultants', 'Manage retainers, one-off projects, client billing, and receipts in one workspace.'],
-  ['Logistics & local operations', 'Record repeat charges, dispatch costs, salaries, and pending payments clearly.'],
-  ['Growing teams', 'Keep staff records, business details, and daily admin organized as the business expands.']
-]
-
 const outcomes = [
-  ['Less scattered records', 'Keep invoices, clients, products, expenses, and staff details in one organized workspace.'],
-  ['Faster customer follow-up', 'Share invoice links through WhatsApp and send reminders without rewriting the same message.'],
-  ['Clearer money view', 'Track paid revenue, pending invoices, expenses, and estimated profit from the dashboard.']
-]
-
-const productHighlights = [
-  ['Invoice studio', 'Create, preview, edit, download, share, and track invoice status.'],
-  ['Business profile', 'Save contact details, bank information, logo link, and customer-facing payment information.'],
-  ['Operating records', 'Manage products, services, expenses, staff, and client records as the business grows.']
+  ['Less scattered admin', 'Keep invoices, clients, products, expenses, and staff records in one organised workspace.'],
+  ['Faster customer follow-up', 'Share invoice links through WhatsApp and send reminders without rewriting messages.'],
+  ['A clearer money picture', 'Track paid revenue, pending invoices, expenses, and estimated profit from the dashboard.']
 ]
 
 const previewMetrics = [
@@ -107,10 +78,10 @@ const plans = [
 ]
 
 const mobileNavItems = [
-  { label: 'Product overview', to: '/features', description: 'See what BizFlow NG does' },
+  { label: 'Features', to: '/features', description: 'See what BizFlow NG does' },
   { label: 'How it works', to: '/how-it-works', description: 'From signup to first invoice' },
   { label: 'Pricing', to: '/pricing', description: 'See available service plans' },
-  { label: 'Support center', to: '/support', description: 'Get help using BizFlow NG' }
+  { label: 'Support', to: '/support', description: 'Get help using BizFlow NG' }
 ]
 
 export default function LandingPage() {
@@ -169,8 +140,8 @@ export default function LandingPage() {
 
       <div id="landing-mobile-menu" className={`landing-mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="landing-mobile-menu-head">
-          <strong>Explore BizFlow NG</strong>
-          <p>Move around the product, learn the features, or create your account.</p>
+          <strong>BizFlow NG</strong>
+          <p>Simple business tools for Nigerian SMEs.</p>
         </div>
         {mobileNavItems.map(item => item.to ? (
           <Link key={item.label} to={item.to} onClick={closeMobileMenu}>
@@ -196,8 +167,8 @@ export default function LandingPage() {
             <div className="landing-eyebrow">Built for Nigerian SMEs</div>
             <h1>Streamline invoicing, records, and team operations in one workspace.</h1>
             <p>
-              BizFlow NG gives growing businesses a polished workspace for invoices,
-              clients, staff records, products, expenses, and daily business decisions.
+              BizFlow NG helps you create invoices, manage customers, track expenses,
+              and stay organised without switching between scattered tools.
             </p>
             <div className="landing-actions">
               <Link to="/auth" className="btn-primary landing-hero-btn">Start with your business email</Link>
@@ -267,48 +238,10 @@ export default function LandingPage() {
 
         <section className="landing-section">
           <div className="landing-section-head">
-            <span>Made for real business work</span>
-            <h2>Built for every Nigerian SME that needs clearer records</h2>
-            <p>
-              Whether you sell products, offer services, manage staff, or run daily operations,
-              BizFlow NG gives you a simple way to keep business activity organized.
-            </p>
-          </div>
-          <div className="landing-grid">
-            {smeTypes.map(([title, body]) => (
-              <article key={title} className="landing-panel world-hover-card">
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="landing-section landing-section-alt" id="how-it-works">
-          <div className="landing-section-head">
-            <span>How it works</span>
-            <h2>From signup to first invoice in a few clear steps</h2>
-            <p>
-              New users do not need to set up everything first. You can create a customer while making your first invoice.
-            </p>
-          </div>
-          <div className="landing-steps">
-            {steps.map((step, index) => (
-              <div key={step.title} className="landing-step">
-                <div className="landing-step-num">{index + 1}</div>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="landing-section" id="features">
-          <div className="landing-section-head">
             <span>Core features</span>
-            <h2>A complete starter operating system for small businesses</h2>
+            <h2>Everything you need to keep daily business work organised</h2>
             <p>
-              A focused workspace for invoicing, records, and everyday business admin.
+              A practical workspace for invoices, customers, products, expenses, and staff records.
             </p>
           </div>
           <div className="world-feature-grid">
@@ -322,21 +255,21 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="landing-section world-command-section">
+        <section className="landing-section landing-section-alt" id="how-it-works">
           <div className="landing-section-head">
-            <span>Inside the product</span>
-            <h2>Designed around how small teams actually work</h2>
+            <span>How it works</span>
+            <h2>From signup to first invoice in three simple steps</h2>
             <p>
-              BizFlow NG keeps the important business activities close together, so owners spend less time searching and more time serving customers.
+              You can get started quickly without setting up every record first.
             </p>
           </div>
-          <div className="world-command-grid">
-            {productHighlights.map(([title, body]) => (
-              <article key={title} className="world-command-card">
-                <div className="world-command-line"></div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
+          <div className="landing-steps">
+            {steps.map((step, index) => (
+              <div key={step.title} className="landing-step">
+                <div className="landing-step-num">{index + 1}</div>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </div>
             ))}
           </div>
         </section>
@@ -346,7 +279,7 @@ export default function LandingPage() {
             <span>Pricing</span>
             <h2>Simple pricing for small Nigerian businesses</h2>
             <p>
-              Start with the plan that fits your current workflow. If you need help setting up clients, products, and team records, setup support is available.
+              Choose the plan that fits your current stage, and upgrade when your business grows.
             </p>
           </div>
           <div className="landing-grid">
@@ -371,7 +304,7 @@ export default function LandingPage() {
         <section className="landing-cta">
           <h2>Put BizFlow NG to work for your business.</h2>
           <p>
-            Create your account, set up your business details, and start managing invoices, clients, and staff records in one place.
+            Create your account and start managing invoices, records, and daily business activity in one place.
           </p>
           <div className="landing-actions">
             <Link to="/auth" className="btn-primary landing-hero-btn">Create account</Link>
