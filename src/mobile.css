@@ -566,18 +566,76 @@ table {
 
 @media(max-width:480px) {
   .auth-shell,
+  .verify-shell,
   .legal-shell,
   .public-invoice-shell {
-    padding: 14px;
+    padding: 18px 14px;
   }
 
-  .page-utility-nav {
-    align-items: stretch;
+  .auth-topbar {
+    margin-bottom: 22px;
   }
 
-  .home-link {
-    flex: 1;
-    justify-content: center;
+  .auth-brand-block {
+    margin-bottom: 20px;
+  }
+
+  .auth-brand-mark {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 14px;
+  }
+
+  .auth-brand-block h1 {
+    font-size: 30px;
+  }
+
+  .auth-brand-block p {
+    font-size: 13px;
+  }
+
+  .auth-panel {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+
+  .verify-card {
+    padding: 30px 20px;
+    border-radius: 18px;
+  }
+
+  .verify-card h1 {
+    font-size: 22px;
+  }
+
+  .verify-logo-stack {
+    margin-bottom: 24px;
+  }
+
+  .verify-logo-mark {
+    width: 48px;
+    height: 48px;
+    padding: 11px;
+  }
+
+  .verify-logo-text {
+    font-size: 20px;
+  }
+
+  .auth-input-wrap input {
+    min-height: 52px;
+    border-radius: 14px;
+  }
+
+  .auth-submit-button,
+  .auth-oauth-button {
+    min-height: 52px;
+    border-radius: 14px;
+  }
+
+  .auth-switch {
+    font-size: 13px;
+    gap: 4px;
   }
 
   .mobile-header {
@@ -618,305 +676,5 @@ table {
 
   .bank-details {
     display: grid;
-  }
-}
-
-@media(max-width:640px) {
-  body {
-    font-size: 15px;
-  }
-
-  input,
-  select,
-  textarea,
-  button {
-    font-size: 16px;
-  }
-
-  .app-main {
-    padding: 10px;
-  }
-
-  .mobile-header {
-    top: 6px;
-    border-radius: 16px;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
-  }
-
-  .mobile-header-actions {
-    gap: 6px;
-  }
-
-  .page-header {
-    margin: 14px 0 16px;
-    gap: 10px;
-  }
-
-  .page-header .btn-primary,
-  .launch-helper-actions .btn-outline {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .page-title {
-    font-size: 21px;
-    line-height: 1.18;
-  }
-
-  .page-sub {
-    font-size: 13px;
-    line-height: 1.45;
-  }
-
-  .section-grid {
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .stat-card {
-    padding: 15px;
-    border-radius: 16px;
-  }
-
-  .stat-value {
-    font-size: 22px;
-    line-height: 1.1;
-  }
-
-  .quick-action-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .quick-action-card {
-    padding: 14px;
-    min-height: 118px;
-  }
-
-  .card {
-    padding: 15px;
-    border-radius: 18px;
-  }
-
-  .launch-helper-card,
-  .settings-overview-grid,
-  .settings-preview-grid,
-  .settings-checklist,
-  .invoice-progress-strip {
-    grid-template-columns: 1fr !important;
-  }
-
-  .launch-helper-card,
-  .settings-section-head,
-  .settings-preview-head {
-    display: grid;
-    gap: 12px;
-  }
-
-  .customer-mode-row,
-  .launch-helper-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .customer-mode-button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .table-toolbar {
-    grid-template-columns: 1fr !important;
-    gap: 8px;
-  }
-
-  .quick-chip-row {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 6px;
-    scrollbar-width: none;
-  }
-
-  .quick-chip-row::-webkit-scrollbar {
-    display: none;
-  }
-
-  .quick-chip-row button {
-    white-space: nowrap;
-    flex: 0 0 auto;
-  }
-
-  .action-row {
-    gap: 6px;
-  }
-
-  .mini-action {
-    padding: 8px 10px;
-    min-height: 36px;
-  }
-
-  table {
-    min-width: 0 !important;
-    width: 100%;
-  }
-
-  thead {
-    display: none;
-  }
-
-  tbody,
-  tr,
-  td {
-    display: block;
-    width: 100%;
-  }
-
-  tr {
-    margin-bottom: 12px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: var(--surface);
-  }
-
-  tr:hover td {
-    background: transparent;
-  }
-
-  td {
-    border: 0;
-    padding: 6px 0;
-    font-size: 13px;
-  }
-
-  td .action-row {
-    padding-top: 6px;
-  }
-
-  .modal-overlay {
-    padding: 0;
-    align-items: flex-end;
-  }
-
-  .modal {
-    width: 100%;
-    max-height: 92vh;
-    border-radius: 24px 24px 0 0;
-    padding: 18px;
-  }
-
-  .modal-header {
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .modal-title {
-    font-size: 17px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr !important;
-    gap: 0;
-  }
-
-  .form-group {
-    margin-bottom: 13px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    min-height: 46px;
-    border-radius: 12px;
-  }
-
-  .invoice-item-row,
-  [style*="2fr 80px 110px 32px"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  .invoice-item-row input:first-child,
-  [style*="2fr 80px 110ppx 32px"] input:first-child {
-    grid-column: auto;
-  }
-
-  .invoice-total-box {
-    text-align: left;
-  }
-
-  .invoice-progress-item,
-  .settings-check-item {
-    padding: 12px;
-  }
-
-  .invoice-preview-card {
-    padding: 12px;
-  }
-
-  .public-invoice-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr ;
-    gap: 8px;
-    padding: 0 4px;
-  }
-
-  .public-invoice-actions .public-home-button,
-  .public-invoice-actions .btn-primary {
-    grid-column: 1 / -1;
-  }
-
-  .public-invoice-card,
-  .legal-card {
-    padding: 16px;
-    border-radius: 20px;
-  }
-
-  .public-invoice-card h1 {
-    font-size: 23px !important;
-  }
-
-  .public-invoice-card [style*="text-align: right"] {
-    text-align: left !important;
-  }
-
-  .payment-details-box {
-    padding: 14px;
-    border-radius: 16px;
-  }
-
-  .landing-hero-copy h1 {
-    font-size: clamp(2rem, 11vw, 2.7rem);
-  }
-
-  .landing-section {
-    padding-top: 48px;
-    padding-bottom: 48px;
-  }
-
-  .landing-grid,
-  .landing-steps {
-    gap: 12px;
-  }
-}
-
-@media(max-width:380px){
-  .quick-action-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .public-invoice-actions {
-    grid-template-columns: 1fr ;
-  }
-
-  .mobile-menu-button {
-    min-width: 62px;
-  }
-
-  .mobile-signout-button {
-    min-width: 74px;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 11px;
   }
 }

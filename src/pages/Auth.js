@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export default function Auth() {
+  const navigate = useNavigate()
   const [mode, setMode] = useState('signup')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,7 +27,13 @@ export default function Auth() {
         options: { data: { full_name: name } }
       })
       if (error) setError(error.message)
-      else setMessage('Account created! Check your email to confirm, then log in.')
+      else {
+        localStorage.setItem('bizflow-pending-email', email)
+        setName('')
+        setEmail('')
+        setPassword('')
+        navigate('/verify-email')
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setError('Incorrect email or password. Please try again.')
