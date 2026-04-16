@@ -33,7 +33,7 @@ const pages = {
   pricing: {
     eyebrow: 'Pricing',
     title: 'Simple plans for small Nigerian businesses',
-    intro: 'Choose the plan that fits your current workflow. Public checkout is not enabled yet, so customers can create an account and contact support for setup.',
+    intro: 'Choose the plan that fits your current workflow. Plan activation is currently guided through support so businesses can start with the right setup.',
     cards: [
       ['Starter - ₦5,000 / month', 'Invoice creation, PDF export, WhatsApp sharing, client records, and products/services list.'],
       ['Growth - ₦12,000 / month', 'Everything in Starter, plus staff management, expense tracking, dashboard records, and onboarding support.'],

@@ -21,6 +21,8 @@ export default function Products({ business }) {
   const [query, setQuery] = useState('')
   const [priceBand, setPriceBand] = useState('all')
 
+  // Product loading is scoped to the active business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadProducts()
 
@@ -166,8 +168,8 @@ export default function Products({ business }) {
             filtered.length === 0 ?
               <div className="empty-state">
                 <div className="empty-icon">📦</div>
-                <h3>{products.length ? 'No matching item found' : 'No products or services yet'}</h3>
-                <p>Add your common products, services, retainers, delivery fees, or consultation packages.</p>
+                <h3>{products.length ? 'No matching item found' : 'Add what you sell'}</h3>
+                <p>{products.length ? 'Try another search term or price band to find the item you need.' : 'Save your products and services once — reuse them on every invoice.'}</p>
                 <button className="btn-primary" onClick={openAdd}>Add Product or Service</button>
               </div> :
               <div style={{ overflowX: 'auto' }}>

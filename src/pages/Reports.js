@@ -10,6 +10,8 @@ export default function Reports({ business }) {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Realtime reports data is keyed by the current business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadReports()
 

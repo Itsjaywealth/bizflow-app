@@ -36,6 +36,8 @@ export default function Invoices({ business }) {
   const [savingPayment, setSavingPayment] = useState(false)
   const [catalogQuery, setCatalogQuery] = useState('')
 
+  // Realtime invoice data is keyed by the current business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadData()
 
@@ -402,13 +404,20 @@ export default function Invoices({ business }) {
     { label: 'At least one item added', done: form.items.some(item => (item.description || '').trim() && Number(item.qty) > 0) },
     { label: 'Due date selected', done: Boolean(form.due_date) },
   ]
+  const setupHighlights = [
+    { label: 'Saved clients', value: clients.length, hint: clients.length ? 'Ready for quick invoice selection' : 'A new client can be created inside the invoice form' },
+    { label: 'Saved items', value: products.length, hint: products.length ? 'Use your catalog for faster invoicing' : 'You can still create invoices without saved products' },
+    { label: 'Live invoices', value: invoices.length, hint: invoices.length ? 'Track status, payments, and reminders here' : 'Your first invoice will appear here once created' }
+  ]
+  const isFirstInvoice = invoices.length === 0
+  const showNoResults = !loading && filteredInvoices.length === 0
 
   return (
     <div>
       <div className="page-header">
         <div>
           <div className="page-title">Invoices</div>
-          <div className="page-sub">Create, preview, share, edit and track invoices</div>
+          <div className="page-sub">Create, preview, share, and track customer invoices without extra setup stress.</div>
         </div>
         <button className="btn-primary" onClick={openAdd}>+ New Invoice</button>
       </div>
@@ -416,12 +425,22 @@ export default function Invoices({ business }) {
       <div className="launch-helper-card">
         <div>
           <strong>Create invoices without extra setup</strong>
-          <p>BizFlow lets you type a new customer directly on the invoice, then save them automatically for later use.</p>
+          <p>BizFlow lets you type a new customer directly on the invoice, then saves that client automatically for later use.</p>
         </div>
         <div className="launch-helper-actions">
           <Link className="btn-outline" to="/products">Manage products</Link>
           <Link className="btn-outline" to="/settings">Update payment details</Link>
         </div>
+      </div>
+
+      <div className="onboarding-grid invoice-setup-grid" style={{ marginBottom: 18 }}>
+        {setupHighlights.map(item => (
+          <div key={item.label} className="onboarding-card">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <p>{item.hint}</p>
+          </div>
+        ))}
       </div>
 
       <div className="section-grid">
@@ -438,9 +457,22 @@ export default function Invoices({ business }) {
             {statuses.map(status => <option key={status} value={status}>{status}</option>)}
           </select>
         </div>
+        {isFirstInvoice && (
+          <div className="notice success">
+            New here? Start with one invoice. If you do not have saved clients or products yet, BizFlow will still let you complete the invoice and keep the record for later.
+          </div>
+        )}
         {loading ? <p style={{ color: '#94a3b8' }}>Loading invoices...</p> :
-          filteredInvoices.length === 0 ?
-            <div className="empty-state"><div className="empty-icon">🧾</div><h3>No invoices found</h3><p>Create your first invoice. You can add the client while creating it.</p><button className="btn-primary" onClick={openAdd}>Create Invoice</button></div> :
+          showNoResults ?
+            <div className="empty-state">
+              <div className="empty-icon">🧾</div>
+              <h3>{isFirstInvoice ? 'Send your first invoice today' : 'No invoices match this view'}</h3>
+              <p>{isFirstInvoice ? 'Create a professional invoice in under 2 minutes. No setup needed.' : 'Try a different search or status filter to find the invoice you need.'}</p>
+              <div className="action-row" style={{ justifyContent: 'center' }}>
+                <button className="btn-primary" onClick={openAdd}>Create Invoice</button>
+                {isFirstInvoice && <Link className="btn-outline" to="/products">Add Products</Link>}
+              </div>
+            </div> :
             <div style={{ overflowX: 'auto' }}>
               <table>
                 <thead><tr><th>Invoice #</th><th>Client</th><th>Total</th><th>Paid</th><th>Balance</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>

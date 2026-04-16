@@ -9,6 +9,8 @@ export default function Dashboard({ business }) {
   const [monthly, setMonthly] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Realtime dashboard data is keyed by the current business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!business) return undefined
     loadData()
@@ -135,6 +137,16 @@ export default function Dashboard({ business }) {
           ))}
         </div>
       </section>
+
+      {setupPercent < 100 && (
+        <div className="dashboard-setup-banner">
+          <div>
+            <strong>Your profile is {setupPercent}% complete</strong>
+            <p>Add your business details to get started and unlock a smoother BizFlow workspace.</p>
+          </div>
+          <Link to="/settings" className="btn-primary">Complete setup →</Link>
+        </div>
+      )}
 
       <div className="section-grid">
         <div className="stat-card premium-stat"><div className="stat-label">Revenue Paid</div><div className="stat-value" style={{ color: '#0d7c4f' }}>{fmt(stats.paid)}</div><div className="stat-change up">{stats.invoiceCount} invoices total</div></div>

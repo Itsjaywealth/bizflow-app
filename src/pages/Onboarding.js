@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import PageUtilityNav from '../components/PageUtilityNav'
 
@@ -8,6 +8,23 @@ export default function Onboarding({ setBusiness }) {
   const [error, setError] = useState('')
 
   function update(field, value) { setForm(f => ({ ...f, [field]: value })) }
+
+  useEffect(() => {
+    let mounted = true
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!mounted || !user?.email) return
+      setForm(current => current.email ? current : { ...current, email: user.email })
+    })
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const readiness = useMemo(() => ([
+    { label: 'Business name added', done: Boolean(form.name.trim()) },
+    { label: 'Contact details added', done: Boolean(form.email.trim() || form.phone.trim()) },
+    { label: 'Payment details ready', done: Boolean(form.bank_name.trim() && form.account_name.trim() && form.account_number.trim()) }
+  ]), [form])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -27,7 +44,7 @@ export default function Onboarding({ setBusiness }) {
             <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/></svg>
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: '#0a1628' }}>Set Up Your Business</h1>
-          <p style={{ color: '#64748b', fontSize: 15, marginTop: 8 }}>Add the details customers should see on invoices. You can update everything later.</p>
+          <p style={{ color: '#64748b', fontSize: 15, marginTop: 8 }}>Add the key business details customers should see on invoices. You can refine everything later from Settings.</p>
         </div>
 
         <div className="auth-panel">
@@ -38,6 +55,32 @@ export default function Onboarding({ setBusiness }) {
                 <span style={{ fontSize: 11, color: i < 2 ? '#0d7c4f' : '#94a3b8', fontWeight: 600 }}>{step}</span>
               </div>
             ))}
+          </div>
+
+          <div className="onboarding-grid">
+            <div className="onboarding-card">
+              <span>What to add first</span>
+              <strong>Start with what customers need to trust your invoice.</strong>
+              <p>Business name is required. Email, phone, and payment details help customers know who sent the invoice and where to pay.</p>
+            </div>
+            <div className="onboarding-card">
+              <span>What can wait</span>
+              <strong>You can update this later.</strong>
+              <p>If you are not ready with full payment details yet, complete the basics and update the rest from your dashboard settings.</p>
+            </div>
+          </div>
+
+          <div className="invoice-progress-strip onboarding-progress-strip">
+            {readiness.map(item => (
+              <div key={item.label} className={`invoice-progress-item ${item.done ? 'done' : ''}`}>
+                <span>{item.done ? '✓' : '•'}</span>
+                <strong>{item.label}</strong>
+              </div>
+            ))}
+          </div>
+
+          <div className="notice success">
+            BizFlow uses these details to make your invoices look more complete and professional from the start.
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -78,7 +121,7 @@ export default function Onboarding({ setBusiness }) {
             {error && <div style={{ background: '#fef2f2', color: '#b91c1c', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16 }}>{error}</div>}
 
             <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: 13, fontSize: 15 }} disabled={loading}>
-              {loading ? 'Setting up...' : 'Take Me to My Dashboard →'}
+              {loading ? 'Setting up...' : 'Finish Setup and Open Dashboard →'}
             </button>
           </form>
         </div>
