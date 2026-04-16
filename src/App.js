@@ -20,6 +20,7 @@ import SupportPage from './pages/SupportPage'
 import InfoPage from './pages/InfoPage'
 import Billing from './pages/Billing'
 import Layout from './components/Layout'
+import BizFlowAI from './components/BizFlowAI'
 import './App.css'
 import './sidebar-theme.css'
 import './product-upgrades.css'
@@ -80,40 +81,43 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
-        <Route path="/home" element={<LandingPage />} />
-        <Route path="/invoice/:token" element={<PublicInvoice />} />
-        <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/terms" element={<LegalPage type="terms" />} />
-        <Route path="/privacy" element={<LegalPage type="privacy" />} />
-        <Route path="/refund-policy" element={<LegalPage type="refund" />} />
-        <Route path="/features" element={<InfoPage type="features" />} />
-        <Route path="/how-it-works" element={<InfoPage type="how" />} />
-        <Route path="/pricing" element={<InfoPage type="pricing" />} />
-        <Route path="/support" element={<SupportPage />} />
-        <Route path="/auth" element={!session ? <Auth /> : <Navigate to={getAppHome()} replace />} />
-        <Route path="/onboarding" element={
-          !session ? <Navigate to="/auth" replace /> :
-          business ? <Navigate to="/dashboard" replace /> :
-          <Onboarding setBusiness={setBusiness} />
-        } />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard business={business} />
-          </ProtectedRoute>
-        } />
-        <Route path="/invoices" element={<ProtectedRoute><Invoices business={business} /></ProtectedRoute>} />
-        <Route path="/clients" element={<ProtectedRoute><Clients business={business} /></ProtectedRoute>} />
-        <Route path="/staff" element={<ProtectedRoute><Staff business={business} /></ProtectedRoute>} />
-        <Route path="/products" element={<ProtectedRoute><Products business={business} /></ProtectedRoute>} />
-        <Route path="/expenses" element={<ProtectedRoute><Expenses business={business} /></ProtectedRoute>} />
-        <Route path="/reports" element={<ProtectedRoute><Reports business={business} /></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute><Settings business={business} setBusiness={setBusiness} /></ProtectedRoute>} />
-        <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
-      </Routes>
+      <>
+        <Routes>
+          <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
+          <Route path="/home" element={<LandingPage />} />
+          <Route path="/invoice/:token" element={<PublicInvoice />} />
+          <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/terms" element={<LegalPage type="terms" />} />
+          <Route path="/privacy" element={<LegalPage type="privacy" />} />
+          <Route path="/refund-policy" element={<LegalPage type="refund" />} />
+          <Route path="/features" element={<InfoPage type="features" />} />
+          <Route path="/how-it-works" element={<InfoPage type="how" />} />
+          <Route path="/pricing" element={<InfoPage type="pricing" />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/auth" element={!session ? <Auth /> : <Navigate to={getAppHome()} replace />} />
+          <Route path="/onboarding" element={
+            !session ? <Navigate to="/auth" replace /> :
+            business ? <Navigate to="/dashboard" replace /> :
+            <Onboarding setBusiness={setBusiness} />
+          } />
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard business={business} />
+            </ProtectedRoute>
+          } />
+          <Route path="/invoices" element={<ProtectedRoute><Invoices business={business} /></ProtectedRoute>} />
+          <Route path="/clients" element={<ProtectedRoute><Clients business={business} /></ProtectedRoute>} />
+          <Route path="/staff" element={<ProtectedRoute><Staff business={business} /></ProtectedRoute>} />
+          <Route path="/products" element={<ProtectedRoute><Products business={business} /></ProtectedRoute>} />
+          <Route path="/expenses" element={<ProtectedRoute><Expenses business={business} /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports business={business} /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings business={business} setBusiness={setBusiness} /></ProtectedRoute>} />
+          <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+          <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
+        </Routes>
+        <BizFlowAI session={session} business={business} />
+      </>
     </BrowserRouter>
   )
 }
