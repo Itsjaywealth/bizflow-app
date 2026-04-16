@@ -397,8 +397,20 @@ export default function LandingPage() {
           <Link to="/privacy">Privacy</Link>
         </div>
         <div className="landing-footer-links">
-          <a href="https://www.instagram.com/bizflowng?igsh=a2N2OXk5bHB3NDhk" target="_blank" rel="noreferrer">Instagram 📷</a>
-          <a href="https://x.com/bizflowng" target="_blank" rel="noreferrer">X X</a>
+          <a className="landing-social-link" href="https://www.instagram.com/bizflowng?igsh=a2N2OXk5bHB3NDhk" target="_blank" rel="noreferrer" aria-label="BizFlow NG on Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="2" />
+              <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2" />
+              <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+            </svg>
+            <span>Instagram</span>
+          </a>
+          <a className="landing-social-link" href="https://x.com/bizflowng" target="_blank" rel="noreferrer" aria-label="BizFlow NG on X">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 4L20 20M20 4L4 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
+            <span>X</span>
+          </a>
         </div>
       </footer>
       <div className="landing-footer-copyright">© 2026 BizFlow NG by BrandVerse Ventures. All rights reserved.</div>

@@ -2191,6 +2191,18 @@ tr:hover td { background: var(--surface-soft); }
   font-size: 12px;
 }
 
+.landing-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.landing-social-link svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
 .page-header-actions {
   display: flex;
   align-items: center;
