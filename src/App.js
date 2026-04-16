@@ -14,6 +14,7 @@ import Settings from './pages/Settings'
 import PublicInvoice from './pages/PublicInvoice'
 import LandingPage from './pages/LandingPage'
 import ResetPassword from './pages/ResetPassword'
+import VerifyEmail from './pages/VerifyEmail'
 import LegalPage from './pages/LegalPage'
 import SupportPage from './pages/SupportPage'
 import InfoPage from './pages/InfoPage'
@@ -30,6 +31,8 @@ export default function App() {
   const [business, setBusiness] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  // The auth bootstrap should run once on mount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const savedTheme = localStorage.getItem('bizflow-theme')
     const preferredTheme = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -81,6 +84,7 @@ export default function App() {
         <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <LandingPage />} />
         <Route path="/home" element={<LandingPage />} />
         <Route path="/invoice/:token" element={<PublicInvoice />} />
+        <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/terms" element={<LegalPage type="terms" />} />
         <Route path="/privacy" element={<LegalPage type="privacy" />} />

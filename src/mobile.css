@@ -566,18 +566,76 @@ table {
 
 @media(max-width:480px) {
   .auth-shell,
+  .verify-shell,
   .legal-shell,
   .public-invoice-shell {
-    padding: 14px;
+    padding: 18px 14px;
   }
 
-  .page-utility-nav {
-    align-items: stretch;
+  .auth-topbar {
+    margin-bottom: 22px;
   }
 
-  .home-link {
-    flex: 1;
-    justify-content: center;
+  .auth-brand-block {
+    margin-bottom: 20px;
+  }
+
+  .auth-brand-mark {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 14px;
+  }
+
+  .auth-brand-block h1 {
+    font-size: 30px;
+  }
+
+  .auth-brand-block p {
+    font-size: 13px;
+  }
+
+  .auth-panel {
+    padding: 22px 18px;
+    border-radius: 22px;
+  }
+
+  .verify-card {
+    padding: 30px 20px;
+    border-radius: 18px;
+  }
+
+  .verify-card h1 {
+    font-size: 22px;
+  }
+
+  .verify-logo-stack {
+    margin-bottom: 24px;
+  }
+
+  .verify-logo-mark {
+    width: 48px;
+    height: 48px;
+    padding: 11px;
+  }
+
+  .verify-logo-text {
+    font-size: 20px;
+  }
+
+  .auth-input-wrap input {
+    min-height: 52px;
+    border-radius: 14px;
+  }
+
+  .auth-submit-button,
+  .auth-oauth-button {
+    min-height: 52px;
+    border-radius: 14px;
+  }
+
+  .auth-switch {
+    font-size: 13px;
+    gap: 4px;
   }
 
   .mobile-header {
@@ -703,7 +761,9 @@ table {
   .settings-overview-grid,
   .settings-preview-grid,
   .settings-checklist,
-  .invoice-progress-strip {
+  .invoice-progress-strip,
+  .onboarding-grid,
+  .table-toolbar {
     grid-template-columns: 1fr !important;
   }
 

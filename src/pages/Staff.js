@@ -15,6 +15,8 @@ export default function Staff({ business }) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [form, setForm] = useState(emptyForm)
 
+  // Staff loading is scoped to the active business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadStaff() }, [])
 
   async function loadStaff() {

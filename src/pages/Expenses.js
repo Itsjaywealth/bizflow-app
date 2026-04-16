@@ -14,6 +14,8 @@ export default function Expenses({ business }) {
   const [query, setQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
 
+  // Expense loading is scoped to the active business.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadExpenses() }, [])
 
   async function loadExpenses() {

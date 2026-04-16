@@ -4,7 +4,7 @@ import PageUtilityNav from '../components/PageUtilityNav'
 const content = {
   terms: {
     title: 'Terms of Service',
-    intro: 'These terms explain the basic rules for using BizFlow NG while the product is in early access.',
+    intro: 'These terms explain the basic rules for using BizFlow NG while the product continues to grow.',
     sections: [
       ['Use of the service', 'BizFlow NG helps businesses record clients, products, expenses, staff records, and invoices. You are responsible for the accuracy of the information you enter.'],
       ['Account responsibility', 'Keep your login details private. If you believe your account has been accessed without permission, contact support quickly.'],
@@ -14,7 +14,7 @@ const content = {
   },
   privacy: {
     title: 'Privacy Policy',
-    intro: 'This policy explains how BizFlow NG treats business information entered into the app.',
+    intro: 'This policy explains how BizFlow NG handles business information entered into the app.',
     sections: [
       ['Information you provide', 'The app stores account, business, client, invoice, product, expense, and staff information so your workspace can function.'],
       ['How information is used', 'Your information is used to provide the app experience: authentication, dashboard records, invoices, and business management tools.'],
@@ -24,7 +24,7 @@ const content = {
   },
   refund: {
     title: 'Refund Policy',
-    intro: 'BizFlow NG is currently positioned as early access with guided onboarding. Public checkout is not enabled in the app yet.',
+    intro: 'BizFlow NG is currently available with guided onboarding and manual support-led plan activation.',
     sections: [
       ['Current billing status', 'If no payment has been collected inside BizFlow NG, no in-app refund process applies.'],
       ['Manual payments', 'If you pay directly for setup or support, refund terms should be agreed in writing before work begins.'],
