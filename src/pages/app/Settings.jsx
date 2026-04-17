@@ -700,7 +700,7 @@ export default function Settings({ business, setBusiness }) {
                     <input
                       type="file"
                       accept="image/*"
-                      className="block w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-700"
+                      className="block w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-700 dark:bg-white/5"
                       onChange={async (event) => {
                         const file = event.target.files?.[0]
                         if (!file) return
@@ -730,13 +730,13 @@ export default function Settings({ business, setBusiness }) {
                   </div>
                   <label className="block space-y-2">
                     <span className="text-sm font-semibold text-neutral-700">Business description</span>
-                    <textarea rows={5} {...businessForm.register('description')} className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" />
+                    <textarea rows={5} {...businessForm.register('description')} className="w-full rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
                   </label>
                   <Button type="submit" loading={savingSection === 'business'}>Save Changes</Button>
                 </form>
 
                 <div className="space-y-6">
-                  <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                     <div className="flex items-center gap-3">
                       <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"><ImageIcon className="h-5 w-5" /></div>
                       <div>
@@ -745,7 +745,7 @@ export default function Settings({ business, setBusiness }) {
                       </div>
                     </div>
                     <div className="mt-5 flex flex-col items-center gap-4">
-                      <div className="flex h-44 w-44 items-center justify-center overflow-hidden rounded-[32px] border border-dashed border-neutral-300 bg-white">
+                      <div className="flex h-44 w-44 items-center justify-center overflow-hidden rounded-[32px] border border-dashed border-emerald-400/25 bg-white/90 dark:bg-white/5">
                         {logoPreview ? <img src={logoPreview} alt="Logo preview" className="h-full w-full object-cover" style={{ transform: `scale(${logoZoom})` }} /> : <Building2 className="h-12 w-12 text-neutral-300" />}
                       </div>
                       <label className="w-full space-y-2">
@@ -755,7 +755,7 @@ export default function Settings({ business, setBusiness }) {
                     </div>
                   </Card>
 
-                  <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                     <h3 className="text-lg font-bold text-neutral-950">Profile snapshot</h3>
                     <div className="mt-5 grid gap-3">
                       <PreviewRow label="Business" value={businessForm.watch('name') || 'Your business name'} />
@@ -779,7 +779,7 @@ export default function Settings({ business, setBusiness }) {
                   <input
                     type="file"
                     accept="image/*"
-                    className="block w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-700"
+                    className="block w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-700 dark:bg-white/5"
                     onChange={async (event) => {
                       const file = event.target.files?.[0]
                       if (!file) return
@@ -805,7 +805,7 @@ export default function Settings({ business, setBusiness }) {
                   <p className="text-sm text-neutral-500">Profile images show in the app shell and activity areas.</p>
                 </div>
 
-                <div className="rounded-[28px] border border-neutral-200 bg-neutral-50 p-5">
+                <div className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 p-5 dark:bg-white/5">
                   <h3 className="text-lg font-bold text-neutral-950">Appearance</h3>
                   <p className="mt-2 text-sm text-neutral-500">Choose the color mode that feels best for your team across BizFlow NG.</p>
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -892,14 +892,14 @@ export default function Settings({ business, setBusiness }) {
             <Card className="rounded-[32px] space-y-8">
               <SectionHeader title="Billing & Subscription" description="Review your plan, saved payment details, and billing history." />
               <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                <Card className="rounded-[28px] border border-primary/15 bg-primary/5">
+                <Card className="rounded-[28px] border border-emerald-400/15 bg-brand-gradient text-white shadow-glow">
                   <p className="text-sm font-semibold uppercase tracking-[0.16em] text-primary">Current plan</p>
                   <h3 className="mt-3 text-3xl font-black text-neutral-950">{currentPlan}</h3>
-                  <p className="mt-2 text-sm text-neutral-500">{defaultPlans[currentPlan]?.price || 'Custom pricing'}</p>
-                  <p className="mt-2 text-sm text-neutral-500">Renews on {new Date(renewalDate).toLocaleDateString('en-NG')}</p>
+                  <p className="mt-2 text-sm text-emerald-50/90">{defaultPlans[currentPlan]?.price || 'Custom pricing'}</p>
+                  <p className="mt-2 text-sm text-emerald-50/90">Renews on {new Date(renewalDate).toLocaleDateString('en-NG')}</p>
                   <div className="mt-5 space-y-3">
                     {(defaultPlans[currentPlan]?.features || []).map((feature) => (
-                      <div key={feature} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-700">✓ {feature}</div>
+                      <div key={feature} className="rounded-2xl border border-white/12 bg-white/10 px-4 py-3 text-sm text-emerald-50">✓ {feature}</div>
                     ))}
                   </div>
                   <div className="mt-5 flex flex-wrap gap-3">
@@ -908,7 +908,7 @@ export default function Settings({ business, setBusiness }) {
                 </Card>
 
                 <div className="space-y-6">
-                  <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                     <h3 className="text-lg font-bold text-neutral-950">Payment method</h3>
                     <p className="mt-3 text-sm text-neutral-500">{safeJson(business?.billing_settings, {}).card_last4 ? `Visa ending in ${safeJson(business?.billing_settings, {}).card_last4} • ${safeJson(business?.billing_settings, {}).card_expiry || 'Expiry unavailable'}` : 'No saved card on file yet.'}</p>
                     <Button
@@ -924,7 +924,7 @@ export default function Settings({ business, setBusiness }) {
                     </Button>
                   </Card>
 
-                  <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                     <h3 className="text-lg font-bold text-neutral-950">Billing history</h3>
                     {billingHistory.length === 0 ? <p className="mt-3 text-sm text-neutral-500">No billing history records yet.</p> : (
                       <div className="mt-4 overflow-x-auto">
@@ -971,7 +971,7 @@ export default function Settings({ business, setBusiness }) {
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="space-y-2">
                       <span className="text-sm font-semibold text-neutral-700">Invoice color scheme</span>
-                      <input type="color" value={invoiceForm.watch('color_scheme')} onChange={(event) => invoiceForm.setValue('color_scheme', event.target.value)} className="h-12 w-full rounded-xl border border-neutral-200 bg-white p-2" />
+                      <input type="color" value={invoiceForm.watch('color_scheme')} onChange={(event) => invoiceForm.setValue('color_scheme', event.target.value)} className="h-12 w-full rounded-xl border border-emerald-400/12 bg-white/90 p-2 dark:bg-white/5" />
                     </label>
                     <Select label="Logo position" options={logoPositions.map((item) => ({ label: item, value: item }))} value={invoiceForm.watch('logo_position')} onChange={(value) => invoiceForm.setValue('logo_position', value)} />
                     <Select label="Font style" options={fontStyles.map((item) => ({ label: item, value: item }))} value={invoiceForm.watch('font_style')} onChange={(value) => invoiceForm.setValue('font_style', value)} />
@@ -982,18 +982,18 @@ export default function Settings({ business, setBusiness }) {
                   <Input label="Invoice number format" {...invoiceForm.register('number_format')} />
                   <label className="block space-y-2">
                     <span className="text-sm font-semibold text-neutral-700">Default notes / footer text</span>
-                    <textarea rows={4} {...invoiceForm.register('footer_text')} className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" />
+                    <textarea rows={4} {...invoiceForm.register('footer_text')} className="w-full rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
                   </label>
                   <label className="block space-y-2">
                     <span className="text-sm font-semibold text-neutral-700">Thank you message</span>
-                    <textarea rows={4} {...invoiceForm.register('thank_you_message')} className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" />
+                    <textarea rows={4} {...invoiceForm.register('thank_you_message')} className="w-full rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
                   </label>
                   <Button type="submit" loading={savingSection === 'invoice_settings'}>Save invoice customization</Button>
                 </form>
 
-                <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                   <h3 className="text-lg font-bold text-neutral-950">Live preview</h3>
-                  <div className="mt-5 rounded-[28px] border border-neutral-200 bg-white p-6" style={{ fontFamily: invoicePreview.font_style === 'Classic' ? 'Georgia, serif' : invoicePreview.font_style === 'Minimal' ? '"Helvetica Neue", sans-serif' : '"Plus Jakarta Sans", sans-serif' }}>
+                  <div className="mt-5 rounded-[28px] border border-emerald-400/12 bg-white/95 p-6 dark:bg-white/5" style={{ fontFamily: invoicePreview.font_style === 'Classic' ? 'Georgia, serif' : invoicePreview.font_style === 'Minimal' ? '"Helvetica Neue", sans-serif' : '"Plus Jakarta Sans", sans-serif' }}>
                     <div className={`flex ${invoicePreview.logo_position === 'center' ? 'justify-center' : invoicePreview.logo_position === 'right' ? 'justify-end' : 'justify-start'}`}>
                       {logoPreview ? <img src={logoPreview} alt="Invoice logo preview" className="h-14 rounded-2xl object-contain" /> : <div className="rounded-2xl bg-primary/10 px-4 py-3 text-sm font-bold text-primary">LOGO</div>}
                     </div>
@@ -1008,7 +1008,7 @@ export default function Settings({ business, setBusiness }) {
                         <p className="text-sm text-neutral-500">{businessForm.watch('email') || business?.email || 'hello@bizflowng.com'}</p>
                       </div>
                     </div>
-                    <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm text-neutral-700">{invoicePreview.footer_text}</div>
+                    <div className="mt-6 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-sm text-neutral-700 dark:bg-white/5">{invoicePreview.footer_text}</div>
                     <div className="mt-4 rounded-2xl px-4 py-4 text-sm text-white" style={{ backgroundColor: invoicePreview.color_scheme }}>{invoicePreview.thank_you_message}</div>
                   </div>
                 </Card>
@@ -1041,7 +1041,7 @@ export default function Settings({ business, setBusiness }) {
                     ['app_system_updates', 'System updates'],
                   ]} form={notificationForm} />
 
-                  <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                     <h3 className="text-lg font-bold text-neutral-950">SMS Notifications</h3>
                     <div className="mt-5 space-y-4">
                       <ToggleRow label="Enable SMS (Termii)" checked={notificationValues.sms_enabled} onChange={() => notificationForm.setValue('sms_enabled', !notificationValues.sms_enabled)} />
@@ -1062,7 +1062,7 @@ export default function Settings({ business, setBusiness }) {
                 <SectionHeader title="Integrations" description="Manage external services that power payments, messaging, automations, and team workflow." />
                 <div className="grid gap-4 md:grid-cols-2">
                   {integrationCards.map((card) => (
-                    <Card key={card.key} className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                    <Card key={card.key} className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <h3 className="text-lg font-bold text-neutral-950">{card.name}</h3>
@@ -1094,7 +1094,7 @@ export default function Settings({ business, setBusiness }) {
                 <SectionHeader title="Security" description="Protect your account with password updates, 2FA preferences, session limits, and device controls." />
                 <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
                   <div className="space-y-6">
-                    <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                    <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                       <h3 className="text-lg font-bold text-neutral-950">Change password</h3>
                       <div className="mt-5 grid gap-4">
                         <Input label="Current password" type="password" {...securityForm.register('current_password')} />
@@ -1103,7 +1103,7 @@ export default function Settings({ business, setBusiness }) {
                       </div>
                     </Card>
 
-                    <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                    <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                       <h3 className="text-lg font-bold text-neutral-950">Session settings</h3>
                       <div className="mt-5 grid gap-4">
                         <ToggleRow label="Enable 2FA" checked={securityValues.two_factor_enabled} onChange={() => securityForm.setValue('two_factor_enabled', !securityValues.two_factor_enabled)} />
@@ -1114,19 +1114,19 @@ export default function Settings({ business, setBusiness }) {
                   </div>
 
                   <div className="space-y-6">
-                    <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                    <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                       <h3 className="text-lg font-bold text-neutral-950">Authenticator setup</h3>
-                      <div className="mt-5 grid grid-cols-5 gap-1 rounded-2xl border border-neutral-200 bg-white p-4">
+                      <div className="mt-5 grid grid-cols-5 gap-1 rounded-2xl border border-emerald-400/12 bg-white/90 p-4 dark:bg-white/5">
                         {buildQrGrid(user?.id).map((filled, index) => <span key={index} className={`aspect-square rounded-sm ${filled ? 'bg-neutral-950' : 'bg-neutral-100'}`} />)}
                       </div>
                       <div className="mt-4 grid gap-2">
                         {(safeJson(business?.security_settings, {}).backup_codes || ['BF-AX31P2', 'BF-QM72L9', 'BF-HT55X0']).map((code) => (
-                          <div key={code} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-700">{code}</div>
+                          <div key={code} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm font-semibold text-neutral-700 dark:bg-white/5">{code}</div>
                         ))}
                       </div>
                     </Card>
 
-                    <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+                    <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                       <h3 className="text-lg font-bold text-neutral-950">Login activity</h3>
                       <div className="mt-4 overflow-x-auto">
                         <table>
@@ -1212,7 +1212,7 @@ SectionHeader.propTypes = {
 
 function PreviewRow({ label, value }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4">
+    <div className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 dark:bg-white/5">
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">{label}</p>
       <p className="mt-2 text-sm font-medium text-neutral-700">{value}</p>
     </div>
@@ -1226,7 +1226,7 @@ PreviewRow.propTypes = {
 
 function ToggleRow({ label, checked, onChange }) {
   return (
-    <label className="flex items-center justify-between gap-4 rounded-2xl border border-neutral-200 bg-white px-4 py-4">
+    <label className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 dark:bg-white/5">
       <span className="text-sm font-medium text-neutral-700">{label}</span>
       <button type="button" onClick={onChange} className={`inline-flex h-7 w-12 items-center rounded-full p-1 transition ${checked ? 'bg-primary justify-end' : 'bg-neutral-200 justify-start'}`}>
         <span className="h-5 w-5 rounded-full bg-white shadow-sm" />
@@ -1243,7 +1243,7 @@ ToggleRow.propTypes = {
 
 function NotificationGroup({ title, items, form }) {
   return (
-    <Card className="rounded-[28px] border border-neutral-200 bg-neutral-50">
+    <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
       <h3 className="text-lg font-bold text-neutral-950">{title}</h3>
       <div className="mt-5 space-y-3">
         {items.map(([key, label]) => (
