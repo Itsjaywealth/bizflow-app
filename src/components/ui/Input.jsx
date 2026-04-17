@@ -16,28 +16,30 @@ export default function Input({
   return (
     <label htmlFor={id || name} className="block space-y-2">
       {label ? (
-        <span className="text-sm font-semibold text-neutral-700">{label}</span>
+        <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">{label}</span>
       ) : null}
       <span
         className={[
-          'flex items-center gap-3 rounded-xl border bg-white px-4 py-3 shadow-sm transition-colors',
-          error ? 'border-danger' : 'border-neutral-200 focus-within:border-primary',
+          'flex items-center gap-3 rounded-xl border bg-white/90 px-4 py-3 shadow-sm backdrop-blur transition-all duration-300 dark:bg-white/5',
+          error
+            ? 'border-danger'
+            : 'border-neutral-200 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15 dark:border-brand-glow/10',
           className,
         ].join(' ').trim()}
       >
-        {prefixIcon ? <span className="text-neutral-400">{prefixIcon}</span> : null}
+        {prefixIcon ? <span className="text-neutral-400 dark:text-neutral-300">{prefixIcon}</span> : null}
         <input
           id={id || name}
           name={name}
-          className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-0"
+          className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-0 dark:text-white dark:placeholder:text-neutral-400"
           {...props}
         />
-        {suffixIcon ? <span className="text-neutral-400">{suffixIcon}</span> : null}
+        {suffixIcon ? <span className="text-neutral-400 dark:text-neutral-300">{suffixIcon}</span> : null}
       </span>
       {error ? (
         <span className="block text-sm font-medium text-danger">{error}</span>
       ) : helperText ? (
-        <span className="block text-sm text-neutral-500">{helperText}</span>
+        <span className="block text-sm text-neutral-500 dark:text-neutral-300">{helperText}</span>
       ) : null}
     </label>
   )

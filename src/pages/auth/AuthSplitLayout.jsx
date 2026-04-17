@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { BarChart3, FileText, ShieldCheck } from 'lucide-react'
+import BrandLogo from '../../components/BrandLogo'
 
 const marketingFeatures = [
   {
@@ -32,22 +33,16 @@ export default function AuthSplitLayout({ title, subtitle, children }) {
   )
 
   return (
-    <div className="min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-7xl overflow-hidden rounded-[36px] border border-neutral-200 bg-white shadow-modal lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-blue-600 to-primary-dark p-10 text-white lg:flex lg:flex-col lg:justify-between">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.2),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(245,158,11,0.22),_transparent_28%)]" />
+    <div className="brand-app-shell min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8 dark:bg-darkbg">
+      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-7xl overflow-hidden rounded-[36px] border border-neutral-200 bg-white shadow-modal dark:border-brand-glow/10 dark:bg-white/5 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="relative hidden overflow-hidden bg-brand-dark p-10 text-white lg:flex lg:flex-col lg:justify-between">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.16),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(52,211,153,0.18),_transparent_28%)]" />
           <div className="relative z-10">
             <Link to="/" className="inline-flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-sm font-black text-white">
-                BF
-              </span>
-              <div>
-                <p className="text-lg font-black">BizFlow NG</p>
-                <p className="text-sm text-blue-100">Business OS for SMEs</p>
-              </div>
+              <BrandLogo textClassName="text-white [&>span:last-child]:text-emerald-100" />
             </Link>
             <div className="mt-20 max-w-xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100">Built for confident operations</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-100">Built for confident operations</p>
               <h1 className="mt-5 text-5xl font-black leading-tight">Your business. Organized. Always.</h1>
               <div className="mt-10 space-y-5">
                 {marketingFeatures.map((feature, index) => {
@@ -65,7 +60,7 @@ export default function AuthSplitLayout({ title, subtitle, children }) {
                       </span>
                       <div>
                         <p className="font-bold">{feature.title}</p>
-                        <p className="mt-2 text-sm leading-6 text-blue-100">{feature.description}</p>
+                        <p className="mt-2 text-sm leading-6 text-emerald-100/90">{feature.description}</p>
                       </div>
                     </motion.div>
                   )
@@ -83,23 +78,17 @@ export default function AuthSplitLayout({ title, subtitle, children }) {
                 className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur"
               >
                 <p className="text-3xl font-black">{value}</p>
-                <p className="mt-2 text-sm leading-6 text-blue-100">{caption}</p>
+                <p className="mt-2 text-sm leading-6 text-emerald-100/90">{caption}</p>
               </motion.div>
             ))}
           </div>
         </div>
 
-        <div className="flex items-center justify-center bg-white px-4 py-8 sm:px-8">
+        <div className="flex items-center justify-center bg-white/90 px-4 py-8 sm:px-8 dark:bg-white/5">
           <div className="w-full max-w-xl">
             <div className="mb-8 text-center lg:text-left">
               <Link to="/" className="inline-flex items-center gap-3 lg:hidden">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-sm font-black text-white shadow-button">
-                  BF
-                </span>
-                <div>
-                  <p className="text-lg font-black text-neutral-900">BizFlow NG</p>
-                  <p className="text-sm text-neutral-500">Business OS for SMEs</p>
-                </div>
+                <BrandLogo />
               </Link>
               <h2 className="mt-8 text-4xl font-black tracking-tight text-neutral-900">{title}</h2>
               <p className="mt-3 text-sm leading-7 text-neutral-500">{subtitle}</p>

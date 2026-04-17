@@ -1,13 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { motion } from 'framer-motion'
 import Spinner from './Spinner'
 
 const variantClasses = {
-  primary: 'bg-primary text-white shadow-button hover:bg-primary-dark focus-visible:ring-primary',
-  secondary: 'bg-neutral-900 text-white shadow-button hover:bg-neutral-800 focus-visible:ring-neutral-400',
-  outline: 'border border-neutral-300 bg-white text-neutral-900 hover:border-primary hover:text-primary focus-visible:ring-primary',
-  ghost: 'bg-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-primary',
-  danger: 'bg-danger text-white shadow-button hover:bg-red-600 focus-visible:ring-danger',
+  primary: 'bg-brand-gradient text-white shadow-glow hover:brightness-110 focus-visible:ring-primary dark:text-white',
+  secondary: 'bg-darkbg-card text-white shadow-card hover:bg-darkbg-hover focus-visible:ring-brand-glow dark:bg-darkbg-hover',
+  outline: 'border border-primary/30 bg-white text-neutral-900 hover:bg-primary/10 hover:text-primary focus-visible:ring-primary dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+  ghost: 'bg-transparent text-neutral-700 hover:bg-primary/10 hover:text-primary focus-visible:ring-primary dark:text-neutral-200 dark:hover:bg-white/10 dark:hover:text-white',
+  danger: 'bg-danger text-white shadow-card hover:bg-red-600 focus-visible:ring-danger',
 }
 
 const sizeClasses = {
@@ -33,13 +34,15 @@ export default function Button({
   const isDisabled = disabled || loading
 
   return (
-    <button
+    <motion.button
       type={type}
       disabled={isDisabled}
+      whileTap={isDisabled ? undefined : { scale: 0.98 }}
+      whileHover={isDisabled ? undefined : { y: -1 }}
       className={[
-        'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-all duration-200',
+        'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-60',
+        'ring-offset-background disabled:cursor-not-allowed disabled:opacity-60',
         variantClasses[variant],
         sizeClasses[size],
         fullWidth ? 'w-full' : '',
@@ -50,7 +53,7 @@ export default function Button({
       {loading ? <Spinner size="sm" className="text-current" /> : leftIcon}
       <span>{children}</span>
       {!loading && rightIcon}
-    </button>
+    </motion.button>
   )
 }
 
