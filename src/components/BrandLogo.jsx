@@ -9,9 +9,15 @@ export default function BrandLogo({
 }) {
   return (
     <div className={`inline-flex items-center gap-3 ${className}`.trim()}>
-      <span className="brand-logo-glow relative inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gradient shadow-glow transition-transform duration-300 hover:scale-[1.03]">
-        <span className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-white/20 to-transparent" />
-        <span className="relative text-sm font-black tracking-[0.28em] text-white">BF</span>
+      <span className="brand-logo-glow relative inline-flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-300 hover:scale-[1.03]">
+        <img
+          src="/logo.svg"
+          alt="BizFlow NG logo"
+          width="48"
+          height="48"
+          decoding="async"
+          className="h-12 w-12 rounded-2xl object-contain"
+        />
       </span>
       {!compact ? (
         <span className={`block ${textClassName}`.trim()}>
