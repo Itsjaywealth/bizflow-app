@@ -6,6 +6,7 @@ import { z } from 'zod'
 import {
   Bell,
   Building2,
+  ChevronRight,
   CheckCircle2,
   CreditCard,
   Globe,
@@ -13,7 +14,9 @@ import {
   KeyRound,
   Landmark,
   Mail,
+  ShieldAlert,
   Palette,
+  Sparkles,
   ShieldCheck,
   Smartphone,
   Trash2,
@@ -21,6 +24,7 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAppShell } from '../../context/AppShellContext'
@@ -35,14 +39,14 @@ import Modal from '../../components/ui/Modal'
 import Select from '../../components/ui/Select'
 
 const tabs = [
-  { key: 'business', label: 'Business Profile', icon: <Building2 className="h-4 w-4" /> },
-  { key: 'account', label: 'My Account', icon: <UserRound className="h-4 w-4" /> },
-  { key: 'team', label: 'Team & Permissions', icon: <Users className="h-4 w-4" /> },
-  { key: 'billing', label: 'Billing & Subscription', icon: <CreditCard className="h-4 w-4" /> },
-  { key: 'invoice', label: 'Invoice Customization', icon: <Palette className="h-4 w-4" /> },
-  { key: 'notifications', label: 'Notifications', icon: <Bell className="h-4 w-4" /> },
-  { key: 'integrations', label: 'Integrations', icon: <Zap className="h-4 w-4" /> },
-  { key: 'security', label: 'Security', icon: <ShieldCheck className="h-4 w-4" /> },
+  { key: 'business', label: 'Business Profile', icon: <Building2 className="h-4 w-4" />, description: 'Workspace identity and defaults' },
+  { key: 'account', label: 'My Account', icon: <UserRound className="h-4 w-4" />, description: 'Your personal preferences' },
+  { key: 'team', label: 'Team & Permissions', icon: <Users className="h-4 w-4" />, description: 'Collaborators and access control' },
+  { key: 'billing', label: 'Billing & Subscription', icon: <CreditCard className="h-4 w-4" />, description: 'Plan, payments, and billing history' },
+  { key: 'invoice', label: 'Invoice Customization', icon: <Palette className="h-4 w-4" />, description: 'Branding and invoice defaults' },
+  { key: 'notifications', label: 'Notifications', icon: <Bell className="h-4 w-4" />, description: 'Email, in-app, and SMS alerts' },
+  { key: 'integrations', label: 'Integrations', icon: <Zap className="h-4 w-4" />, description: 'Connected services and APIs' },
+  { key: 'security', label: 'Security', icon: <ShieldCheck className="h-4 w-4" />, description: 'Passwords, sessions, and protection' },
 ]
 
 const roleOptions = ['Owner', 'Admin', 'Manager', 'Staff', 'Accountant']
@@ -649,6 +653,10 @@ export default function Settings({ business, setBusiness }) {
   const notificationValues = notificationForm.watch()
   const integrationValues = integrationForm.watch()
   const securityValues = securityForm.watch()
+  const billingSettings = safeJson(business?.billing_settings, {})
+  const activeTabMeta = tabs.find((item) => item.key === activeTab) || tabs[0]
+  const planStatus = billingSettings.cancel_requested ? 'Renewing off' : billingSettings.status || 'Active'
+  const secureBillingNote = billingSettings.card_last4 ? 'Your billing profile is active and ready for the next renewal.' : 'Add a payment method to make renewals smooth and interruption-free.'
 
   const integrationCards = [
     { key: 'paystack_connected', name: 'Paystack', description: 'Card and bank payment collection', connected: integrationValues.paystack_connected, action: 'Manage' },
@@ -661,34 +669,117 @@ export default function Settings({ business, setBusiness }) {
 
   return (
     <div className="space-y-6">
-      <section className="page-header">
-        <div>
-          <div className="page-title">Settings</div>
-          <div className="page-sub">Control your workspace profile, account, team, billing, invoice brand, notifications, integrations, and security from one professional settings center.</div>
-        </div>
-      </section>
+      <motion.section
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="relative overflow-hidden rounded-[32px] border border-emerald-500/15 bg-white/90 p-6 shadow-card backdrop-blur dark:border-emerald-400/10 dark:bg-white/5 lg:p-8"
+      >
+        <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_top_right,rgba(52,211,153,0.18),transparent_52%)] lg:block" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/15 bg-emerald-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:border-emerald-400/15 dark:bg-emerald-400/10 dark:text-emerald-200">
+              <Sparkles className="h-3.5 w-3.5" />
+              Workspace settings
+            </div>
+            <h1 className="mt-4 text-3xl font-black tracking-tight text-neutral-950 dark:text-white md:text-4xl">Settings</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+              Configure your workspace identity, team permissions, billing, invoice branding, and security from one polished control center.
+            </p>
+          </div>
 
-      <div className="grid gap-6 xl:grid-cols-[280px_1fr]">
-        <Card className="rounded-[32px] p-3">
-          <div className="space-y-2">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => {
-                      setActiveTab(tab.key)
-                      setSearchParams({ tab: tab.key })
-                    }}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold transition ${activeTab === tab.key ? 'bg-primary text-white shadow-button' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-950'}`}
-                  >
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-[24px] border border-emerald-500/15 bg-neutral-950/[0.03] px-4 py-4 dark:border-emerald-400/10 dark:bg-white/5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">Workspace</p>
+              <p className="mt-2 text-sm font-bold text-neutral-950 dark:text-white">{business?.name || 'BizFlow workspace'}</p>
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{currentPlan} plan</p>
+            </div>
+            <div className="rounded-[24px] border border-emerald-500/15 bg-neutral-950/[0.03] px-4 py-4 dark:border-emerald-400/10 dark:bg-white/5">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">Active section</p>
+              <p className="mt-2 text-sm font-bold text-neutral-950 dark:text-white">{activeTabMeta.label}</p>
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{activeTabMeta.description}</p>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      <div className="lg:hidden">
+        <div className="overflow-x-auto pb-2">
+          <div className="flex min-w-max gap-3">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => {
+                  setActiveTab(tab.key)
+                  setSearchParams({ tab: tab.key })
+                }}
+                className={[
+                  'flex items-center gap-2 rounded-full border px-4 py-3 text-sm font-semibold transition',
+                  activeTab === tab.key
+                    ? 'border-emerald-500/20 bg-brand-gradient text-white shadow-glow'
+                    : 'border-neutral-200 bg-white/85 text-neutral-700 hover:border-emerald-400/20 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-200 dark:hover:bg-white/10',
+                ].join(' ').trim()}
+              >
                 {tab.icon}
-                <span>{tab.label}</span>
+                <span className="whitespace-nowrap">{tab.label}</span>
               </button>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)]">
+        <Card className="hidden rounded-[32px] p-4 xl:sticky xl:top-24 xl:block">
+          <div className="space-y-5">
+            <div className="rounded-[28px] border border-emerald-500/15 bg-neutral-950/[0.03] p-5 dark:border-emerald-400/10 dark:bg-white/5">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">Workspace settings</p>
+              <h2 className="mt-3 text-lg font-black text-neutral-950 dark:text-white">A cleaner way to manage BizFlow</h2>
+              <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">
+                Each section is organized for faster scanning, cleaner updates, and safer admin control.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => {
+                    setActiveTab(tab.key)
+                    setSearchParams({ tab: tab.key })
+                  }}
+                  className={[
+                    'group flex w-full items-center gap-3 rounded-[22px] border px-4 py-4 text-left transition',
+                    activeTab === tab.key
+                      ? 'border-emerald-500/15 bg-emerald-500/10 text-neutral-950 shadow-card dark:border-emerald-400/15 dark:bg-emerald-400/10 dark:text-white'
+                      : 'border-transparent text-neutral-600 hover:border-emerald-500/10 hover:bg-neutral-50 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/5 dark:hover:text-white',
+                  ].join(' ').trim()}
+                >
+                  <span className={[
+                    'inline-flex h-10 w-10 items-center justify-center rounded-2xl transition',
+                    activeTab === tab.key ? 'bg-brand-gradient text-white shadow-glow' : 'bg-neutral-100 text-neutral-500 group-hover:bg-emerald-50 group-hover:text-primary dark:bg-white/10 dark:text-neutral-300',
+                  ].join(' ').trim()}>
+                    {tab.icon}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-bold">{tab.label}</span>
+                    <span className="mt-1 block text-xs leading-5 text-neutral-500 dark:text-neutral-400">{tab.description}</span>
+                  </span>
+                  <ChevronRight className={`h-4 w-4 transition ${activeTab === tab.key ? 'text-primary dark:text-emerald-300' : 'text-neutral-300 group-hover:text-primary'}`} />
+                </button>
+              ))}
+            </div>
+          </div>
         </Card>
 
-        <div className="space-y-6">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="space-y-6"
+        >
           {activeTab === 'business' ? (
             <Card className="rounded-[32px]">
               <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
@@ -889,78 +980,173 @@ export default function Settings({ business, setBusiness }) {
           ) : null}
 
           {activeTab === 'billing' ? (
-            <Card className="rounded-[32px] space-y-8">
-              <SectionHeader title="Billing & Subscription" description="Review your plan, saved payment details, and billing history." />
-              <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                <Card className="rounded-[28px] border border-emerald-400/15 bg-brand-gradient text-white shadow-glow">
-                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-primary">Current plan</p>
-                  <h3 className="mt-3 text-3xl font-black text-neutral-950">{currentPlan}</h3>
-                  <p className="mt-2 text-sm text-emerald-50/90">{defaultPlans[currentPlan]?.price || 'Custom pricing'}</p>
-                  <p className="mt-2 text-sm text-emerald-50/90">Renews on {new Date(renewalDate).toLocaleDateString('en-NG')}</p>
-                  <div className="mt-5 space-y-3">
-                    {(defaultPlans[currentPlan]?.features || []).map((feature) => (
-                      <div key={feature} className="rounded-2xl border border-white/12 bg-white/10 px-4 py-3 text-sm text-emerald-50">✓ {feature}</div>
-                    ))}
-                  </div>
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    <Button onClick={() => navigate('/pricing')}>{currentPlan === 'Starter' ? 'Upgrade Plan' : 'Change Plan'}</Button>
-                  </div>
-                </Card>
+            <div className="space-y-6">
+              <SettingsSectionShell
+                title="Billing & Subscription"
+                description="Manage your current plan, saved payment details, billing records, and subscription changes from one polished billing center."
+              >
+                <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28 }}>
+                    <Card className="relative overflow-hidden rounded-[32px] border-0 bg-brand-gradient p-0 text-white shadow-glow">
+                      <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_52%)]" />
+                      <div className="relative space-y-6 p-7 lg:p-8">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                          <div>
+                            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-50">
+                              <Sparkles className="h-3.5 w-3.5" />
+                              Current plan
+                            </div>
+                            <h3 className="mt-4 text-3xl font-black tracking-tight text-white lg:text-4xl">{currentPlan}</h3>
+                            <p className="mt-2 max-w-xl text-sm leading-7 text-emerald-50/90">
+                              {currentPlan === 'Growth'
+                                ? 'Built for growing teams that need payroll, analytics, deeper controls, and smoother operations.'
+                                : currentPlan === 'Starter'
+                                  ? 'A clean starting point for smaller teams managing invoices, clients, and business essentials.'
+                                  : 'Enterprise-grade support, custom integrations, and advanced service for larger operations.'}
+                            </p>
+                          </div>
 
-                <div className="space-y-6">
-                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
-                    <h3 className="text-lg font-bold text-neutral-950">Payment method</h3>
-                    <p className="mt-3 text-sm text-neutral-500">{safeJson(business?.billing_settings, {}).card_last4 ? `Visa ending in ${safeJson(business?.billing_settings, {}).card_last4} • ${safeJson(business?.billing_settings, {}).card_expiry || 'Expiry unavailable'}` : 'No saved card on file yet.'}</p>
-                    <Button
-                      className="mt-4"
-                      variant="outline"
-                      onClick={() => {
-                        const updateUrl = safeJson(business?.billing_settings, {}).payment_update_url
-                        if (updateUrl) window.location.assign(updateUrl)
-                        else navigate('/pricing')
-                      }}
-                    >
-                      Update payment method
-                    </Button>
-                  </Card>
+                          <div className="flex flex-col items-start gap-3 lg:items-end">
+                            <Badge variant="success" className="border-0 bg-white/15 text-white">{planStatus}</Badge>
+                            <Button
+                              variant="outline"
+                              className="border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white dark:bg-white/10"
+                              onClick={() => navigate('/pricing')}
+                            >
+                              {currentPlan === 'Starter' ? 'Upgrade Plan' : 'Change Plan'}
+                            </Button>
+                          </div>
+                        </div>
 
-                  <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
-                    <h3 className="text-lg font-bold text-neutral-950">Billing history</h3>
-                    {billingHistory.length === 0 ? <p className="mt-3 text-sm text-neutral-500">No billing history records yet.</p> : (
-                      <div className="mt-4 overflow-x-auto">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Date</th>
-                              <th>Amount</th>
-                              <th>Plan</th>
-                              <th>Receipt</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {billingHistory.map((row) => (
-                              <tr key={row.id}>
-                                <td>{new Date(row.created_at).toLocaleDateString('en-NG')}</td>
-                                <td>{row.amount ? `₦${Number(row.amount).toLocaleString()}` : '—'}</td>
-                                <td>{row.plan_name || currentPlan}</td>
-                                <td>{row.receipt_reference || '—'}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                        <div className="grid gap-4 md:grid-cols-3">
+                          <div className="rounded-[24px] border border-white/15 bg-white/10 px-4 py-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80">Price</p>
+                            <p className="mt-2 text-xl font-black text-white">{defaultPlans[currentPlan]?.price || 'Custom pricing'}</p>
+                          </div>
+                          <div className="rounded-[24px] border border-white/15 bg-white/10 px-4 py-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80">Renews</p>
+                            <p className="mt-2 text-xl font-black text-white">{new Date(renewalDate).toLocaleDateString('en-NG')}</p>
+                          </div>
+                          <div className="rounded-[24px] border border-white/15 bg-white/10 px-4 py-4">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-100/80">Security</p>
+                            <p className="mt-2 text-sm font-semibold leading-6 text-emerald-50">{secureBillingNote}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-3 md:grid-cols-2">
+                          {(defaultPlans[currentPlan]?.features || []).map((feature) => (
+                            <div key={feature} className="flex items-start gap-3 rounded-[22px] border border-white/15 bg-white/10 px-4 py-4 text-sm leading-6 text-emerald-50">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                              <span>{feature}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    )}
-                  </Card>
+                    </Card>
+                  </motion.div>
+
+                  <div className="space-y-6">
+                    <SettingsFeatureCard
+                      icon={<Landmark className="h-5 w-5" />}
+                      title="Payment method"
+                      description="Keep your subscription running smoothly with an up-to-date card or billing source."
+                    >
+                      {billingSettings.card_last4 ? (
+                        <div className="space-y-4">
+                          <div className="rounded-[24px] border border-emerald-500/12 bg-white/80 px-5 py-5 dark:bg-white/5">
+                            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">Saved card</p>
+                            <p className="mt-2 text-lg font-black text-neutral-950 dark:text-white">
+                              Visa ending in {billingSettings.card_last4}
+                            </p>
+                            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                              {billingSettings.card_expiry || 'Expiry unavailable'}
+                            </p>
+                          </div>
+                          <Button
+                            variant="outline"
+                            fullWidth
+                            onClick={() => {
+                              const updateUrl = billingSettings.payment_update_url
+                              if (updateUrl) window.location.assign(updateUrl)
+                              else navigate('/pricing')
+                            }}
+                          >
+                            Update payment method
+                          </Button>
+                        </div>
+                      ) : (
+                        <PolishedEmptyState
+                          icon={<CreditCard className="h-5 w-5" />}
+                          title="No saved payment method yet"
+                          description="Add a card or billing source to make renewals seamless and avoid interruptions."
+                          actionLabel="Update payment method"
+                          onAction={() => {
+                            const updateUrl = billingSettings.payment_update_url
+                            if (updateUrl) window.location.assign(updateUrl)
+                            else navigate('/pricing')
+                          }}
+                        />
+                      )}
+                    </SettingsFeatureCard>
+
+                    <div className="rounded-[28px] border border-emerald-500/12 bg-white/75 px-5 py-5 shadow-card dark:border-white/10 dark:bg-white/5">
+                      <div className="flex items-center gap-3">
+                        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-primary">
+                          <ShieldCheck className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="text-base font-black text-neutral-950 dark:text-white">Secure billing</h3>
+                          <p className="text-sm text-neutral-500 dark:text-neutral-400">Payments are processed through your connected billing flow and stored references only.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </SettingsSectionShell>
+
+              <SettingsSectionShell
+                title="Billing history"
+                description="Review past charges, plan changes, and receipt references in one place."
+              >
+                {billingHistory.length === 0 ? (
+                  <PolishedEmptyState
+                    icon={<Mail className="h-5 w-5" />}
+                    title="No billing history yet"
+                    description="As invoices are charged or subscription events happen, your billing records will appear here in a clean, searchable timeline."
+                  />
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Amount</th>
+                          <th>Plan</th>
+                          <th>Receipt</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {billingHistory.map((row) => (
+                          <tr key={row.id}>
+                            <td>{new Date(row.created_at).toLocaleDateString('en-NG')}</td>
+                            <td>{row.amount ? `₦${Number(row.amount).toLocaleString()}` : '—'}</td>
+                            <td>{row.plan_name || currentPlan}</td>
+                            <td>{row.receipt_reference || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </SettingsSectionShell>
 
               <DangerZone
                 title="Cancel Subscription"
-                description="This marks your subscription for cancellation and keeps a record in workspace billing settings."
+                description="Canceling your subscription will stop future renewals while preserving your billing record and workspace history according to policy."
                 actionLabel="Cancel Subscription"
                 onAction={() => setDeleteModal({ type: 'cancel-subscription', value: '' })}
               />
-            </Card>
+            </div>
           ) : null}
 
           {activeTab === 'invoice' ? (
@@ -1161,7 +1347,7 @@ export default function Settings({ business, setBusiness }) {
               </form>
             </Card>
           ) : null}
-        </div>
+        </motion.div>
       </div>
 
       <Modal open={inviteModalOpen} onClose={() => setInviteModalOpen(false)} title="Invite team member">
@@ -1198,9 +1384,13 @@ Settings.propTypes = {
 
 function SectionHeader({ title, description }) {
   return (
-    <div>
-      <h2 className="text-xl font-bold text-neutral-950">{title}</h2>
-      <p className="mt-1 text-sm text-neutral-500">{description}</p>
+    <div className="max-w-3xl">
+      <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/12 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:border-emerald-400/15 dark:bg-emerald-400/10 dark:text-emerald-200">
+        <Sparkles className="h-3 w-3" />
+        Settings section
+      </div>
+      <h2 className="mt-4 text-2xl font-black tracking-tight text-neutral-950 dark:text-white">{title}</h2>
+      <p className="mt-2 text-sm leading-7 text-neutral-500 dark:text-neutral-400">{description}</p>
     </div>
   )
 }
@@ -1212,9 +1402,9 @@ SectionHeader.propTypes = {
 
 function PreviewRow({ label, value }) {
   return (
-    <div className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 dark:bg-white/5">
+    <div className="rounded-[22px] border border-emerald-500/12 bg-white/90 px-4 py-4 shadow-sm dark:border-white/10 dark:bg-white/5">
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">{label}</p>
-      <p className="mt-2 text-sm font-medium text-neutral-700">{value}</p>
+      <p className="mt-2 text-sm font-medium text-neutral-700 dark:text-neutral-200">{value}</p>
     </div>
   )
 }
@@ -1226,9 +1416,9 @@ PreviewRow.propTypes = {
 
 function ToggleRow({ label, checked, onChange }) {
   return (
-    <label className="flex items-center justify-between gap-4 rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 dark:bg-white/5">
-      <span className="text-sm font-medium text-neutral-700">{label}</span>
-      <button type="button" onClick={onChange} className={`inline-flex h-7 w-12 items-center rounded-full p-1 transition ${checked ? 'bg-primary justify-end' : 'bg-neutral-200 justify-start'}`}>
+    <label className="flex items-center justify-between gap-4 rounded-[22px] border border-emerald-500/12 bg-white/90 px-4 py-4 shadow-sm transition hover:border-emerald-500/20 dark:border-white/10 dark:bg-white/5">
+      <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">{label}</span>
+      <button type="button" onClick={onChange} className={`inline-flex h-7 w-12 items-center rounded-full p-1 transition ${checked ? 'bg-brand-gradient justify-end shadow-glow' : 'bg-neutral-200 justify-start dark:bg-white/10'}`}>
         <span className="h-5 w-5 rounded-full bg-white shadow-sm" />
       </button>
     </label>
@@ -1243,7 +1433,7 @@ ToggleRow.propTypes = {
 
 function NotificationGroup({ title, items, form }) {
   return (
-    <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
+    <Card className="rounded-[30px] border border-emerald-500/12 bg-white/85 shadow-card dark:border-white/10 dark:bg-white/5">
       <h3 className="text-lg font-bold text-neutral-950">{title}</h3>
       <div className="mt-5 space-y-3">
         {items.map(([key, label]) => (
@@ -1260,12 +1450,88 @@ NotificationGroup.propTypes = {
   form: PropTypes.object.isRequired,
 }
 
+function SettingsSectionShell({ title, description, children, actions = null }) {
+  return (
+    <Card className="rounded-[34px] border border-emerald-500/12 bg-white/85 p-6 shadow-card dark:border-white/10 dark:bg-white/5 lg:p-8">
+      <div className="flex flex-col gap-4 border-b border-neutral-200/80 pb-6 dark:border-white/10 lg:flex-row lg:items-start lg:justify-between">
+        <SectionHeader title={title} description={description} />
+        {actions ? <div className="shrink-0">{actions}</div> : null}
+      </div>
+      <div className="mt-6 space-y-6">{children}</div>
+    </Card>
+  )
+}
+
+SettingsSectionShell.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  actions: PropTypes.node,
+}
+
+function SettingsFeatureCard({ icon, title, description, children }) {
+  return (
+    <Card className="rounded-[30px] border border-emerald-500/12 bg-white/80 p-6 shadow-card dark:border-white/10 dark:bg-white/5">
+      <div className="flex items-start gap-4">
+        <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 text-primary">
+          {icon}
+        </div>
+        <div>
+          <h3 className="text-lg font-black text-neutral-950 dark:text-white">{title}</h3>
+          <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">{description}</p>
+        </div>
+      </div>
+      <div className="mt-6">{children}</div>
+    </Card>
+  )
+}
+
+SettingsFeatureCard.propTypes = {
+  icon: PropTypes.node.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+}
+
+function PolishedEmptyState({ icon, title, description, actionLabel, onAction }) {
+  return (
+    <div className="rounded-[26px] border border-dashed border-emerald-500/18 bg-neutral-50/90 px-5 py-6 dark:border-white/10 dark:bg-white/[0.03]">
+      <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-primary">
+        {icon}
+      </div>
+      <h4 className="mt-4 text-lg font-black text-neutral-950 dark:text-white">{title}</h4>
+      <p className="mt-2 text-sm leading-6 text-neutral-500 dark:text-neutral-400">{description}</p>
+      {actionLabel && onAction ? (
+        <Button className="mt-5" variant="outline" fullWidth onClick={onAction}>
+          {actionLabel}
+        </Button>
+      ) : null}
+    </div>
+  )
+}
+
+PolishedEmptyState.propTypes = {
+  icon: PropTypes.node.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  actionLabel: PropTypes.string,
+  onAction: PropTypes.func,
+}
+
 function DangerZone({ title, description, actionLabel, onAction, className = '' }) {
   return (
-    <Card className={`rounded-[28px] border border-red-200 bg-red-50 ${className}`}>
-      <h3 className="text-lg font-bold text-red-700">{title}</h3>
-      <p className="mt-2 text-sm leading-7 text-red-600">{description}</p>
-      <Button className="mt-4" variant="danger" leftIcon={<Trash2 className="h-4 w-4" />} onClick={onAction}>{actionLabel}</Button>
+    <Card className={`rounded-[32px] border border-red-300/70 bg-red-50/95 p-6 shadow-card dark:border-red-500/20 dark:bg-red-500/10 ${className}`}>
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 rounded-full border border-red-300/70 bg-white/70 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600 dark:border-red-400/20 dark:bg-red-500/10 dark:text-red-200">
+            <ShieldAlert className="h-3.5 w-3.5" />
+            Danger zone
+          </div>
+          <h3 className="mt-4 text-xl font-black text-red-700 dark:text-red-200">{title}</h3>
+          <p className="mt-2 text-sm leading-7 text-red-700/90 dark:text-red-100/80">{description}</p>
+        </div>
+        <Button className="w-full lg:w-auto" variant="danger" leftIcon={<Trash2 className="h-4 w-4" />} onClick={onAction}>{actionLabel}</Button>
+      </div>
     </Card>
   )
 }

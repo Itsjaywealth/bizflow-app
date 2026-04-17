@@ -309,7 +309,7 @@ export default function Landing() {
         path="/"
       />
       <motion.header
-        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-emerald-400/10 bg-white/78 shadow-card backdrop-blur-xl dark:bg-darkbg/80' : 'bg-transparent'}`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-emerald-500/12 bg-white/88 shadow-card backdrop-blur-xl dark:border-white/10 dark:bg-darkbg/84' : 'bg-transparent'}`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <a href="#top">
@@ -335,7 +335,7 @@ export default function Landing() {
 
           <button
             type="button"
-            className="inline-flex rounded-2xl border border-emerald-400/15 bg-white/80 p-3 text-neutral-700 dark:bg-white/5 lg:hidden"
+            className="inline-flex rounded-2xl border border-emerald-500/15 bg-white/90 p-3 text-neutral-800 shadow-sm dark:bg-white/5 dark:text-neutral-100 lg:hidden"
             onClick={() => setMobileMenuOpen((value) => !value)}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -348,14 +348,14 @@ export default function Landing() {
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
-              className="border-t border-neutral-200 bg-white lg:hidden"
+              className="border-t border-emerald-500/12 bg-[#f7fbf9] shadow-card dark:border-white/10 dark:bg-darkbg-card lg:hidden"
             >
               <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6">
                 {navLinks.map((item) => (
                   <a
                     key={item.label}
                     href={item.href}
-                    className="text-sm font-semibold text-neutral-700"
+                    className="rounded-2xl border border-transparent bg-white/60 px-4 py-3 text-sm font-semibold text-neutral-800 shadow-sm dark:bg-white/5 dark:text-neutral-100"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}
@@ -376,28 +376,29 @@ export default function Landing() {
       </motion.header>
 
       <main id="top">
-        <section className="relative overflow-hidden px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-24 lg:pt-16">
-          <div className="absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(circle_at_top_right,_rgba(26,86,219,0.18),_transparent_36%),radial-gradient(circle_at_left,_rgba(245,158,11,0.16),_transparent_28%),linear-gradient(180deg,#ffffff_0%,#f8fafc_55%,#f8fafc_100%)]" />
+        <section className="relative overflow-hidden px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-16">
+          <div className="absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.16),_transparent_34%),radial-gradient(circle_at_left,_rgba(16,185,129,0.12),_transparent_24%),linear-gradient(180deg,#fbfefd_0%,#f4faf7_45%,#eef5f1_100%)] dark:bg-[radial-gradient(circle_at_top_right,_rgba(52,211,153,0.14),_transparent_28%),radial-gradient(circle_at_left,_rgba(34,197,94,0.10),_transparent_20%),linear-gradient(180deg,#0b1120_0%,#101827_100%)]" />
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <Reveal className="max-w-2xl">
               <Badge variant="info" className="rounded-full px-4 py-2 text-sm font-semibold">
                 🇳🇬 Built for Nigerian Businesses
               </Badge>
-              <h1 className="mt-6 text-5xl font-black tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl">
+              <h1 className="mt-6 text-4xl font-black tracking-tight text-neutral-950 sm:text-5xl lg:text-7xl dark:text-white">
                 Run Your Business Smarter. Get Paid Faster.
               </h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-neutral-600">
+              <p className="mt-6 max-w-xl text-base leading-8 text-neutral-700 sm:text-lg dark:text-neutral-300">
                 BizFlow NG is the all-in-one platform for invoicing, payroll, client management, and HR — built for Nigerian SMEs and growing businesses worldwide.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/signup">
-                  <Button size="lg" rightIcon={<ArrowRight className="h-4 w-4" />}>
+                <Link to="/signup" className="w-full sm:w-auto">
+                  <Button size="lg" fullWidth rightIcon={<ArrowRight className="h-4 w-4" />}>
                     Start Free — No Credit Card
                   </Button>
                 </Link>
-                <a href="#dashboard-preview">
+                <a href="#dashboard-preview" className="w-full sm:w-auto">
                   <Button
                     size="lg"
+                    fullWidth
                     variant="outline"
                     leftIcon={<CirclePlay className="h-4 w-4" />}
                   >
@@ -405,7 +406,7 @@ export default function Landing() {
                   </Button>
                 </a>
               </div>
-              <p className="mt-5 text-sm font-semibold text-neutral-500">
+              <p className="mt-5 text-sm font-semibold text-neutral-600 dark:text-neutral-300">
                 ⭐ Trusted by 1,200+ businesses across Nigeria
               </p>
             </Reveal>
@@ -413,7 +414,7 @@ export default function Landing() {
             <Reveal delay={0.15} className="relative">
               <div className="absolute -left-6 top-16 hidden h-40 w-40 rounded-full bg-primary/10 blur-3xl lg:block" />
               <div className="absolute -right-6 bottom-8 hidden h-40 w-40 rounded-full bg-accent/20 blur-3xl lg:block" />
-              <div className="relative rounded-[32px] border border-white/70 bg-white/75 p-5 shadow-modal backdrop-blur">
+              <div className="relative rounded-[32px] border border-emerald-500/12 bg-[#f8fcfa]/95 p-4 shadow-modal backdrop-blur sm:p-5 dark:border-white/10 dark:bg-white/[0.04]">
                 <div className="rounded-[28px] border border-neutral-200 bg-neutral-950 p-4 text-white">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
@@ -456,36 +457,36 @@ export default function Landing() {
                 <motion.div
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 4, repeat: Infinity, repeatType: 'mirror' }}
-                  className="absolute -left-3 top-10 rounded-2xl border border-emerald-100 bg-white px-4 py-3 shadow-card"
+                  className="absolute -left-1 top-8 rounded-2xl border border-emerald-200 bg-[#fcfffd] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-left-3 sm:top-10"
                 >
-                  <p className="text-sm font-semibold text-neutral-900">✅ Invoice #1042 paid — ₦450,000</p>
+                  <p className="text-sm font-semibold text-neutral-950 dark:text-white">✅ Invoice #1042 paid — ₦450,000</p>
                 </motion.div>
                 <motion.div
                   animate={{ y: [0, 8, 0] }}
                   transition={{ duration: 4.5, repeat: Infinity, repeatType: 'mirror' }}
-                  className="absolute -right-2 top-1/3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-card"
+                  className="absolute right-0 top-[34%] rounded-2xl border border-neutral-200 bg-[#fbfdfc] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-right-2"
                 >
-                  <p className="text-sm font-semibold text-neutral-900">👤 New client added</p>
+                  <p className="text-sm font-semibold text-neutral-950 dark:text-white">👤 New client added</p>
                 </motion.div>
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 3.8, repeat: Infinity, repeatType: 'mirror' }}
-                  className="absolute bottom-0 left-8 rounded-2xl border border-amber-100 bg-white px-4 py-3 shadow-card"
+                  className="absolute bottom-0 left-4 rounded-2xl border border-amber-200 bg-[#fffdf8] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:left-8"
                 >
-                  <p className="text-sm font-semibold text-neutral-900">💰 Payroll processed</p>
+                  <p className="text-sm font-semibold text-neutral-950 dark:text-white">💰 Payroll processed</p>
                 </motion.div>
               </div>
             </Reveal>
           </div>
         </section>
 
-        <Reveal className="border-y border-neutral-200 bg-white/80 px-4 py-6 sm:px-6 lg:px-8">
+        <Reveal className="border-y border-emerald-500/10 bg-[#f2f7f4] px-4 py-6 sm:px-6 lg:px-8 dark:border-white/10 dark:bg-white/[0.03]">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <p className="max-w-2xl text-sm font-semibold text-neutral-600">
+              <p className="max-w-2xl text-sm font-semibold leading-6 text-neutral-700 dark:text-neutral-200">
                 Trusted by businesses in Lagos, Abuja, Port Harcourt, London, Houston & more
               </p>
-              <div className="grid gap-4 text-sm font-semibold text-neutral-700 sm:grid-cols-3">
+              <div className="grid gap-4 text-sm font-semibold text-neutral-800 sm:grid-cols-3 dark:text-neutral-100">
                 <p>1,200+ Businesses</p>
                 <p>₦2.4B Processed</p>
                 <p>98% Satisfaction</p>
@@ -500,7 +501,7 @@ export default function Landing() {
                 {repeatedLogos.map((logo, index) => (
                   <div
                     key={`${logo}-${index}`}
-                    className="flex min-w-[180px] items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-5 py-4 shadow-sm"
+                    className="flex min-w-[180px] items-center gap-3 rounded-2xl border border-emerald-500/12 bg-white/90 px-5 py-4 shadow-sm dark:border-white/10 dark:bg-white/5"
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <Sparkles className="h-5 w-5" />
@@ -513,14 +514,14 @@ export default function Landing() {
           </div>
         </Reveal>
 
-        <section id="features" className="px-4 py-20 sm:px-6 lg:px-8">
+        <section id="features" className="bg-[#fbfdfc] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:bg-transparent">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">Features</p>
-              <h2 className="mt-4 text-4xl font-black text-neutral-900 sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 Everything you need to run your business
               </h2>
-              <p className="mt-5 text-lg text-neutral-600">
+              <p className="mt-5 text-base leading-8 text-neutral-700 sm:text-lg dark:text-neutral-300">
                 One platform. Zero confusion. Maximum results.
               </p>
             </Reveal>
@@ -529,12 +530,12 @@ export default function Landing() {
                 const Icon = feature.icon
                 return (
                   <Reveal key={feature.title} delay={index * 0.07}>
-                    <Card hover className="h-full rounded-[28px] border-neutral-200 p-7">
+                    <Card hover className="h-full rounded-[28px] border-emerald-500/12 bg-white/92 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-7">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                         <Icon className="h-7 w-7" />
                       </div>
-                      <h3 className="mt-6 text-xl font-bold text-neutral-900">{feature.title}</h3>
-                      <p className="mt-4 text-sm leading-7 text-neutral-600">{feature.description}</p>
+                      <h3 className="mt-6 text-xl font-bold text-neutral-950 dark:text-white">{feature.title}</h3>
+                      <p className="mt-4 text-sm leading-7 text-neutral-700 dark:text-neutral-300">{feature.description}</p>
                     </Card>
                   </Reveal>
                 )
@@ -543,11 +544,11 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="border-y border-neutral-200 bg-white px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-y border-emerald-500/10 bg-[#eff6f2] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:border-white/10 dark:bg-white/[0.03]">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">How it works</p>
-              <h2 className="mt-4 text-4xl font-black text-neutral-900 sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 Get started in 3 simple steps
               </h2>
             </Reveal>
@@ -566,7 +567,7 @@ export default function Landing() {
                 const Icon = step.icon
                 return (
                   <Reveal key={step.title} delay={index * 0.08}>
-                    <div className="relative rounded-[28px] border border-neutral-200 bg-background p-8 shadow-card">
+                    <div className="relative rounded-[28px] border border-emerald-500/12 bg-white/90 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-8">
                       <div className="flex items-center justify-between">
                         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-base font-black text-white">
                           0{index + 1}
@@ -575,8 +576,8 @@ export default function Landing() {
                           <Icon className="h-6 w-6" />
                         </span>
                       </div>
-                      <h3 className="mt-6 text-xl font-bold text-neutral-900">{step.title}</h3>
-                      <p className="mt-4 text-sm leading-7 text-neutral-600">{step.description}</p>
+                      <h3 className="mt-6 text-xl font-bold text-neutral-950 dark:text-white">{step.title}</h3>
+                      <p className="mt-4 text-sm leading-7 text-neutral-700 dark:text-neutral-300">{step.description}</p>
                     </div>
                   </Reveal>
                 )
@@ -585,17 +586,17 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="dashboard-preview" className="px-4 py-20 sm:px-6 lg:px-8">
+        <section id="dashboard-preview" className="bg-[#f8fbf9] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:bg-transparent">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">Platform preview</p>
-              <h2 className="mt-4 text-4xl font-black text-neutral-900 sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 The dashboard your business deserves
               </h2>
             </Reveal>
 
             <Reveal delay={0.1} className="mt-14">
-              <div className="overflow-hidden rounded-[32px] border border-neutral-200 bg-white shadow-modal">
+              <div className="overflow-hidden rounded-[32px] border border-emerald-500/12 bg-white/92 shadow-modal dark:border-white/10 dark:bg-white/[0.04]">
                 <div className="grid min-h-[620px] lg:grid-cols-[250px_1fr]">
                   <aside className="bg-neutral-950 px-6 py-8 text-white">
                     <div className="flex items-center gap-3">
@@ -615,7 +616,7 @@ export default function Landing() {
                     </div>
                   </aside>
 
-                  <div className="bg-background p-6 sm:p-8">
+                  <div className="bg-[#f6faf8] p-5 sm:p-8 dark:bg-transparent">
                     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                       {[
                         ['Revenue', '₦4.8M', '+18.4%'],
@@ -623,7 +624,7 @@ export default function Landing() {
                         ['Payroll', '₦1.2M', 'completed'],
                         ['Staff', '18', 'active'],
                       ].map(([label, value, meta]) => (
-                        <div key={label} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
+                        <div key={label} className="rounded-3xl border border-emerald-500/12 bg-white/95 p-5 shadow-card dark:border-white/10 dark:bg-white/5">
                           <p className="text-sm text-neutral-500">{label}</p>
                           <p className="mt-3 text-3xl font-black text-neutral-900">{value}</p>
                           <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-500">{meta}</p>
@@ -632,7 +633,7 @@ export default function Landing() {
                     </div>
 
                     <div className="mt-6 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                      <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-card">
+                      <div className="rounded-[28px] border border-emerald-500/12 bg-white/95 p-5 shadow-card dark:border-white/10 dark:bg-white/5">
                         <div className="mb-4 flex items-center justify-between">
                           <div>
                             <p className="text-sm font-semibold text-neutral-900">Cashflow trend</p>
@@ -654,14 +655,14 @@ export default function Landing() {
                         </div>
                       </div>
 
-                      <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-card">
+                      <div className="rounded-[28px] border border-emerald-500/12 bg-white/95 p-5 shadow-card dark:border-white/10 dark:bg-white/5">
                         <div className="mb-4">
                           <p className="text-sm font-semibold text-neutral-900">Recent invoices</p>
                           <p className="text-xs text-neutral-500">Last billing activity across your workspace</p>
                         </div>
                         <div className="space-y-3">
                           {mockInvoiceRows.map((row) => (
-                            <div key={row.invoice} className="rounded-2xl border border-neutral-200 px-4 py-4">
+                            <div key={row.invoice} className="rounded-2xl border border-emerald-500/12 bg-[#fcfffd] px-4 py-4 dark:border-white/10 dark:bg-white/[0.03]">
                               <div className="flex items-center justify-between gap-3">
                                 <div>
                                   <p className="text-sm font-bold text-neutral-900">{row.invoice}</p>
@@ -690,18 +691,18 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="pricing" className="border-y border-neutral-200 bg-white px-4 py-20 sm:px-6 lg:px-8">
+        <section id="pricing" className="border-y border-emerald-500/10 bg-[#eef5f1] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:border-white/10 dark:bg-white/[0.03]">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">Pricing</p>
-              <h2 className="mt-4 text-4xl font-black text-neutral-900 sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 Simple, transparent pricing
               </h2>
-              <p className="mt-5 text-lg text-neutral-600">No hidden fees. Cancel anytime.</p>
+              <p className="mt-5 text-base leading-8 text-neutral-700 sm:text-lg dark:text-neutral-300">No hidden fees. Cancel anytime.</p>
             </Reveal>
 
             <div className="mt-8 flex items-center justify-center">
-              <div className="inline-flex rounded-full border border-neutral-200 bg-background p-1">
+              <div className="inline-flex rounded-full border border-emerald-500/12 bg-white/85 p-1 shadow-sm dark:border-white/10 dark:bg-white/5">
                 {['monthly', 'annual'].map((mode) => (
                   <button
                     key={mode}
@@ -724,13 +725,13 @@ export default function Landing() {
                     className={`h-full rounded-[30px] border p-8 shadow-card ${
                       plan.highlight
                         ? 'border-primary bg-primary text-white shadow-modal'
-                        : 'border-neutral-200 bg-background text-neutral-900'
+                        : 'border-emerald-500/12 bg-white/92 text-neutral-950 dark:border-white/10 dark:bg-white/5 dark:text-white'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-2xl font-black">{plan.name}</h3>
-                        <p className={`mt-3 text-sm leading-7 ${plan.highlight ? 'text-emerald-100' : 'text-neutral-500'}`}>
+                        <p className={`mt-3 text-sm leading-7 ${plan.highlight ? 'text-emerald-100' : 'text-neutral-700 dark:text-neutral-300'}`}>
                           {plan.description}
                         </p>
                       </div>
@@ -742,13 +743,13 @@ export default function Landing() {
                     </div>
                     <div className="mt-8 flex items-end gap-2">
                       <span className="text-5xl font-black">{plan.price}</span>
-                      {plan.period ? <span className={plan.highlight ? 'text-emerald-100' : 'text-neutral-500'}>{plan.period}</span> : null}
+                      {plan.period ? <span className={plan.highlight ? 'text-emerald-100' : 'text-neutral-600 dark:text-neutral-400'}>{plan.period}</span> : null}
                     </div>
                     <div className="mt-8 space-y-4">
                       {plan.features.map((feature) => (
                         <div key={feature} className="flex items-start gap-3">
                           <Check className={`mt-1 h-4 w-4 shrink-0 ${plan.highlight ? 'text-white' : 'text-success'}`} />
-                          <span className={`text-sm ${plan.highlight ? 'text-emerald-50' : 'text-neutral-600'}`}>{feature}</span>
+                          <span className={`text-sm ${plan.highlight ? 'text-emerald-50' : 'text-neutral-700 dark:text-neutral-300'}`}>{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -770,11 +771,11 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="testimonials" className="px-4 py-20 sm:px-6 lg:px-8">
+        <section id="testimonials" className="bg-[#fbfdfc] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:bg-transparent">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">Testimonials</p>
-              <h2 className="mt-4 text-4xl font-black text-neutral-900 sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 What business owners are saying
               </h2>
             </Reveal>
@@ -805,21 +806,21 @@ export default function Landing() {
                   <Reveal key={testimonial.name} delay={index * 0.07}>
                     <motion.div
                       animate={{ opacity: testimonialIndex === index ? 1 : 0.72, scale: testimonialIndex === index ? 1 : 0.98 }}
-                      className="rounded-[28px] border border-neutral-200 bg-white p-7 shadow-card"
+                      className="rounded-[28px] border border-emerald-500/12 bg-white/94 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-7"
                     >
                       <div className="mb-4 flex items-center gap-1 text-amber-500">
                         {Array.from({ length: 5 }).map((_, star) => (
                           <span key={star}>★</span>
                         ))}
                       </div>
-                      <p className="text-base leading-8 text-neutral-700">{testimonial.quote}</p>
+                      <p className="text-base leading-8 text-neutral-800 dark:text-neutral-200">{testimonial.quote}</p>
                       <div className="mt-6 flex items-center gap-4">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-black text-primary">
                           {testimonial.initials}
                         </div>
                         <div>
                           <p className="font-bold text-neutral-900">{testimonial.name}</p>
-                          <p className="text-sm text-neutral-500">
+                          <p className="text-sm text-neutral-600 dark:text-neutral-400">
                             {testimonial.title} — {testimonial.company}
                           </p>
                         </div>
@@ -833,7 +834,7 @@ export default function Landing() {
                       key={item.name}
                       type="button"
                       onClick={() => setTestimonialIndex(index)}
-                      className={`h-3 w-3 rounded-full transition-all ${testimonialIndex === index ? 'bg-primary w-8' : 'bg-neutral-300'}`}
+                      className={`h-3 w-3 rounded-full transition-all ${testimonialIndex === index ? 'bg-primary w-8' : 'bg-neutral-300 dark:bg-neutral-600'}`}
                       aria-label={`Show testimonial ${index + 1}`}
                     />
                   ))}
@@ -843,11 +844,11 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="border-y border-neutral-200 bg-white px-4 py-20 sm:px-6 lg:px-8">
+        <section className="border-y border-emerald-500/10 bg-[#eff4f1] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:border-white/10 dark:bg-white/[0.03]">
           <div className="mx-auto max-w-5xl">
             <Reveal className="text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">FAQ</p>
-              <h2 className="mt-4 text-4xl font-black text-neutral-900 sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 Frequently Asked Questions
               </h2>
             </Reveal>
@@ -855,13 +856,13 @@ export default function Landing() {
             <div className="mt-12 space-y-4">
               {faqs.map((faq, index) => (
                 <Reveal key={faq.question} delay={index * 0.04}>
-                  <div className="overflow-hidden rounded-[24px] border border-neutral-200 bg-background shadow-sm">
+                  <div className="overflow-hidden rounded-[24px] border border-emerald-500/12 bg-white/92 shadow-sm dark:border-white/10 dark:bg-white/5">
                     <button
                       type="button"
                       onClick={() => setOpenFaq((current) => (current === index ? -1 : index))}
-                      className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                      className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
                     >
-                      <span className="text-base font-bold text-neutral-900">{faq.question}</span>
+                      <span className="text-base font-bold text-neutral-950 dark:text-white">{faq.question}</span>
                       <motion.span
                         animate={{ rotate: openFaq === index ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
@@ -878,7 +879,7 @@ export default function Landing() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.24 }}
                         >
-                          <div className="border-t border-neutral-200 px-6 py-5 text-sm leading-7 text-neutral-600">
+                          <div className="border-t border-emerald-500/12 px-5 py-5 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:text-neutral-300 sm:px-6">
                             {faq.answer}
                           </div>
                         </motion.div>
@@ -891,10 +892,10 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <section className="px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-7xl">
             <Reveal>
-              <div className="overflow-hidden rounded-[36px] bg-brand-dark px-6 py-14 text-center text-white shadow-modal sm:px-10">
+              <div className="overflow-hidden rounded-[36px] bg-brand-dark px-6 py-12 text-center text-white shadow-modal sm:px-10 sm:py-14">
                 <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-100">Ready when you are</p>
                 <h2 className="mt-4 text-4xl font-black sm:text-5xl">
                   Ready to take control of your business?
@@ -928,7 +929,7 @@ export default function Landing() {
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
             <div>
               <BrandLogo />
-              <p className="mt-5 max-w-sm text-sm leading-7 text-neutral-600">
+              <p className="mt-5 max-w-sm text-sm leading-7 text-neutral-700 dark:text-neutral-300">
                 Built for Nigerian SMEs, designed to help modern businesses invoice faster, manage teams better, and grow with clarity.
               </p>
               <div className="mt-6 flex items-center gap-3">
@@ -943,7 +944,7 @@ export default function Landing() {
                     <a
                       key={item.label}
                       href={item.href}
-                      className="flex h-11 w-11 items-center justify-center rounded-2xl border border-neutral-200 text-neutral-600 hover:border-primary hover:text-primary"
+                      className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-500/12 bg-[#fcfffd] text-neutral-700 hover:border-primary hover:text-primary dark:border-white/10 dark:bg-white/5 dark:text-neutral-200"
                     >
                       <Icon className="h-5 w-5" />
                     </a>
@@ -954,7 +955,7 @@ export default function Landing() {
 
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-400">Product</p>
-              <div className="mt-5 space-y-3 text-sm text-neutral-600">
+              <div className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
                 <a href="#features" className="block hover:text-primary">Features</a>
                 <a href="#pricing" className="block hover:text-primary">Pricing</a>
                 <a href="#blog" className="block hover:text-primary">Changelog</a>
@@ -964,7 +965,7 @@ export default function Landing() {
 
             <div id="blog">
               <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-400">Company</p>
-              <div className="mt-5 space-y-3 text-sm text-neutral-600">
+              <div className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
                 <a href="#top" className="block hover:text-primary">About</a>
                 <a href="#blog" className="block hover:text-primary">Blog</a>
                 <a href="#contact" className="block hover:text-primary">Careers</a>
@@ -974,7 +975,7 @@ export default function Landing() {
 
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-400">Legal</p>
-              <div className="mt-5 space-y-3 text-sm text-neutral-600">
+              <div className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
                 <Link to="/privacy" className="block hover:text-primary">Privacy Policy</Link>
                 <Link to="/terms" className="block hover:text-primary">Terms</Link>
                 <Link to="/privacy" className="block hover:text-primary">Privacy & Cookies</Link>
@@ -982,7 +983,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col gap-3 border-t border-neutral-200 pt-6 text-sm text-neutral-500 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mt-12 flex flex-col gap-3 border-t border-emerald-500/12 pt-6 text-sm text-neutral-600 dark:border-white/10 dark:text-neutral-400 lg:flex-row lg:items-center lg:justify-between">
             <p>© 2025 BizFlow NG. All rights reserved.</p>
             <div className="flex flex-wrap items-center gap-4">
               <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Secured by Paystack</span>
@@ -998,14 +999,14 @@ export default function Landing() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
-            className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-[28px] border border-neutral-200 bg-white p-5 shadow-modal"
+            className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-[28px] border border-emerald-500/12 bg-[#fbfdfc] p-5 shadow-modal dark:border-white/10 dark:bg-darkbg-card"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <MessageCircleMore className="mt-1 h-5 w-5 text-primary" />
                 <div>
-                  <p className="font-bold text-neutral-900">We use cookies to improve your experience.</p>
-                  <p className="mt-1 text-sm leading-6 text-neutral-600">
+                  <p className="font-bold text-neutral-950 dark:text-white">We use cookies to improve your experience.</p>
+                  <p className="mt-1 text-sm leading-6 text-neutral-700 dark:text-neutral-300">
                     By continuing, you agree to our use of cookies for analytics, product improvement, and smoother sessions.
                   </p>
                 </div>
