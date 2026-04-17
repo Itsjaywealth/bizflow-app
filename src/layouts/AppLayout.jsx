@@ -17,7 +17,7 @@ export default function AppLayout({ children, session, business }) {
   }
 
   return (
-    <div className="min-h-screen bg-background text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-neutral-100">
+    <div className="brand-app-shell min-h-screen bg-background text-neutral-900 transition-colors duration-300 dark:bg-darkbg dark:text-neutral-100">
       <AppRouteSeo />
       <Sidebar
         collapsed={collapsed}

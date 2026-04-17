@@ -31,18 +31,18 @@ export default function Topbar({ onOpenMobileMenu, onLogout, user }) {
   const { openSearch, theme, toggleTheme, openShortcuts } = useAppShell()
 
   return (
-    <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/90 backdrop-blur transition-colors duration-300 dark:border-neutral-800 dark:bg-neutral-950/80">
+    <header className="sticky top-0 z-20 border-b border-emerald-400/10 bg-white/72 backdrop-blur-xl transition-colors duration-300 dark:border-emerald-400/10 dark:bg-darkbg/80">
       <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onOpenMobileMenu}
-            className="inline-flex rounded-xl border border-neutral-200 p-2 text-neutral-600 hover:bg-neutral-100 dark:border-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-800 lg:hidden"
+            className="inline-flex rounded-xl border border-emerald-400/15 bg-white/80 p-2 text-neutral-600 hover:bg-white dark:bg-white/5 dark:text-neutral-200 dark:hover:bg-white/10 lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </button>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">BizFlow NG</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-500 dark:text-emerald-300">BizFlow NG</p>
             <h1 className="text-lg font-bold text-neutral-900 dark:text-white">{getPageTitle(location.pathname)}</h1>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function Topbar({ onOpenMobileMenu, onLogout, user }) {
           <button
             type="button"
             onClick={openSearch}
-            className="flex w-full items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-500 transition hover:border-primary hover:bg-white dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-primary dark:hover:bg-neutral-900"
+            className="flex w-full items-center gap-3 rounded-2xl border border-emerald-400/15 bg-white/80 px-4 py-3 text-sm text-neutral-500 transition hover:border-primary hover:bg-white focus-visible:ring-4 focus-visible:ring-primary/15 dark:bg-white/5 dark:text-neutral-300 dark:hover:border-primary dark:hover:bg-white/10"
           >
             <Search className="h-4 w-4" />
             <span className="flex-1 text-left">Search invoices, clients, staff...</span>
@@ -63,7 +63,7 @@ export default function Topbar({ onOpenMobileMenu, onLogout, user }) {
           <button
             type="button"
             onClick={toggleTheme}
-            className="rounded-2xl border border-neutral-200 bg-white p-3 text-neutral-600 transition hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            className="rounded-2xl border border-emerald-400/15 bg-white/80 p-3 text-neutral-600 transition hover:bg-white dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
             aria-label="Toggle dark mode"
           >
             {theme === 'dark' ? <SunMedium className="h-5 w-5" /> : <MoonStar className="h-5 w-5" />}
@@ -72,7 +72,7 @@ export default function Topbar({ onOpenMobileMenu, onLogout, user }) {
           <button
             type="button"
             onClick={openSearch}
-            className="rounded-2xl border border-neutral-200 bg-white p-3 text-neutral-600 transition hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800 lg:hidden"
+            className="rounded-2xl border border-emerald-400/15 bg-white/80 p-3 text-neutral-600 transition hover:bg-white dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 lg:hidden"
             aria-label="Open global search"
           >
             <Search className="h-5 w-5" />
@@ -81,7 +81,7 @@ export default function Topbar({ onOpenMobileMenu, onLogout, user }) {
           <button
             type="button"
             onClick={openShortcuts}
-            className="hidden rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800 xl:inline-flex"
+            className="hidden rounded-2xl border border-emerald-400/15 bg-white/80 px-4 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-white dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 xl:inline-flex"
           >
             Shortcuts
           </button>

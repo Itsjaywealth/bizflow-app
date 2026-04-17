@@ -39,6 +39,7 @@ import {
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
+import BrandLogo from '../components/BrandLogo'
 import Seo from '../components/Seo'
 
 const navLinks = [
@@ -301,24 +302,18 @@ export default function Landing() {
   }
 
   return (
-    <div className="bg-background text-neutral-900">
+    <div className="brand-app-shell bg-background text-neutral-900 dark:bg-darkbg dark:text-neutral-100">
       <Seo
         title="BizFlow NG — Business Management Software for Nigerian SMEs"
         description="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
         path="/"
       />
       <motion.header
-        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-neutral-200 bg-white/95 shadow-card backdrop-blur' : 'bg-transparent'}`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-emerald-400/10 bg-white/78 shadow-card backdrop-blur-xl dark:bg-darkbg/80' : 'bg-transparent'}`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <a href="#top" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-sm font-black text-white shadow-button">
-              BF
-            </span>
-            <div>
-              <p className="text-base font-black text-neutral-900">BizFlow NG</p>
-              <p className="text-xs text-neutral-500">Business OS for SMEs</p>
-            </div>
+          <a href="#top">
+            <BrandLogo />
           </a>
 
           <nav className="hidden items-center gap-8 lg:flex">
@@ -340,7 +335,7 @@ export default function Landing() {
 
           <button
             type="button"
-            className="inline-flex rounded-2xl border border-neutral-200 bg-white p-3 text-neutral-700 lg:hidden"
+            className="inline-flex rounded-2xl border border-emerald-400/15 bg-white/80 p-3 text-neutral-700 dark:bg-white/5 lg:hidden"
             onClick={() => setMobileMenuOpen((value) => !value)}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -422,7 +417,7 @@ export default function Landing() {
                 <div className="rounded-[28px] border border-neutral-200 bg-neutral-950 p-4 text-white">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.22em] text-blue-200">Live dashboard</p>
+                      <p className="text-xs uppercase tracking-[0.22em] text-emerald-200">Live dashboard</p>
                       <h3 className="mt-2 text-xl font-bold">BizFlow command center</h3>
                     </div>
                     <Badge className="bg-white/10 text-white ring-0">Realtime</Badge>
@@ -449,7 +444,7 @@ export default function Landing() {
                             initial={{ height: 0 }}
                             animate={{ height: `${value}%` }}
                             transition={{ duration: 0.7, delay: index * 0.06 }}
-                            className="w-full rounded-full bg-gradient-to-t from-primary via-blue-400 to-sky-300"
+                            className="w-full rounded-full bg-gradient-to-t from-primary via-emerald-400 to-accent"
                           />
                           <span className="text-[10px] text-neutral-400">W{index + 1}</span>
                         </div>
@@ -604,13 +599,7 @@ export default function Landing() {
                 <div className="grid min-h-[620px] lg:grid-cols-[250px_1fr]">
                   <aside className="bg-neutral-950 px-6 py-8 text-white">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary font-black">
-                        BF
-                      </span>
-                      <div>
-                        <p className="font-black">BizFlow NG</p>
-                        <p className="text-xs text-neutral-400">Operations OS</p>
-                      </div>
+                      <BrandLogo showTagline={false} textClassName="text-white [&>span:last-child]:text-neutral-400" />
                     </div>
                     <div className="mt-8 space-y-2">
                       {['Dashboard', 'Invoices', 'Clients', 'Staff & HR', 'Payroll', 'Reports', 'Settings'].map((item, index) => (
@@ -719,7 +708,7 @@ export default function Landing() {
                     type="button"
                     onClick={() => setBillingMode(mode)}
                     className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
-                      billingMode === mode ? 'bg-primary text-white shadow-button' : 'text-neutral-600'
+                      billingMode === mode ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-600'
                     }`}
                   >
                     {mode === 'monthly' ? 'Monthly' : 'Annual (20% off)'}
@@ -741,7 +730,7 @@ export default function Landing() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-2xl font-black">{plan.name}</h3>
-                        <p className={`mt-3 text-sm leading-7 ${plan.highlight ? 'text-blue-100' : 'text-neutral-500'}`}>
+                        <p className={`mt-3 text-sm leading-7 ${plan.highlight ? 'text-emerald-100' : 'text-neutral-500'}`}>
                           {plan.description}
                         </p>
                       </div>
@@ -753,13 +742,13 @@ export default function Landing() {
                     </div>
                     <div className="mt-8 flex items-end gap-2">
                       <span className="text-5xl font-black">{plan.price}</span>
-                      {plan.period ? <span className={plan.highlight ? 'text-blue-100' : 'text-neutral-500'}>{plan.period}</span> : null}
+                      {plan.period ? <span className={plan.highlight ? 'text-emerald-100' : 'text-neutral-500'}>{plan.period}</span> : null}
                     </div>
                     <div className="mt-8 space-y-4">
                       {plan.features.map((feature) => (
                         <div key={feature} className="flex items-start gap-3">
                           <Check className={`mt-1 h-4 w-4 shrink-0 ${plan.highlight ? 'text-white' : 'text-success'}`} />
-                          <span className={`text-sm ${plan.highlight ? 'text-blue-50' : 'text-neutral-600'}`}>{feature}</span>
+                          <span className={`text-sm ${plan.highlight ? 'text-emerald-50' : 'text-neutral-600'}`}>{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -905,12 +894,12 @@ export default function Landing() {
         <section className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <Reveal>
-              <div className="overflow-hidden rounded-[36px] bg-[linear-gradient(135deg,#1A56DB_0%,#3B82F6_48%,#F59E0B_130%)] px-6 py-14 text-center text-white shadow-modal sm:px-10">
-                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100">Ready when you are</p>
+              <div className="overflow-hidden rounded-[36px] bg-brand-dark px-6 py-14 text-center text-white shadow-modal sm:px-10">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-100">Ready when you are</p>
                 <h2 className="mt-4 text-4xl font-black sm:text-5xl">
                   Ready to take control of your business?
                 </h2>
-                <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-blue-50">
+                <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-emerald-50">
                   Join 1,200+ smart business owners already using BizFlow NG.
                 </p>
                 <div className="mt-8">
@@ -925,7 +914,7 @@ export default function Landing() {
                     </Button>
                   </Link>
                 </div>
-                <p className="mt-5 text-sm font-semibold text-blue-100">
+                <p className="mt-5 text-sm font-semibold text-emerald-100">
                   No credit card required · Cancel anytime
                 </p>
               </div>
@@ -938,15 +927,7 @@ export default function Landing() {
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
             <div>
-              <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-sm font-black text-white shadow-button">
-                  BF
-                </span>
-                <div>
-                  <p className="text-base font-black text-neutral-900">BizFlow NG</p>
-                  <p className="text-sm text-neutral-500">Business management platform</p>
-                </div>
-              </div>
+              <BrandLogo />
               <p className="mt-5 max-w-sm text-sm leading-7 text-neutral-600">
                 Built for Nigerian SMEs, designed to help modern businesses invoice faster, manage teams better, and grow with clarity.
               </p>

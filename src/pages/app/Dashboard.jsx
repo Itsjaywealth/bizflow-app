@@ -169,11 +169,11 @@ function DashboardStatCard({
                 <AreaChart data={sparkline.map((item, index) => ({ index, value: item }))}>
                   <defs>
                     <linearGradient id={`spark-${chartId}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#1A56DB" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#1A56DB" stopOpacity={0.02} />
+                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
-                  <Area type="monotone" dataKey="value" stroke="#1A56DB" strokeWidth={2} fill={`url(#spark-${chartId})`} />
+                  <Area type="monotone" dataKey="value" stroke="#22C55E" strokeWidth={2} fill={`url(#spark-${chartId})`} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -524,8 +524,8 @@ export default function Dashboard({ business }) {
                 <AreaChart data={monthlyRevenue}>
                   <defs>
                     <linearGradient id="dashboardRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#1A56DB" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#1A56DB" stopOpacity={0.02} />
+                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid stroke="#E5E7EB" strokeDasharray="3 3" vertical={false} />
@@ -536,7 +536,7 @@ export default function Dashboard({ business }) {
                     formatter={(value) => [currency(value), 'Revenue']}
                     labelStyle={{ color: '#0F172A', fontWeight: 700 }}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#1A56DB" strokeWidth={3} fill="url(#dashboardRevenue)" />
+                  <Area type="monotone" dataKey="value" stroke="#22C55E" strokeWidth={3} fill="url(#dashboardRevenue)" />
                 </AreaChart>
               </ResponsiveContainer>
             )}

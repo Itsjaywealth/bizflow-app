@@ -5,6 +5,7 @@ import { supabase } from './lib/supabase'
 import AppLayout from './layouts/AppLayout'
 import PublicLayout from './layouts/PublicLayout'
 import ProtectedRoute from './components/ProtectedRoute'
+import BrandLogo from './components/BrandLogo'
 import ErrorBoundary from './components/ui/ErrorBoundary'
 import { AppToaster } from './components/ui/Toast'
 import { AppShellProvider } from './context/AppShellContext'
@@ -62,11 +63,9 @@ AppFrame.propTypes = {
 
 function RouteFallback() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="w-full max-w-xl rounded-[28px] border border-neutral-200 bg-white p-8 text-center shadow-card">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-sm font-black text-white shadow-button">
-          BF
-        </div>
+    <div className="brand-app-shell flex min-h-screen items-center justify-center bg-background px-6 dark:bg-darkbg">
+      <div className="brand-shell-panel w-full max-w-xl rounded-[28px] p-8 text-center shadow-card">
+        <BrandLogo className="mx-auto justify-center" showTagline={false} />
         <p className="text-lg font-bold text-neutral-900">Loading BizFlow NG</p>
         <p className="mt-2 text-sm text-neutral-500">Preparing your workspace and route assets…</p>
       </div>
@@ -119,11 +118,9 @@ export default function App() {
 
   if (authLoading || businessLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="brand-app-shell flex min-h-screen items-center justify-center bg-background dark:bg-darkbg">
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-sm font-black text-white shadow-button">
-            BF
-          </div>
+          <BrandLogo className="mx-auto justify-center" showTagline={false} />
           <p className="text-sm font-medium text-neutral-500">Loading BizFlow NG...</p>
         </div>
       </div>
