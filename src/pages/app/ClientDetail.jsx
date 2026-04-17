@@ -124,9 +124,9 @@ export default function ClientDetail({ business }) {
         </div>
       </section>
 
-      <div className="inline-flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1">
+      <div className="inline-flex rounded-2xl border border-emerald-400/12 bg-neutral-50 p-1 dark:bg-white/5">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold capitalize ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}>{tab}</button>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold capitalize transition ${activeTab === tab ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-500 hover:bg-emerald-500/8 hover:text-primary'}`}>{tab}</button>
         ))}
       </div>
 
@@ -142,7 +142,7 @@ export default function ClientDetail({ business }) {
             </div>
 
             <h2 className="mt-8 text-xl font-bold text-neutral-950">Notes</h2>
-            <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={6} className="mt-4 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" />
+            <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={6} className="mt-4 w-full rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
             <div className="mt-4">
               <Button loading={savingNotes} onClick={saveNotes}>Save notes</Button>
             </div>
@@ -203,7 +203,7 @@ export default function ClientDetail({ business }) {
           <h2 className="text-xl font-bold text-neutral-950">Activity timeline</h2>
           <div className="mt-5 space-y-4">
             {timeline.map((item, index) => (
-              <div key={`${item.label}-${index}`} className="flex items-start gap-4 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <div key={`${item.label}-${index}`} className="flex items-start gap-4 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                 <span className="mt-1 h-3 w-3 rounded-full bg-primary" />
                 <div>
                   <p className="font-semibold text-neutral-900">{item.label}</p>
@@ -229,7 +229,7 @@ export default function ClientDetail({ business }) {
           </div>
           <div className="grid gap-3">
             {files.length === 0 ? <p className="text-sm text-neutral-500">No files uploaded yet.</p> : files.map((file) => (
-              <a key={file.name} href={`${supabase.storage.from('client-files').getPublicUrl(`${business.id}/${id}/${file.name}`).data.publicUrl}`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <a key={file.name} href={`${supabase.storage.from('client-files').getPublicUrl(`${business.id}/${id}/${file.name}`).data.publicUrl}`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 transition hover:border-emerald-400/40 hover:bg-emerald-500/8 dark:bg-white/5">
                 <span className="text-sm font-medium text-neutral-700">{file.name}</span>
                 <span className="text-xs text-neutral-400">{Math.round((file.metadata?.size || 0) / 1024)} KB</span>
               </a>
@@ -245,7 +245,7 @@ ClientDetail.propTypes = { business: PropTypes.object }
 
 function InfoCard({ icon, label, value, href = '' }) {
   const content = (
-    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <div className="flex items-center gap-2 text-sm font-semibold text-neutral-500">{icon}{label}</div>
       <p className="mt-2 text-sm font-medium text-neutral-700">{value}</p>
     </div>
@@ -257,7 +257,7 @@ InfoCard.propTypes = { icon: PropTypes.node.isRequired, label: PropTypes.string.
 
 function SummaryRow({ label, value }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <span className="text-sm text-neutral-600">{label}</span>
       <strong className="text-sm font-bold text-neutral-950">{value}</strong>
     </div>

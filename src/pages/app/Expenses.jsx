@@ -115,10 +115,10 @@ export default function Expenses({ business }) {
               <p className="mt-1 text-sm text-neutral-500">Know where your money is going before month end.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+              <label className="flex items-center gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 dark:bg-white/5">
                 <input placeholder="Search expense..." value={query} onChange={(event) => setQuery(event.target.value)} className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none" />
               </label>
-              <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800">
+              <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 dark:bg-white/5">
                 <option value="all">All categories</option>
                 {categories.map((category) => <option key={category}>{category}</option>)}
               </select>
@@ -127,7 +127,7 @@ export default function Expenses({ business }) {
 
           <div className="mb-4 flex flex-wrap gap-2">
             {commonCategories.map((category) => (
-              <button key={category} type="button" onClick={() => openAdd(category)} className="rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm font-semibold text-neutral-600 hover:border-primary hover:text-primary">
+              <button key={category} type="button" onClick={() => openAdd(category)} className="rounded-full border border-emerald-400/12 bg-neutral-50 px-4 py-2 text-sm font-semibold text-neutral-600 transition hover:border-emerald-400/50 hover:bg-emerald-500/8 hover:text-primary dark:bg-white/5">
                 {category}
               </button>
             ))}
@@ -164,7 +164,7 @@ export default function Expenses({ business }) {
 
         <Card className="rounded-[30px]">
           <div className="flex items-center gap-3">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-red-100 text-red-600"><DollarSign className="h-5 w-5" /></div>
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-glow"><DollarSign className="h-5 w-5" /></div>
             <div>
               <h2 className="text-xl font-bold text-neutral-950">Top spending areas</h2>
               <p className="mt-1 text-sm text-neutral-500">See which categories take the biggest share.</p>
@@ -177,8 +177,8 @@ export default function Expenses({ business }) {
                   <span className="text-sm font-medium text-neutral-600">{row.category}</span>
                   <strong className="text-sm font-bold text-neutral-950">{fmt(row.total)}</strong>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-neutral-100">
-                  <div className="h-full rounded-full bg-red-400" style={{ width: `${Math.max(5, (row.total / Math.max(total, 1)) * 100)}%` }} />
+                <div className="h-3 overflow-hidden rounded-full bg-emerald-500/10 dark:bg-white/8">
+                  <div className="h-full rounded-full bg-brand-gradient" style={{ width: `${Math.max(5, (row.total / Math.max(total, 1)) * 100)}%` }} />
                 </div>
               </div>
             ))}
@@ -196,7 +196,7 @@ export default function Expenses({ business }) {
           <Input label="Date" type="date" value={form.expense_date} onChange={(event) => setForm((current) => ({ ...current, expense_date: event.target.value }))} />
           <label className="block space-y-2">
             <span className="text-sm font-semibold text-neutral-700">Notes</span>
-            <textarea rows={3} value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900" />
+            <textarea rows={3} value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
           </label>
           <Button type="submit" fullWidth loading={saving}>{editing ? 'Save Changes' : 'Save Expense'}</Button>
         </form>
@@ -208,7 +208,7 @@ export default function Expenses({ business }) {
 Expenses.propTypes = { business: PropTypes.object }
 
 function MetricCard({ label, value, note, tone = 'neutral' }) {
-  const toneClasses = { neutral: 'text-neutral-950', danger: 'text-red-600' }
+  const toneClasses = { neutral: 'text-neutral-950', danger: 'text-primary' }
   return (
     <Card className="rounded-3xl">
       <p className="text-sm font-semibold text-neutral-500">{label}</p>

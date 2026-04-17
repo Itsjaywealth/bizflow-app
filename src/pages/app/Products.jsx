@@ -119,10 +119,10 @@ export default function Products({ business }) {
               <p className="mt-1 text-sm text-neutral-500">Perfect for consultants, vendors, agencies, salons, logistics, and retail businesses.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+              <label className="flex items-center gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 dark:bg-white/5">
                 <input placeholder="Search products..." value={query} onChange={(event) => setQuery(event.target.value)} className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none" />
               </label>
-              <select value={priceBand} onChange={(event) => setPriceBand(event.target.value)} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800">
+              <select value={priceBand} onChange={(event) => setPriceBand(event.target.value)} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 dark:bg-white/5">
                 <option value="all">All price bands</option>
                 <option value="low">Up to ₦25,000</option>
                 <option value="mid">₦25,001 to ₦100,000</option>
@@ -133,7 +133,7 @@ export default function Products({ business }) {
 
           <div className="mb-4 flex flex-wrap gap-2">
             {starterCatalog.map((template) => (
-              <button key={template.name} type="button" onClick={() => openTemplate(template)} className="rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm font-semibold text-neutral-600 hover:border-primary hover:text-primary">
+              <button key={template.name} type="button" onClick={() => openTemplate(template)} className="rounded-full border border-emerald-400/12 bg-neutral-50 px-4 py-2 text-sm font-semibold text-neutral-600 transition hover:border-emerald-400/50 hover:bg-emerald-500/8 hover:text-primary dark:bg-white/5">
                 {template.name}
               </button>
             ))}
@@ -170,7 +170,7 @@ export default function Products({ business }) {
 
         <Card className="rounded-[30px]">
           <div className="flex items-center gap-3">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600"><Package2 className="h-5 w-5" /></div>
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-glow"><Package2 className="h-5 w-5" /></div>
             <div>
               <h2 className="text-xl font-bold text-neutral-950">Catalog insights</h2>
               <p className="mt-1 text-sm text-neutral-500">Your strongest and highest-priced items.</p>
@@ -178,7 +178,7 @@ export default function Products({ business }) {
           </div>
           <div className="mt-5 grid gap-3">
             {topProducts.length === 0 ? <p className="text-sm text-neutral-500">Add items to see your top-priced products and services.</p> : topProducts.map((product) => (
-              <div key={product.id} className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <div key={product.id} className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                 <span className="text-sm font-medium text-neutral-600">{product.name}</span>
                 <strong className="text-sm font-bold text-neutral-950">{fmt(product.price)}</strong>
               </div>
@@ -192,7 +192,7 @@ export default function Products({ business }) {
           <Input label="Name *" value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} required />
           <label className="block space-y-2">
             <span className="text-sm font-semibold text-neutral-700">Description</span>
-            <textarea rows={3} value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900" />
+            <textarea rows={3} value={form.description} onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
           </label>
           <Input label="Price (₦)" type="number" value={form.price} onChange={(event) => setForm((current) => ({ ...current, price: event.target.value }))} />
           <Button type="submit" fullWidth loading={saving}>{editing ? 'Save Changes' : 'Save Product or Service'}</Button>
@@ -205,7 +205,7 @@ export default function Products({ business }) {
 Products.propTypes = { business: PropTypes.object }
 
 function MetricCard({ label, value, note, tone = 'neutral' }) {
-  const toneClasses = { neutral: 'text-neutral-950', success: 'text-emerald-600' }
+  const toneClasses = { neutral: 'text-neutral-950', success: 'text-primary' }
   return (
     <Card className="rounded-3xl">
       <p className="text-sm font-semibold text-neutral-500">{label}</p>
