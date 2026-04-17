@@ -121,7 +121,7 @@ export default function InvoiceDetail({ business }) {
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="rounded-[32px]">
-          <div ref={previewRef} className="space-y-8 rounded-[28px] border border-neutral-200 bg-white p-6">
+          <div ref={previewRef} className="space-y-8 rounded-[28px] border border-emerald-400/15 bg-white/95 p-6 dark:bg-white/5">
             <div className="flex flex-wrap items-start justify-between gap-6">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">BizFlow NG</p>
@@ -136,12 +136,12 @@ export default function InvoiceDetail({ business }) {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="rounded-2xl bg-neutral-50 p-4">
+              <div className="rounded-2xl bg-neutral-50 p-4 dark:bg-white/5">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">From</p>
                 <p className="mt-2 font-bold text-neutral-900">{invoice.business_snapshot?.name}</p>
                 <p className="mt-2 text-sm leading-6 text-neutral-500">{invoice.business_snapshot?.address}</p>
               </div>
-              <div className="rounded-2xl bg-neutral-50 p-4">
+              <div className="rounded-2xl bg-neutral-50 p-4 dark:bg-white/5">
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">To</p>
                 <p className="mt-2 font-bold text-neutral-900">{invoice.client_snapshot?.name}</p>
                 <p className="mt-2 text-sm leading-6 text-neutral-500">{invoice.client_snapshot?.email}</p>
@@ -149,14 +149,14 @@ export default function InvoiceDetail({ business }) {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-3xl border border-neutral-200">
+            <div className="overflow-hidden rounded-3xl border border-emerald-400/12">
               <table className="min-w-full">
                 <thead>
                   <tr>
-                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Description</th>
-                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Qty</th>
-                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Unit Price</th>
-                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Amount</th>
+                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Description</th>
+                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Qty</th>
+                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Unit Price</th>
+                    <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -173,7 +173,7 @@ export default function InvoiceDetail({ business }) {
             </div>
 
             <div className="flex justify-end">
-              <div className="w-full max-w-sm space-y-3 rounded-3xl bg-neutral-50 p-5">
+              <div className="w-full max-w-sm space-y-3 rounded-3xl bg-neutral-50 p-5 dark:bg-white/5">
                 <div className="flex items-center justify-between text-sm text-neutral-600"><span>Subtotal</span><strong>{formatCurrency(invoice.subtotal, invoice.currency || 'NGN')}</strong></div>
                 <div className="flex items-center justify-between text-sm text-neutral-600"><span>Tax</span><strong>{formatCurrency(invoice.tax, invoice.currency || 'NGN')}</strong></div>
                 <div className="flex items-center justify-between border-t border-neutral-200 pt-3 text-lg font-black text-neutral-950"><span>Total</span><strong>{formatCurrency(invoice.total, invoice.currency || 'NGN')}</strong></div>
@@ -216,7 +216,7 @@ export default function InvoiceDetail({ business }) {
             <h2 className="text-xl font-bold text-neutral-950">Activity log</h2>
             <div className="mt-5 space-y-4">
               {activityLog.map((entry, index) => (
-                <div key={`${entry.label}-${index}`} className="flex items-start gap-4 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+                <div key={`${entry.label}-${index}`} className="flex items-start gap-4 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                   <span className="mt-1 h-3 w-3 rounded-full bg-primary" />
                   <div>
                     <p className="font-semibold text-neutral-900">{entry.label}</p>

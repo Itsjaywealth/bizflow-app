@@ -370,7 +370,7 @@ export default function InvoiceForm({ business }) {
                       key={client.id}
                       type="button"
                       onClick={() => chooseClient(client)}
-                      className={`rounded-2xl border px-4 py-3 text-left transition ${selectedClientId === client.id ? 'border-primary bg-primary/5' : 'border-neutral-200 bg-neutral-50 hover:border-primary/40'}`}
+                      className={`rounded-2xl border px-4 py-3 text-left transition ${selectedClientId === client.id ? 'border-primary bg-primary/8 shadow-glow' : 'border-emerald-400/12 bg-neutral-50 hover:border-primary/40 hover:bg-emerald-500/8 dark:bg-white/5'}`}
                     >
                       <div className="font-semibold text-neutral-900">{client.name}</div>
                       <div className="text-sm text-neutral-500">{client.email || 'No email'}</div>
@@ -398,13 +398,13 @@ export default function InvoiceForm({ business }) {
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="block space-y-2">
                   <span className="text-sm font-semibold text-neutral-700">Currency</span>
-                  <select {...register('currency')} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900">
+                  <select {...register('currency')} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5">
                     {['NGN', 'USD', 'GBP', 'EUR'].map((option) => <option key={option}>{option}</option>)}
                   </select>
                 </label>
                 <label className="block space-y-2">
                   <span className="text-sm font-semibold text-neutral-700">Payment terms</span>
-                  <select {...register('payment_terms')} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900">
+                  <select {...register('payment_terms')} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5">
                     {['Net 7', 'Net 14', 'Net 30', 'Custom'].map((option) => <option key={option}>{option}</option>)}
                   </select>
                 </label>
@@ -430,7 +430,7 @@ export default function InvoiceForm({ business }) {
                     onDragStart={() => onDragStart(index)}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={() => onDrop(index)}
-                    className="rounded-3xl border border-neutral-200 bg-neutral-50 p-4"
+                    className="rounded-3xl border border-emerald-400/12 bg-neutral-50 p-4 dark:bg-white/5"
                   >
                     <div className="mb-4 flex items-center justify-between gap-4">
                       <div className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-500">
@@ -447,14 +447,14 @@ export default function InvoiceForm({ business }) {
                       <Input label="Unit Price" type="number" error={errors.items?.[index]?.unit_price?.message} {...register(`items.${index}.unit_price`)} />
                       <label className="block space-y-2">
                         <span className="text-sm font-semibold text-neutral-700">Tax %</span>
-                        <select {...register(`items.${index}.tax_percent`)} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900">
+                        <select {...register(`items.${index}.tax_percent`)} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5">
                           <option value="0">0%</option>
                           <option value="7.5">7.5% VAT</option>
                           <option value="10">10%</option>
                           <option value="15">15%</option>
                         </select>
                       </label>
-                      <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm">
+                      <div className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm dark:bg-white/5">
                         <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Amount</span>
                         <strong className="mt-3 block text-base font-bold text-neutral-950">{formatCurrency(Number(values.items?.[index]?.qty || 0) * Number(values.items?.[index]?.unit_price || 0), values.currency)}</strong>
                       </div>
@@ -468,29 +468,29 @@ export default function InvoiceForm({ business }) {
               <div className="space-y-4">
                 <label className="block space-y-2">
                   <span className="text-sm font-semibold text-neutral-700">Notes</span>
-                  <textarea {...register('notes')} rows={4} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900" />
+                  <textarea {...register('notes')} rows={4} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
                 </label>
                 <label className="block space-y-2">
                   <span className="text-sm font-semibold text-neutral-700">Payment terms details</span>
-                  <textarea {...register('payment_terms_note')} rows={4} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900" />
+                  <textarea {...register('payment_terms_note')} rows={4} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
                 </label>
               </div>
 
-              <div className="space-y-4 rounded-3xl border border-neutral-200 bg-neutral-50 p-5">
+              <div className="space-y-4 rounded-3xl border border-emerald-400/12 bg-neutral-50 p-5 dark:bg-white/5">
                 <div className="flex items-center justify-between text-sm text-neutral-600"><span>Subtotal</span><strong>{formatCurrency(subtotal, values.currency)}</strong></div>
                 <div className="flex items-center justify-between text-sm text-neutral-600"><span>Tax total</span><strong>{formatCurrency(taxTotal, values.currency)}</strong></div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="block space-y-2">
                     <span className="text-sm font-semibold text-neutral-700">Discount type</span>
-                    <select {...register('discount_type')} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900">
+                    <select {...register('discount_type')} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5">
                       <option value="amount">₦ amount</option>
                       <option value="percent">% percent</option>
                     </select>
                   </label>
                   <Input label="Discount" type="number" {...register('discount_value')} />
                 </div>
-                <div className="rounded-2xl bg-primary px-4 py-4 text-white">
-                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-blue-100">Grand Total</span>
+                <div className="rounded-2xl bg-brand-gradient px-4 py-4 text-white shadow-glow">
+                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-emerald-50/85">Grand Total</span>
                   <strong className="mt-2 block text-3xl font-black">{formatCurrency(grandTotal, values.currency)}</strong>
                 </div>
               </div>
@@ -525,7 +525,7 @@ export default function InvoiceForm({ business }) {
             paymentLink={generatedPaymentLink}
           />
           {generatedPaymentLink ? (
-            <div className="mt-5 rounded-3xl border border-neutral-200 bg-neutral-50 p-5">
+            <div className="mt-5 rounded-3xl border border-emerald-400/12 bg-neutral-50 p-5 dark:bg-white/5">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-bold text-neutral-950">Payment link ready</h3>
@@ -535,8 +535,8 @@ export default function InvoiceForm({ business }) {
                   Copy
                 </Button>
               </div>
-              <div className="mt-4 break-all rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-600">{generatedPaymentLink}</div>
-              <div className="mt-4 inline-grid grid-cols-[repeat(21,minmax(0,1fr))] gap-[2px] rounded-2xl bg-white p-3 shadow-sm">
+              <div className="mt-4 break-all rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-600 dark:bg-white/5">{generatedPaymentLink}</div>
+              <div className="mt-4 inline-grid grid-cols-[repeat(21,minmax(0,1fr))] gap-[2px] rounded-2xl bg-white/90 p-3 shadow-sm dark:bg-white/5">
                 {qrCells.map((filled, index) => (
                   <span key={index} className={`h-2.5 w-2.5 rounded-[2px] ${filled ? 'bg-neutral-900' : 'bg-neutral-100'}`} />
                 ))}
@@ -590,7 +590,7 @@ const InvoicePreviewCard = React.forwardRef(function InvoicePreviewCard({
   watermark = '',
 }, ref) {
   return (
-    <div ref={ref} className="relative rounded-[32px] border border-neutral-200 bg-white p-6 shadow-card">
+    <div ref={ref} className="relative rounded-[32px] border border-emerald-400/15 bg-white/95 p-6 shadow-card dark:bg-white/5">
       {watermark ? <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-24deg] text-7xl font-black tracking-[0.22em] text-neutral-200/80">{watermark}</div> : null}
       <div className="flex flex-wrap items-start justify-between gap-6">
         <div>
@@ -606,12 +606,12 @@ const InvoicePreviewCard = React.forwardRef(function InvoicePreviewCard({
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl bg-neutral-50 p-4">
+        <div className="rounded-2xl bg-neutral-50 p-4 dark:bg-white/5">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">From</p>
           <p className="mt-2 font-bold text-neutral-900">{business?.name}</p>
           <p className="mt-2 text-sm leading-6 text-neutral-500">{business?.address || 'Business address'}</p>
         </div>
-        <div className="rounded-2xl bg-neutral-50 p-4">
+        <div className="rounded-2xl bg-neutral-50 p-4 dark:bg-white/5">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">To</p>
           <p className="mt-2 font-bold text-neutral-900">{invoice.client_name}</p>
           <p className="mt-2 text-sm leading-6 text-neutral-500">{invoice.client_email || 'Client email'}</p>
@@ -620,21 +620,21 @@ const InvoicePreviewCard = React.forwardRef(function InvoicePreviewCard({
       </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-neutral-200 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Issue date</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.issue_date}</strong></div>
-        <div className="rounded-2xl border border-neutral-200 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Due date</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.due_date}</strong></div>
-        <div className="rounded-2xl border border-neutral-200 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Currency</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.currency}</strong></div>
-        <div className="rounded-2xl border border-neutral-200 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Terms</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.payment_terms}</strong></div>
+        <div className="rounded-2xl border border-emerald-400/12 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Issue date</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.issue_date}</strong></div>
+        <div className="rounded-2xl border border-emerald-400/12 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Due date</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.due_date}</strong></div>
+        <div className="rounded-2xl border border-emerald-400/12 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Currency</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.currency}</strong></div>
+        <div className="rounded-2xl border border-emerald-400/12 px-4 py-4"><span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Terms</span><strong className="mt-2 block text-sm text-neutral-900">{invoice.payment_terms}</strong></div>
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-3xl border border-neutral-200">
+      <div className="mt-8 overflow-hidden rounded-3xl border border-emerald-400/12">
         <table className="min-w-full">
           <thead>
             <tr>
-              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Description</th>
-              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Qty</th>
-              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Unit</th>
-              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Tax</th>
-              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400">Amount</th>
+              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Description</th>
+              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Qty</th>
+              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Unit</th>
+              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Tax</th>
+              <th className="bg-neutral-50 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.14em] text-neutral-400 dark:bg-white/5">Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -652,7 +652,7 @@ const InvoicePreviewCard = React.forwardRef(function InvoicePreviewCard({
       </div>
 
       <div className="mt-8 flex justify-end">
-        <div className="w-full max-w-sm space-y-3 rounded-3xl bg-neutral-50 p-5">
+        <div className="w-full max-w-sm space-y-3 rounded-3xl bg-neutral-50 p-5 dark:bg-white/5">
           <div className="flex items-center justify-between text-sm text-neutral-600"><span>Subtotal</span><strong>{formatCurrency(subtotal, invoice.currency)}</strong></div>
           <div className="flex items-center justify-between text-sm text-neutral-600"><span>Tax</span><strong>{formatCurrency(taxTotal, invoice.currency)}</strong></div>
           <div className="flex items-center justify-between text-sm text-neutral-600"><span>Discount</span><strong>- {formatCurrency(discountAmount, invoice.currency)}</strong></div>
