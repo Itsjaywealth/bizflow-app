@@ -122,7 +122,7 @@ export default function NotificationCenter() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="relative rounded-2xl border border-neutral-200 bg-white p-3 text-neutral-600 transition hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:bg-neutral-800"
+        className="relative rounded-2xl border border-emerald-400/15 bg-white/80 p-3 text-neutral-600 transition hover:bg-white dark:bg-white/5 dark:text-neutral-200 dark:hover:bg-white/10"
         aria-label="Open notifications"
       >
         <Bell className="h-5 w-5" />
@@ -136,7 +136,7 @@ export default function NotificationCenter() {
           <>
             <motion.button
               type="button"
-              className="fixed inset-0 z-40 bg-neutral-950/45"
+              className="fixed inset-0 z-40 bg-neutral-950/55 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -149,7 +149,7 @@ export default function NotificationCenter() {
               transition={{ type: 'spring', bounce: 0.15, duration: 0.35 }}
               className="notification-center"
             >
-              <div className="flex items-center justify-between gap-4 border-b border-neutral-200 px-5 py-5 dark:border-neutral-800">
+              <div className="flex items-center justify-between gap-4 border-b border-emerald-400/10 px-5 py-5">
                 <div>
                   <h2 className="text-lg font-black text-neutral-950 dark:text-white">Notifications</h2>
                   <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">

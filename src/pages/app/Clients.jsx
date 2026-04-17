@@ -287,21 +287,21 @@ export default function Clients({ business }) {
       <Card className="rounded-[30px]">
         <div className="mb-5 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap gap-3">
-            <label className="flex min-w-[260px] items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+            <label className="flex min-w-[260px] items-center gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3">
               <Search className="h-4 w-4 text-neutral-400" />
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search by name, email, phone" className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none" />
             </label>
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800">
+            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 dark:bg-white/5">
               {statusOptions.map((option) => <option key={option} value={option}>{option === 'all' ? 'All status' : option.charAt(0).toUpperCase() + option.slice(1)}</option>)}
             </select>
-            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800">
+            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 dark:bg-white/5">
               {['Name', 'Date Added', 'Total Spent'].map((option) => <option key={option}>{option}</option>)}
             </select>
           </div>
 
-          <div className="inline-flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1">
-            <button type="button" onClick={() => setViewMode('card')} className={`rounded-xl px-3 py-2 text-sm font-semibold ${viewMode === 'card' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}><Grid2X2 className="h-4 w-4" /></button>
-            <button type="button" onClick={() => setViewMode('table')} className={`rounded-xl px-3 py-2 text-sm font-semibold ${viewMode === 'table' ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}><List className="h-4 w-4" /></button>
+          <div className="inline-flex rounded-2xl border border-emerald-400/12 bg-neutral-50 p-1">
+            <button type="button" onClick={() => setViewMode('card')} className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${viewMode === 'card' ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-500 hover:bg-primary/10 hover:text-primary'}`}><Grid2X2 className="h-4 w-4" /></button>
+            <button type="button" onClick={() => setViewMode('table')} className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${viewMode === 'table' ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-500 hover:bg-primary/10 hover:text-primary'}`}><List className="h-4 w-4" /></button>
           </div>
         </div>
 
@@ -350,7 +350,7 @@ export default function Clients({ business }) {
                     <td><input type="checkbox" checked={selectedIds.includes(client.id)} onChange={() => setSelectedIds((current) => current.includes(client.id) ? current.filter((item) => item !== client.id) : [...current, client.id])} /></td>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl font-bold ${clientAvatarTone(getClientName(client))}`}>{getClientName(client).slice(0, 2).toUpperCase()}</div>
+                      <div className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl font-bold shadow-sm ${clientAvatarTone(getClientName(client))}`}>{getClientName(client).slice(0, 2).toUpperCase()}</div>
                         <div>
                           <div className="font-semibold text-neutral-900">{getClientName(client)}</div>
                           <div className="text-xs text-neutral-500">{client.client_type || 'Client'}</div>
@@ -499,10 +499,10 @@ StatCard.propTypes = { label: PropTypes.string.isRequired, value: PropTypes.oneO
 
 function ClientCard({ client, onView, onInvoice, onEdit, onDelete }) {
   return (
-    <motion.div whileHover={{ y: -4 }} className="group rounded-[28px] border border-neutral-200 bg-neutral-50 p-5 shadow-sm transition-shadow hover:shadow-card">
+    <motion.div whileHover={{ y: -4 }} className="group rounded-[28px] border border-emerald-400/12 bg-neutral-50 p-5 shadow-sm transition-shadow hover:shadow-card dark:bg-white/5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl font-bold ${clientAvatarTone(getClientName(client))}`}>{getClientName(client).slice(0, 2).toUpperCase()}</div>
+        <div className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl font-bold shadow-sm ${clientAvatarTone(getClientName(client))}`}>{getClientName(client).slice(0, 2).toUpperCase()}</div>
           <div>
             <h3 className="text-lg font-bold text-neutral-900">{getClientName(client)}</h3>
             <p className="mt-1 text-sm text-neutral-500">{getClientBusiness(client)}</p>
@@ -517,7 +517,7 @@ function ClientCard({ client, onView, onInvoice, onEdit, onDelete }) {
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4">
+        <div className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 dark:bg-white/8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">Total invoiced</p>
           <p className="mt-2 text-lg font-black text-neutral-900">{formatClientCurrency(client.stats.totalInvoiced)}</p>
         </div>
