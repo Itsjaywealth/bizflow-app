@@ -4,12 +4,26 @@ import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
 const OAUTH_NEXT_STORAGE_KEY = 'bizflow-auth-next'
+const DEFAULT_APP_PATH = '/app/dashboard'
 
 function getSafeNextPath(nextPath) {
-  if (!nextPath || typeof nextPath !== 'string') return '/app/dashboard'
-  if (!nextPath.startsWith('/')) return '/app/dashboard'
-  if (nextPath.startsWith('//')) return '/app/dashboard'
+  if (!nextPath || typeof nextPath !== 'string') return DEFAULT_APP_PATH
+  if (!nextPath.startsWith('/')) return DEFAULT_APP_PATH
+  if (nextPath.startsWith('//')) return DEFAULT_APP_PATH
   return nextPath
+}
+
+function getAuthSiteUrl() {
+  const configured = process.env.REACT_APP_SITE_URL?.trim()
+  if (configured) return configured.replace(/\/$/, '')
+  if (typeof window !== 'undefined' && window.location?.origin) return window.location.origin
+  return 'https://bizflowng.com'
+}
+
+function getOAuthRedirectUrl(nextPath = DEFAULT_APP_PATH) {
+  const redirectUrl = new URL('/auth/callback', getAuthSiteUrl())
+  redirectUrl.searchParams.set('next', getSafeNextPath(nextPath))
+  return redirectUrl.toString()
 }
 
 export function AuthProvider({ children }) {
@@ -59,13 +73,10 @@ export function AuthProvider({ children }) {
     const safeNextPath = getSafeNextPath(nextPath)
     sessionStorage.setItem(OAUTH_NEXT_STORAGE_KEY, safeNextPath)
 
-    const redirectUrl = new URL('/auth/callback', window.location.origin)
-    redirectUrl.searchParams.set('next', safeNextPath)
-
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectUrl.toString(),
+        redirectTo: getOAuthRedirectUrl(safeNextPath),
         queryParams: {
           access_type: 'offline',
           prompt: 'select_account',
@@ -97,6 +108,7 @@ export function AuthProvider({ children }) {
       signInWithGoogle,
       signOut,
       getSafeNextPath,
+      getOAuthRedirectUrl,
       oauthNextStorageKey: OAUTH_NEXT_STORAGE_KEY,
     }),
     [session, loading]
