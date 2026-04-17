@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import PageUtilityNav from '../components/PageUtilityNav'
+import Seo from '../components/Seo'
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('')
@@ -46,6 +47,12 @@ export default function ResetPassword() {
 
   return (
     <div className="auth-shell">
+      <Seo
+        title="Reset password — BizFlow NG"
+        description="Reset your BizFlow NG password securely and regain access to your account."
+        path="/reset-password"
+        noindex
+      />
       <div style={{ width: '100%', maxWidth: 480 }}>
         <PageUtilityNav />
         <div className="auth-card">

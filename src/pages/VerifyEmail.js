@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import Seo from '../components/Seo'
 
 export default function VerifyEmail() {
   const [visible, setVisible] = useState(false)
@@ -45,6 +46,12 @@ export default function VerifyEmail() {
 
   return (
     <div className="verify-shell">
+      <Seo
+        title="Verify your email — BizFlow NG"
+        description="Confirm your email address to activate your BizFlow NG account and continue setup."
+        path="/verify-email"
+        noindex
+      />
       <div className={`verify-content ${visible ? 'is-visible' : ''}`}>
         <div className="verify-logo-stack">
           <div className="verify-logo-mark" aria-hidden="true">

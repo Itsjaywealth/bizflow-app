@@ -39,6 +39,7 @@ import {
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
+import Seo from '../components/Seo'
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -301,6 +302,11 @@ export default function Landing() {
 
   return (
     <div className="bg-background text-neutral-900">
+      <Seo
+        title="BizFlow NG — Business Management Software for Nigerian SMEs"
+        description="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
+        path="/"
+      />
       <motion.header
         className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-neutral-200 bg-white/95 shadow-card backdrop-blur' : 'bg-transparent'}`}
       >

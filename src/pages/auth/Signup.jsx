@@ -19,6 +19,7 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import useToast from '../../hooks/useToast'
 import AuthSplitLayout from './AuthSplitLayout'
+import Seo from '../../components/Seo'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Enter your full name'),
@@ -111,11 +112,18 @@ export default function Signup() {
   }
 
   return (
-    <AuthSplitLayout
-      title="Create your account"
-      subtitle="Start your 14-day free trial"
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <>
+      <Seo
+        title="Sign up — BizFlow NG"
+        description="Start your BizFlow NG free trial and set up invoicing, payroll, HR, and client management."
+        path="/signup"
+        noindex
+      />
+      <AuthSplitLayout
+        title="Create your account"
+        subtitle="Start your 14-day free trial"
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Full name"
           placeholder="Joseph Egbedi"
@@ -225,13 +233,14 @@ export default function Signup() {
         Continue with Google
       </Button>
 
-      <p className="mt-8 text-center text-sm text-neutral-500">
-        Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-primary hover:text-primary-dark">
-          Log in
-        </Link>
-      </p>
-    </AuthSplitLayout>
+        <p className="mt-8 text-center text-sm text-neutral-500">
+          Already have an account?{' '}
+          <Link to="/login" className="font-semibold text-primary hover:text-primary-dark">
+            Log in
+          </Link>
+        </p>
+      </AuthSplitLayout>
+    </>
   )
 }
 

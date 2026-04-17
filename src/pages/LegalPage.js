@@ -1,5 +1,6 @@
 import React from 'react'
 import PageUtilityNav from '../components/PageUtilityNav'
+import Seo from '../components/Seo'
 
 const content = {
   terms: {
@@ -35,9 +36,15 @@ const content = {
 
 export default function LegalPage({ type }) {
   const page = content[type] || content.terms
+  const pathMap = {
+    terms: '/terms',
+    privacy: '/privacy',
+    refund: '/refund-policy',
+  }
 
   return (
     <div className="legal-shell">
+      <Seo title={`${page.title} — BizFlow NG`} description={page.intro} path={pathMap[type] || '/terms'} />
       <div className="legal-card">
         <PageUtilityNav />
         <h1>{page.title}</h1>

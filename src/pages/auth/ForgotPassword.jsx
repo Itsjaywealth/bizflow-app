@@ -9,6 +9,7 @@ import Button from '../../components/ui/Button'
 import Card from '../../components/ui/Card'
 import Input from '../../components/ui/Input'
 import useToast from '../../hooks/useToast'
+import Seo from '../../components/Seo'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -43,6 +44,12 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-background px-4 py-10 sm:px-6 lg:px-8">
+      <Seo
+        title="Forgot password — BizFlow NG"
+        description="Send a secure password reset link to regain access to your BizFlow NG account."
+        path="/forgot-password"
+        noindex
+      />
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-xl items-center justify-center">
         <Card className="w-full rounded-[32px] p-8 sm:p-10">
           <Link to="/login" className="text-sm font-semibold text-primary hover:text-primary-dark">
