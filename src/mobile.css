@@ -669,6 +669,16 @@ table {
     border-radius: 22px;
   }
 
+  .support-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .support-panel {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
   .public-invoice-topbar {
     align-items: flex-start;
     flex-direction: column;
@@ -729,6 +739,26 @@ table {
   .section-grid {
     gap: 10px;
     margin-bottom: 14px;
+  }
+
+  .legal-card {
+    margin: 14px auto;
+  }
+
+  .legal-intro {
+    max-width: 100%;
+    margin-bottom: 18px;
+  }
+
+  .page-utility-nav {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-link {
+    width: 100%;
+    justify-content: center;
   }
 
   .stat-card {
