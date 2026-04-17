@@ -38,14 +38,16 @@ export default function Login() {
   })
 
   async function onSubmit(values) {
-    const nextPath = getSafeNextPath(location.state?.from?.pathname || '/app/dashboard')
+    const nextPath = getSafeNextPath(
+      `${location.state?.from?.pathname || '/app/dashboard'}${location.state?.from?.search || ''}${location.state?.from?.hash || ''}`
+    )
     const { error } = await supabase.auth.signInWithPassword(values)
     if (error) {
       console.error('Email/password login failed:', error)
       toast.error('Incorrect email or password. Please try again.')
       return
     }
-    navigate(nextPath)
+    navigate(nextPath, { replace: true })
   }
 
   async function handleGoogleSignIn() {
@@ -55,6 +57,7 @@ export default function Login() {
       )
       await startGoogleSignIn(nextPath)
     } catch (error) {
+      console.error('Google sign-in launch failed:', error)
       toast.error('Google login failed. Please try again.')
     }
   }

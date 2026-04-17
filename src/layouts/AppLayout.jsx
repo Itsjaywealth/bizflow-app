@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { supabase } from '../lib/supabase'
 import Sidebar from '../components/navigation/Sidebar'
 import Topbar from '../components/navigation/Topbar'
 import AnnouncementBanner from '../components/AnnouncementBanner'
 import AppShellOverlays from '../components/global/AppShellOverlays'
 import PlanLimitWarnings from '../components/global/PlanLimitWarnings'
 import AppRouteSeo from '../components/AppRouteSeo'
+import useAuth from '../hooks/useAuth'
 
 export default function AppLayout({ children, session, business }) {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { signOut } = useAuth()
 
   async function handleLogout() {
-    await supabase.auth.signOut()
+    await signOut()
   }
 
   return (

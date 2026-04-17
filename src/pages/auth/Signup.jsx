@@ -108,6 +108,7 @@ export default function Signup() {
     try {
       await startGoogleSignIn('/app/dashboard')
     } catch (error) {
+      console.error('Google sign-in launch failed during signup:', error)
       toast.error('Google login failed. Please try again.')
     }
   }
