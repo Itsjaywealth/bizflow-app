@@ -210,9 +210,9 @@ export default function StaffDetail({ business }) {
         </div>
       </section>
 
-      <div className="inline-flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1">
+      <div className="inline-flex rounded-2xl border border-emerald-400/12 bg-neutral-50 p-1 dark:bg-white/5">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold capitalize ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}>{tab}</button>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold capitalize transition ${activeTab === tab ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-500 hover:bg-emerald-500/8 hover:text-primary'}`}>{tab}</button>
         ))}
       </div>
 
@@ -232,7 +232,7 @@ export default function StaffDetail({ business }) {
             </div>
 
             <h2 className="mt-8 text-xl font-bold text-neutral-950">Notes</h2>
-            <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={6} className="mt-4 w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" />
+            <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={6} className="mt-4 w-full rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
             <div className="mt-4">
               <Button onClick={saveInlineProfile}>Save profile notes</Button>
             </div>
@@ -252,9 +252,9 @@ export default function StaffDetail({ business }) {
             <Card className="rounded-[32px]">
               <h2 className="text-xl font-bold text-neutral-950">Quick status</h2>
               <div className="mt-5 space-y-3">
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm text-neutral-600">Attendance rate: <strong className="text-neutral-950">{attendanceSummary.rate}%</strong></div>
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm text-neutral-600">Present records: <strong className="text-neutral-950">{attendanceSummary.present}</strong></div>
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm text-neutral-600">Leave days recorded: <strong className="text-neutral-950">{attendanceSummary.leave}</strong></div>
+                <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-sm text-neutral-600 dark:bg-white/5">Attendance rate: <strong className="text-neutral-950">{attendanceSummary.rate}%</strong></div>
+                <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-sm text-neutral-600 dark:bg-white/5">Present records: <strong className="text-neutral-950">{attendanceSummary.present}</strong></div>
+                <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-sm text-neutral-600 dark:bg-white/5">Leave days recorded: <strong className="text-neutral-950">{attendanceSummary.leave}</strong></div>
               </div>
             </Card>
           </div>
@@ -280,7 +280,7 @@ export default function StaffDetail({ business }) {
           </div>
           <div className="mt-6 space-y-3">
             {attendance.length === 0 ? <p className="text-sm text-neutral-500">No attendance records yet.</p> : attendance.slice(0, 12).map((entry) => (
-              <div key={entry.id} className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <div key={entry.id} className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                 <div>
                   <p className="font-semibold text-neutral-900">{formatDate(entry.attendance_date)}</p>
                   <p className="text-sm text-neutral-500">{entry.check_in_at ? `Checked in ${new Date(entry.check_in_at).toLocaleTimeString('en-NG')}` : 'No check-in time recorded'}</p>
@@ -303,7 +303,7 @@ export default function StaffDetail({ business }) {
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {leaveBalances.map((balance) => (
-              <Card key={balance.leave_type} className="rounded-3xl border border-neutral-200 bg-neutral-50">
+              <Card key={balance.leave_type} className="rounded-3xl border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                 <p className="text-sm font-semibold text-neutral-500">{balance.leave_type}</p>
                 <p className="mt-3 text-3xl font-black text-neutral-950">{balance.remaining_days}/{balance.total_days}</p>
                 <p className="mt-2 text-sm text-neutral-500">days remaining</p>
@@ -389,7 +389,7 @@ export default function StaffDetail({ business }) {
           </div>
           <div className="mt-6 grid gap-3">
             {documents.length === 0 ? <p className="text-sm text-neutral-500">No staff documents uploaded yet.</p> : documents.map((document) => (
-              <div key={document.id} className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <div key={document.id} className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                 <div>
                   <p className="font-semibold text-neutral-900">{document.file_name}</p>
                   <p className="text-sm text-neutral-500">{document.category || 'Document'} • uploaded {formatDate(document.created_at)}</p>
@@ -405,7 +405,7 @@ export default function StaffDetail({ business }) {
         <form onSubmit={requestLeave} className="space-y-4">
           <label className="block space-y-2">
             <span className="text-sm font-semibold text-neutral-700">Leave type</span>
-            <select value={leaveForm.leave_type} onChange={(event) => setLeaveForm((current) => ({ ...current, leave_type: event.target.value }))} className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900">
+            <select value={leaveForm.leave_type} onChange={(event) => setLeaveForm((current) => ({ ...current, leave_type: event.target.value }))} className="w-full rounded-xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5">
               {leaveTypeOptions.map((option) => <option key={option} value={option}>{option}</option>)}
             </select>
           </label>
@@ -415,7 +415,7 @@ export default function StaffDetail({ business }) {
           </div>
           <label className="block space-y-2">
             <span className="text-sm font-semibold text-neutral-700">Reason</span>
-            <textarea rows={4} value={leaveForm.reason} onChange={(event) => setLeaveForm((current) => ({ ...current, reason: event.target.value }))} className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-900" />
+            <textarea rows={4} value={leaveForm.reason} onChange={(event) => setLeaveForm((current) => ({ ...current, reason: event.target.value }))} className="w-full rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 dark:bg-white/5" />
           </label>
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={() => setShowLeaveModal(false)}>Cancel</Button>
@@ -427,7 +427,7 @@ export default function StaffDetail({ business }) {
       <Modal open={showPayslipModal} onClose={() => setShowPayslipModal(false)} title="Payslip preview">
         {selectedPayslip ? (
           <div className="space-y-4">
-            <div className="rounded-[28px] border border-neutral-200 bg-white p-6">
+            <div className="rounded-[28px] border border-emerald-400/15 bg-white/90 p-6 dark:bg-white/5">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">BizFlow NG</p>
@@ -462,7 +462,7 @@ StaffDetail.propTypes = {
 
 function InfoCard({ icon = null, label, value }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <div className="flex items-center gap-2 text-sm font-semibold text-neutral-500">
         {icon}
         <span>{label}</span>
@@ -480,7 +480,7 @@ InfoCard.propTypes = {
 
 function SummaryRow({ label, value }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <span className="text-sm font-medium text-neutral-600">{label}</span>
       <strong className="text-sm font-bold text-neutral-950">{value}</strong>
     </div>
@@ -494,7 +494,7 @@ SummaryRow.propTypes = {
 
 function SummaryRowCard({ label, value }) {
   return (
-    <Card className="rounded-3xl border border-neutral-200 bg-neutral-50">
+    <Card className="rounded-3xl border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
       <p className="text-sm font-semibold text-neutral-500">{label}</p>
       <p className="mt-3 text-3xl font-black text-neutral-950">{value}</p>
     </Card>
@@ -508,7 +508,7 @@ SummaryRowCard.propTypes = {
 
 function InfoBox({ label, value }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">{label}</p>
       <p className="mt-2 font-semibold text-neutral-900">{value}</p>
     </div>
