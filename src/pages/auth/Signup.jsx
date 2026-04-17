@@ -18,6 +18,7 @@ import { supabase } from '../../lib/supabase'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import useToast from '../../hooks/useToast'
+import useAuth from '../../hooks/useAuth'
 import AuthSplitLayout from './AuthSplitLayout'
 import Seo from '../../components/Seo'
 
@@ -43,6 +44,7 @@ function PasswordRule({ label, passed }) {
 export default function Signup() {
   const navigate = useNavigate()
   const toast = useToast()
+  const { signInWithGoogle: startGoogleSignIn } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [passwordValue, setPasswordValue] = useState('')
 
@@ -93,6 +95,7 @@ export default function Signup() {
     })
 
     if (error) {
+      console.error('Email sign-up failed:', error)
       toast.error(error.message)
       return
     }
@@ -101,14 +104,12 @@ export default function Signup() {
     navigate('/verify-email')
   }
 
-  async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/app/dashboard`,
-      },
-    })
-    if (error) toast.error(error.message)
+  async function handleGoogleSignIn() {
+    try {
+      await startGoogleSignIn('/app/dashboard')
+    } catch (error) {
+      toast.error('Google login failed. Please try again.')
+    }
   }
 
   return (
@@ -228,7 +229,7 @@ export default function Signup() {
         variant="outline"
         size="lg"
         leftIcon={<Sparkles className="h-4 w-4" />}
-        onClick={signInWithGoogle}
+        onClick={handleGoogleSignIn}
       >
         Continue with Google
       </Button>

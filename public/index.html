@@ -26,7 +26,9 @@
     />
     <meta property="og:url" content="https://bizflowng.com" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content="https://bizflowng.com/og-image.png" />
+    <meta property="og:image:alt" content="BizFlow NG product preview" />
+    <meta property="og:locale" content="en_NG" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@bizflowng" />
@@ -35,7 +37,7 @@
       name="twitter:description"
       content="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
     />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image" content="https://bizflowng.com/og-image.png" />
     <style>
       :root {
         color-scheme: light;
@@ -314,31 +316,56 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "BizFlow NG",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web",
-        "url": "https://bizflowng.com",
-        "description": "Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter.",
-        "offers": [
+        "@graph": [
           {
-            "@type": "Offer",
-            "name": "Starter",
-            "price": "5000",
-            "priceCurrency": "NGN"
+            "@type": "Organization",
+            "name": "BizFlow NG",
+            "url": "https://bizflowng.com",
+            "logo": "https://bizflowng.com/og-image.png",
+            "sameAs": [
+              "https://x.com/bizflowng",
+              "https://www.instagram.com/bizflowng?igsh=a2N2OXk5bHB3NDhk"
+            ],
+            "parentOrganization": {
+              "@type": "Organization",
+              "name": "BrandVerse Ventures",
+              "url": "https://brandverseventures.com"
+            }
           },
           {
-            "@type": "Offer",
-            "name": "Growth",
-            "price": "12000",
-            "priceCurrency": "NGN"
+            "@type": "WebSite",
+            "name": "BizFlow NG",
+            "url": "https://bizflowng.com"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "BizFlow NG",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "url": "https://bizflowng.com",
+            "image": "https://bizflowng.com/og-image.png",
+            "description": "Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter.",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Starter",
+                "price": "5000",
+                "priceCurrency": "NGN"
+              },
+              {
+                "@type": "Offer",
+                "name": "Growth",
+                "price": "12000",
+                "priceCurrency": "NGN"
+              }
+            ],
+            "publisher": {
+              "@type": "Organization",
+              "name": "BrandVerse Ventures",
+              "url": "https://brandverseventures.com"
+            }
           }
-        ],
-        "publisher": {
-          "@type": "Organization",
-          "name": "BrandVerse Ventures",
-          "url": "https://brandverseventures.com"
-        }
+        ]
       }
     </script>
   </head>
@@ -356,8 +383,8 @@
               </div>
             </div>
             <div class="app-shell-actions">
-              <span class="app-shell-button">Log in</span>
-              <span class="app-shell-button app-shell-primary">Start Free Trial</span>
+              <a class="app-shell-button" href="/login">Log in</a>
+              <a class="app-shell-button app-shell-primary" href="/signup">Start Free Trial</a>
             </div>
           </header>
 
@@ -369,8 +396,8 @@
                 BizFlow NG helps businesses manage invoices, payroll, HR, and client relationships in one modern workspace that loads fast and works across devices.
               </p>
               <div class="app-shell-actions">
-                <span class="app-shell-button app-shell-primary">Start Free — No Credit Card</span>
-                <span class="app-shell-button">Explore Features</span>
+                <a class="app-shell-button app-shell-primary" href="/signup">Start Free — No Credit Card</a>
+                <a class="app-shell-button" href="/features">Explore Features</a>
               </div>
               <div class="app-shell-trust">
                 <span>Trusted by businesses across Lagos, Abuja, Port Harcourt, London, and Houston</span>

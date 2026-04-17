@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /app/
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /onboarding
+Disallow: /invoice/
 
 Sitemap: https://bizflowng.com/sitemap.xml

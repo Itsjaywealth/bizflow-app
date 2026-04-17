@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import useToast from '../../hooks/useToast'
+import useAuth from '../../hooks/useAuth'
 import AuthSplitLayout from './AuthSplitLayout'
 import Seo from '../../components/Seo'
 
@@ -18,7 +19,9 @@ const schema = z.object({
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const toast = useToast()
+  const { signInWithGoogle: startGoogleSignIn, getSafeNextPath } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
 
   const {
@@ -35,22 +38,25 @@ export default function Login() {
   })
 
   async function onSubmit(values) {
+    const nextPath = getSafeNextPath(location.state?.from?.pathname || '/app/dashboard')
     const { error } = await supabase.auth.signInWithPassword(values)
     if (error) {
+      console.error('Email/password login failed:', error)
       toast.error('Incorrect email or password. Please try again.')
       return
     }
-    navigate('/app/dashboard')
+    navigate(nextPath)
   }
 
-  async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/app/dashboard`,
-      },
-    })
-    if (error) toast.error(error.message)
+  async function handleGoogleSignIn() {
+    try {
+      const nextPath = getSafeNextPath(
+        `${location.state?.from?.pathname || '/app/dashboard'}${location.state?.from?.search || ''}${location.state?.from?.hash || ''}`
+      )
+      await startGoogleSignIn(nextPath)
+    } catch (error) {
+      toast.error('Google login failed. Please try again.')
+    }
   }
 
   return (
@@ -116,7 +122,7 @@ export default function Login() {
         variant="outline"
         size="lg"
         leftIcon={<Sparkles className="h-4 w-4" />}
-        onClick={signInWithGoogle}
+        onClick={handleGoogleSignIn}
       >
         Continue with Google
       </Button>

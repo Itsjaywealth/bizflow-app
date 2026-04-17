@@ -41,7 +41,7 @@ export default function SupportPage() {
 
         <div className="support-actions">
           <a className="btn-primary" href="mailto:admin@brandverseventures.com">Email Support</a>
-          <Link className="btn-outline" to="/auth">Log in to BizFlow</Link>
+          <Link className="btn-outline" to="/login">Log in to BizFlow</Link>
         </div>
       </div>
     </div>

@@ -75,7 +75,7 @@ export default function InfoPage({ type }) {
         </div>
 
         <div className="support-actions">
-          <Link className="btn-primary" to="/auth">Create account</Link>
+          <Link className="btn-primary" to="/signup">Create account</Link>
           <Link className="btn-outline" to="/support">Contact support</Link>
         </div>
       </div>

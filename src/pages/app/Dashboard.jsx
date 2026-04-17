@@ -247,45 +247,79 @@ export default function Dashboard({ business }) {
     }
   }, [business?.id])
 
+  async function fetchInvoices() {
+    const joinedResponse = await supabase
+      .from('invoices')
+      .select('id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot,clients(name)')
+      .eq('business_id', business.id)
+      .order('created_at', { ascending: false })
+
+    if (!joinedResponse.error) return joinedResponse.data || []
+
+    const fallbackResponse = await supabase
+      .from('invoices')
+      .select('id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot')
+      .eq('business_id', business.id)
+      .order('created_at', { ascending: false })
+
+    if (!fallbackResponse.error) return fallbackResponse.data || []
+
+    throw fallbackResponse.error || joinedResponse.error
+  }
+
+  async function fetchClients() {
+    const preferredResponse = await supabase
+      .from('clients')
+      .select('id,name,created_at,active')
+      .eq('business_id', business.id)
+      .order('created_at', { ascending: false })
+
+    if (!preferredResponse.error) return preferredResponse.data || []
+
+    const fallbackResponse = await supabase
+      .from('clients')
+      .select('id,name,created_at')
+      .eq('business_id', business.id)
+      .order('created_at', { ascending: false })
+
+    if (!fallbackResponse.error) return fallbackResponse.data || []
+
+    throw fallbackResponse.error || preferredResponse.error
+  }
+
+  async function fetchStaff() {
+    const { data, error } = await supabase
+      .from('staff')
+      .select('*')
+      .eq('business_id', business.id)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return data || []
+  }
+
   async function loadDashboard() {
     if (!business?.id) return
     setLoading(true)
     setError('')
 
-    const [invoiceRes, clientRes, staffRes] = await Promise.all([
-      supabase
-        .from('invoices')
-        .select('id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot,clients(name)')
-        .eq('business_id', business.id)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('clients')
-        .select('id,name,created_at')
-        .eq('business_id', business.id)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('staff')
-        .select('*')
-        .eq('business_id', business.id)
-        .order('created_at', { ascending: false }),
-    ])
+    try {
+      const [nextInvoices, nextClients, nextStaff] = await Promise.all([
+        fetchInvoices(),
+        fetchClients(),
+        fetchStaff(),
+      ])
 
-    if (invoiceRes.error || clientRes.error || staffRes.error) {
-      setError(invoiceRes.error?.message || clientRes.error?.message || staffRes.error?.message || 'Unable to load dashboard')
+      setInvoiceRows(nextInvoices)
+      setClients(nextClients)
+      setStaff(nextStaff)
+      setActivities(buildActivities(nextInvoices, nextClients, nextStaff))
+      setReminders(buildReminders(nextInvoices, nextStaff))
       setLoading(false)
-      return
+    } catch (fetchError) {
+      setError(fetchError?.message || 'Unable to load dashboard')
+      setLoading(false)
     }
-
-    const nextInvoices = invoiceRes.data || []
-    const nextClients = clientRes.data || []
-    const nextStaff = staffRes.data || []
-
-    setInvoiceRows(nextInvoices)
-    setClients(nextClients)
-    setStaff(nextStaff)
-    setActivities(buildActivities(nextInvoices, nextClients, nextStaff))
-    setReminders(buildReminders(nextInvoices, nextStaff))
-    setLoading(false)
   }
 
   const now = new Date()

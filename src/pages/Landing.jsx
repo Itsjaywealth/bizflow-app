@@ -996,7 +996,7 @@ export default function Landing() {
               <div className="mt-5 space-y-3 text-sm text-neutral-600">
                 <Link to="/privacy" className="block hover:text-primary">Privacy Policy</Link>
                 <Link to="/terms" className="block hover:text-primary">Terms</Link>
-                <Link to="/privacy" className="block hover:text-primary">Cookie Policy</Link>
+                <Link to="/privacy" className="block hover:text-primary">Privacy & Cookies</Link>
               </div>
             </div>
           </div>

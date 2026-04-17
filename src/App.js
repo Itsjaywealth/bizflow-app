@@ -1,44 +1,47 @@
-import React, { useEffect, useState } from 'react'
+import React, { Suspense, lazy, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { supabase } from './lib/supabase'
-import Dashboard from './pages/app/Dashboard'
-import Clients from './pages/app/Clients'
-import Staff from './pages/app/Staff'
-import Products from './pages/app/Products'
-import Expenses from './pages/app/Expenses'
-import Reports from './pages/app/Reports'
-import Settings from './pages/app/Settings'
-import PublicInvoice from './pages/PublicInvoice'
-import Landing from './pages/Landing'
-import ResetPassword from './pages/ResetPassword'
-import VerifyEmail from './pages/VerifyEmail'
-import LegalPage from './pages/LegalPage'
-import SupportPage from './pages/SupportPage'
-import InfoPage from './pages/InfoPage'
-import Billing from './pages/app/Billing'
-import ClientDetail from './pages/app/ClientDetail'
-import StaffDetail from './pages/app/StaffDetail'
-import BizFlowAI from './components/BizFlowAI'
 import AppLayout from './layouts/AppLayout'
 import PublicLayout from './layouts/PublicLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import ErrorBoundary from './components/ui/ErrorBoundary'
 import { AppToaster } from './components/ui/Toast'
 import { AppShellProvider } from './context/AppShellContext'
-import Payroll from './pages/app/Payroll'
-import LoginPage from './pages/auth/Login'
-import SignupPage from './pages/auth/Signup'
-import ForgotPassword from './pages/auth/ForgotPassword'
-import OnboardingWizard from './pages/auth/Onboarding'
-import AppInvoices from './pages/app/Invoices'
-import InvoiceForm from './pages/app/InvoiceForm'
-import InvoiceDetail from './pages/app/InvoiceDetail'
+import useAuth from './hooks/useAuth'
 import './App.css'
 import './sidebar-theme.css'
 import './product-upgrades.css'
 import './worldclass.css'
 import './mobile.css'
+
+const Dashboard = lazy(() => import('./pages/app/Dashboard'))
+const Clients = lazy(() => import('./pages/app/Clients'))
+const Staff = lazy(() => import('./pages/app/Staff'))
+const Products = lazy(() => import('./pages/app/Products'))
+const Expenses = lazy(() => import('./pages/app/Expenses'))
+const Reports = lazy(() => import('./pages/app/Reports'))
+const Settings = lazy(() => import('./pages/app/Settings'))
+const PublicInvoice = lazy(() => import('./pages/PublicInvoice'))
+const Landing = lazy(() => import('./pages/Landing'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
+const SupportPage = lazy(() => import('./pages/SupportPage'))
+const InfoPage = lazy(() => import('./pages/InfoPage'))
+const Billing = lazy(() => import('./pages/app/Billing'))
+const ClientDetail = lazy(() => import('./pages/app/ClientDetail'))
+const StaffDetail = lazy(() => import('./pages/app/StaffDetail'))
+const BizFlowAI = lazy(() => import('./components/BizFlowAI'))
+const Payroll = lazy(() => import('./pages/app/Payroll'))
+const LoginPage = lazy(() => import('./pages/auth/Login'))
+const SignupPage = lazy(() => import('./pages/auth/Signup'))
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'))
+const OnboardingWizard = lazy(() => import('./pages/auth/Onboarding'))
+const AuthCallback = lazy(() => import('./pages/auth/AuthCallback'))
+const AppInvoices = lazy(() => import('./pages/app/Invoices'))
+const InvoiceForm = lazy(() => import('./pages/app/InvoiceForm'))
+const InvoiceDetail = lazy(() => import('./pages/app/InvoiceDetail'))
 
 function AppFrame({ children, session, business, setBusiness }) {
   return (
@@ -57,10 +60,24 @@ AppFrame.propTypes = {
   setBusiness: PropTypes.func,
 }
 
+function RouteFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-6">
+      <div className="w-full max-w-xl rounded-[28px] border border-neutral-200 bg-white p-8 text-center shadow-card">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-sm font-black text-white shadow-button">
+          BF
+        </div>
+        <p className="text-lg font-bold text-neutral-900">Loading BizFlow NG</p>
+        <p className="mt-2 text-sm text-neutral-500">Preparing your workspace and route assets…</p>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
-  const [session, setSession] = useState(null)
+  const { session, loading: authLoading } = useAuth()
   const [business, setBusiness] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [businessLoading, setBusinessLoading] = useState(true)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('bizflow-theme')
@@ -69,36 +86,38 @@ export default function App() {
     document.documentElement.dataset.theme = initialTheme
     document.documentElement.classList.toggle('dark', initialTheme === 'dark')
     document.body.classList.toggle('dark', initialTheme === 'dark')
-
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      setSession(currentSession)
-      if (currentSession) loadBusiness(currentSession.user.id)
-      else setLoading(false)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      setSession(currentSession)
-      if (currentSession) loadBusiness(currentSession.user.id)
-      else {
-        setBusiness(null)
-        setLoading(false)
-      }
-    })
-
-    return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (authLoading) return
+
+    if (!session) {
+      setBusiness(null)
+      setBusinessLoading(false)
+      return
+    }
+
+    loadBusiness(session.user.id)
+  }, [authLoading, session])
+
   async function loadBusiness(userId) {
-    const { data } = await supabase.from('businesses').select('*').eq('user_id', userId).single()
+    setBusinessLoading(true)
+    const { data, error } = await supabase.from('businesses').select('*').eq('user_id', userId).maybeSingle()
+    if (error) {
+      console.error('Failed to load business profile after auth:', error)
+      setBusiness(null)
+      setBusinessLoading(false)
+      return
+    }
     setBusiness(data || null)
-    setLoading(false)
+    setBusinessLoading(false)
   }
 
   function getAppHome() {
     return business ? '/app/dashboard' : '/onboarding'
   }
 
-  if (loading) {
+  if (authLoading || businessLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
@@ -115,62 +134,65 @@ export default function App() {
     <BrowserRouter>
       <ErrorBoundary>
         <AppToaster />
-        <Routes>
-          <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <PublicLayout><Landing /></PublicLayout>} />
-          <Route path="/home" element={<Navigate to="/" replace />} />
-          <Route path="/login" element={!session ? <LoginPage /> : <Navigate to={getAppHome()} replace />} />
-          <Route path="/signup" element={!session ? <SignupPage /> : <Navigate to={getAppHome()} replace />} />
-          <Route path="/auth" element={<Navigate to="/signup" replace />} />
-          <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to={getAppHome()} replace />} />
-          <Route path="/invoice/:token" element={<PublicInvoice />} />
-          <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/terms" element={<PublicLayout><LegalPage type="terms" /></PublicLayout>} />
-          <Route path="/privacy" element={<PublicLayout><LegalPage type="privacy" /></PublicLayout>} />
-          <Route path="/refund-policy" element={<PublicLayout><LegalPage type="refund" /></PublicLayout>} />
-          <Route path="/features" element={<PublicLayout><InfoPage type="features" /></PublicLayout>} />
-          <Route path="/how-it-works" element={<PublicLayout><InfoPage type="how" /></PublicLayout>} />
-          <Route path="/pricing" element={<PublicLayout><InfoPage type="pricing" /></PublicLayout>} />
-          <Route path="/support" element={<PublicLayout><SupportPage /></PublicLayout>} />
-          <Route
-            path="/onboarding"
-            element={
-              !session ? (
-                <Navigate to="/login" replace />
-              ) : business ? (
-                <Navigate to="/app/dashboard" replace />
-              ) : (
-                <OnboardingWizard setBusiness={setBusiness} />
-              )
-            }
-          />
-          <Route path="/app/dashboard" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Dashboard business={business} /></AppFrame>} />
-          <Route path="/app/invoices" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><AppInvoices business={business} /></AppFrame>} />
-          <Route path="/app/invoices/new" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
-          <Route path="/app/invoices/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceDetail business={business} /></AppFrame>} />
-          <Route path="/app/invoices/:id/edit" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
-          <Route path="/app/clients" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Clients business={business} /></AppFrame>} />
-          <Route path="/app/clients/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><ClientDetail business={business} /></AppFrame>} />
-          <Route path="/app/staff" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Staff business={business} /></AppFrame>} />
-          <Route path="/app/staff/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><StaffDetail business={business} /></AppFrame>} />
-          <Route path="/app/payroll" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Payroll business={business} /></AppFrame>} />
-          <Route path="/app/products" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Products business={business} /></AppFrame>} />
-          <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Expenses business={business} /></AppFrame>} />
-          <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Reports business={business} /></AppFrame>} />
-          <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
-          <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Billing /></AppFrame>} />
-          <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
-          <Route path="/invoices" element={<Navigate to="/app/invoices" replace />} />
-          <Route path="/clients" element={<Navigate to="/app/clients" replace />} />
-          <Route path="/staff" element={<Navigate to="/app/staff" replace />} />
-          <Route path="/products" element={<Navigate to="/app/products" replace />} />
-          <Route path="/expenses" element={<Navigate to="/app/expenses" replace />} />
-          <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
-          <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
-          <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
-          <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
-        </Routes>
-        <BizFlowAI session={session} business={business} />
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <PublicLayout><Landing /></PublicLayout>} />
+            <Route path="/home" element={<Navigate to="/" replace />} />
+            <Route path="/login" element={!session ? <LoginPage /> : <Navigate to={getAppHome()} replace />} />
+            <Route path="/signup" element={!session ? <SignupPage /> : <Navigate to={getAppHome()} replace />} />
+            <Route path="/auth" element={<Navigate to="/signup" replace />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to={getAppHome()} replace />} />
+            <Route path="/invoice/:token" element={<PublicInvoice />} />
+            <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/terms" element={<PublicLayout><LegalPage type="terms" /></PublicLayout>} />
+            <Route path="/privacy" element={<PublicLayout><LegalPage type="privacy" /></PublicLayout>} />
+            <Route path="/refund-policy" element={<PublicLayout><LegalPage type="refund" /></PublicLayout>} />
+            <Route path="/features" element={<PublicLayout><InfoPage type="features" /></PublicLayout>} />
+            <Route path="/how-it-works" element={<PublicLayout><InfoPage type="how" /></PublicLayout>} />
+            <Route path="/pricing" element={<PublicLayout><InfoPage type="pricing" /></PublicLayout>} />
+            <Route path="/support" element={<PublicLayout><SupportPage /></PublicLayout>} />
+            <Route
+              path="/onboarding"
+              element={
+                !session ? (
+                  <Navigate to="/login" replace />
+                ) : business ? (
+                  <Navigate to="/app/dashboard" replace />
+                ) : (
+                  <OnboardingWizard setBusiness={setBusiness} />
+                )
+              }
+            />
+            <Route path="/app/dashboard" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Dashboard business={business} /></AppFrame>} />
+            <Route path="/app/invoices" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><AppInvoices business={business} /></AppFrame>} />
+            <Route path="/app/invoices/new" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
+            <Route path="/app/invoices/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceDetail business={business} /></AppFrame>} />
+            <Route path="/app/invoices/:id/edit" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
+            <Route path="/app/clients" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Clients business={business} /></AppFrame>} />
+            <Route path="/app/clients/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><ClientDetail business={business} /></AppFrame>} />
+            <Route path="/app/staff" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Staff business={business} /></AppFrame>} />
+            <Route path="/app/staff/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><StaffDetail business={business} /></AppFrame>} />
+            <Route path="/app/payroll" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Payroll business={business} /></AppFrame>} />
+            <Route path="/app/products" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Products business={business} /></AppFrame>} />
+            <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Expenses business={business} /></AppFrame>} />
+            <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Reports business={business} /></AppFrame>} />
+            <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
+            <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Billing /></AppFrame>} />
+            <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+            <Route path="/invoices" element={<Navigate to="/app/invoices" replace />} />
+            <Route path="/clients" element={<Navigate to="/app/clients" replace />} />
+            <Route path="/staff" element={<Navigate to="/app/staff" replace />} />
+            <Route path="/products" element={<Navigate to="/app/products" replace />} />
+            <Route path="/expenses" element={<Navigate to="/app/expenses" replace />} />
+            <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
+            <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+            <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
+            <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
+          </Routes>
+          <BizFlowAI session={session} business={business} />
+        </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
   )

@@ -32,18 +32,21 @@ export default function Seo({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="google-site-verification" content={SEARCH_CONSOLE_VERIFICATION} />
+      <meta name="robots" content={noindex ? 'noindex,nofollow' : 'index,follow'} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={socialImage} />
+      <meta property="og:image:alt" content={`${SITE_NAME} preview`} />
       <meta property="og:url" content={canonical} />
       <meta property="og:type" content={type} />
       <meta property="og:site_name" content={SITE_NAME} />
+      <meta property="og:locale" content="en_NG" />
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@bizflowng" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={socialImage} />
       <link rel="canonical" href={canonical} />
-      {noindex ? <meta name="robots" content="noindex,nofollow" /> : null}
     </Helmet>
   )
 }
