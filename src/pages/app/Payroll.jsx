@@ -456,9 +456,9 @@ export default function Payroll({ business }) {
         )}
       </section>
 
-      <div className="inline-flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1">
+      <div className="inline-flex rounded-2xl border border-emerald-400/12 bg-neutral-50 p-1 dark:bg-white/5">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${activeTab === tab ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-500 hover:bg-emerald-500/8 hover:text-primary'}`}>
             {tab}
           </button>
         ))}
@@ -611,14 +611,14 @@ export default function Payroll({ business }) {
 
           <form onSubmit={deductionForm.handleSubmit(saveDeductionSetup)} className="mt-6 space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="flex items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <label className="flex items-start gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                 <input type="checkbox" {...deductionForm.register('pension_enabled')} />
                 <div>
                   <p className="font-semibold text-neutral-900">Enable pension deductions</p>
                   <p className="mt-1 text-sm text-neutral-500">Default employee and employer rates for monthly payroll.</p>
                 </div>
               </label>
-              <label className="flex items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+              <label className="flex items-start gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                 <input type="checkbox" {...deductionForm.register('nhf_enabled')} />
                 <div>
                   <p className="font-semibold text-neutral-900">Enable NHF deductions</p>
@@ -639,7 +639,7 @@ export default function Payroll({ business }) {
                 <Button type="button" variant="outline" size="sm" leftIcon={<Plus className="h-4 w-4" />} onClick={() => append({ name: '', type: 'fixed', value: 0, applies_to: 'All staff' })}>Add row</Button>
               </div>
               {fields.length === 0 ? <p className="text-sm text-neutral-500">No custom deductions configured yet.</p> : fields.map((field, index) => (
-                <div key={field.id} className="grid gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 md:grid-cols-[1fr_150px_140px_1fr_auto]">
+                <div key={field.id} className="grid gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 p-4 md:grid-cols-[1fr_150px_140px_1fr_auto] dark:bg-white/5">
                   <Input label="Name" {...deductionForm.register(`custom_deductions.${index}.name`)} />
                   <label className="space-y-2">
                     <span className="text-sm font-semibold text-neutral-700">Type</span>
@@ -673,7 +673,7 @@ export default function Payroll({ business }) {
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               <Input label="Annual gross salary" type="number" value={annualGrossInput} onChange={(event) => setAnnualGrossInput(event.target.value)} />
-              <div className="rounded-3xl border border-primary/15 bg-primary/5 p-5">
+              <div className="rounded-3xl border border-emerald-400/15 bg-brand-gradient p-5 text-white shadow-glow">
                 <p className="text-sm font-semibold text-neutral-600">Monthly tax estimate</p>
                 <p className="mt-3 text-3xl font-black text-primary">{currency(taxWidget.monthlyTax)}</p>
                 <p className="mt-2 text-sm text-neutral-500">Estimated monthly take-home after PAYE only: {currency(taxWidget.monthlyTakeHome)}</p>
@@ -689,7 +689,7 @@ export default function Payroll({ business }) {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="band" tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="rate" fill="#1A56DB" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="rate" fill="#16A34A" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -706,7 +706,7 @@ export default function Payroll({ business }) {
                 '1.6M – 3.2M: 21%',
                 'Above 3.2M: 24%',
               ].map((band) => (
-                <div key={band} className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm font-medium text-neutral-700">{band}</div>
+                <div key={band} className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-sm font-medium text-neutral-700 dark:bg-white/5">{band}</div>
               ))}
             </div>
 
@@ -740,7 +740,7 @@ export default function Payroll({ business }) {
           <div className="h-3 overflow-hidden rounded-full bg-neutral-100">
             <div className="h-full rounded-full bg-primary transition-all duration-300" style={{ width: `${Math.max(10, (processingLog.length / Math.max(payrollRows.length, 1)) * 100)}%` }} />
           </div>
-          <div className="space-y-3 rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+          <div className="space-y-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 p-4 dark:bg-white/5">
             <p className="text-sm font-semibold text-neutral-900">{processing ? `Processing payroll for ${processingLog.length + 1 > payrollRows.length ? payrollRows.length : processingLog.length + 1} of ${payrollRows.length}` : 'Finalizing payroll run...'}</p>
             {processingLog.map((item) => <p key={item} className="text-sm text-neutral-600">{item}</p>)}
           </div>
@@ -815,7 +815,7 @@ export default function Payroll({ business }) {
                 </div>
               </div>
 
-              <div className="rounded-3xl bg-primary/5 p-5">
+              <div className="rounded-3xl bg-brand-gradient p-5 text-white shadow-glow">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Net Pay</p>
                 <p className="mt-3 text-4xl font-black tracking-tight text-primary">{currency(selectedPayslip.net)}</p>
                 <p className="mt-3 text-sm text-neutral-600">Paid to: {selectedPayslip.bankName} — {selectedPayslip.accountNumber}</p>
@@ -879,7 +879,7 @@ MiniStat.propTypes = {
 
 function SummaryPill({ label, value }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">{label}</p>
       <p className="mt-2 text-lg font-black text-neutral-950">{value}</p>
     </div>
@@ -893,7 +893,7 @@ SummaryPill.propTypes = {
 
 function InfoBox({ label, value }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+    <div className="rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">{label}</p>
       <p className="mt-2 font-semibold text-neutral-900">{value}</p>
     </div>
