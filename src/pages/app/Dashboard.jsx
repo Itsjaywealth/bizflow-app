@@ -49,15 +49,6 @@ const statusColors = {
   draft: '#94A3B8',
 }
 
-const seedRevenue = [
-  { label: 'Nov', value: 320000 },
-  { label: 'Dec', value: 480000 },
-  { label: 'Jan', value: 410000 },
-  { label: 'Feb', value: 560000 },
-  { label: 'Mar', value: 610000 },
-  { label: 'Apr', value: 530000 },
-]
-
 function currency(value) {
   return `₦${Number(value || 0).toLocaleString()}`
 }
@@ -108,6 +99,40 @@ function deriveTrend(current, previous) {
   const diff = ((current - previous) / previous) * 100
   const sign = diff >= 0 ? '+' : ''
   return `${sign}${diff.toFixed(1)}%`
+}
+
+function logDashboardError(scope, error, businessId) {
+  if (!error) return
+
+  console.error(`[Dashboard:${scope}]`, {
+    businessId,
+    message: error.message || 'Unknown dashboard error',
+    details: error.details || null,
+    hint: error.hint || null,
+    code: error.code || null,
+  })
+}
+
+function normalizeInvoiceRows(rows = []) {
+  return rows.map((invoice) => ({
+    ...invoice,
+    total: Number(invoice.total || 0),
+    amount_paid: Number(invoice.amount_paid || 0),
+  }))
+}
+
+function normalizeClientRows(rows = []) {
+  return rows.map((client) => ({
+    ...client,
+    active: client.active !== false,
+  }))
+}
+
+function normalizeStaffRows(rows = []) {
+  return rows.map((member) => ({
+    ...member,
+    name: member.name || member.full_name || [member.first_name, member.last_name].filter(Boolean).join(' ') || 'Team member',
+  }))
 }
 
 function DashboardStatCard({
@@ -218,6 +243,45 @@ DashboardErrorState.propTypes = {
   onRetry: PropTypes.func.isRequired,
 }
 
+function DashboardWarningState({ widgetErrors, onRetry }) {
+  const failingWidgets = Object.keys(widgetErrors)
+
+  if (!failingWidgets.length) return null
+
+  return (
+    <Card className="rounded-3xl border-amber-200 bg-amber-50">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-amber-900">Some dashboard sections need another try.</h2>
+          <p className="mt-2 text-sm leading-6 text-amber-800">
+            We loaded what we could, but {failingWidgets.join(', ')} {failingWidgets.length === 1 ? 'is' : 'are'} unavailable right now.
+          </p>
+        </div>
+        <Button variant="outline" onClick={onRetry}>Retry dashboard data</Button>
+      </div>
+    </Card>
+  )
+}
+
+DashboardWarningState.propTypes = {
+  widgetErrors: PropTypes.objectOf(PropTypes.string).isRequired,
+  onRetry: PropTypes.func.isRequired,
+}
+
+function ChartEmptyState({ title, description }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center rounded-[28px] border border-dashed border-neutral-300 bg-neutral-50 px-6 text-center">
+      <h3 className="text-base font-bold text-neutral-900">{title}</h3>
+      <p className="mt-2 max-w-sm text-sm leading-6 text-neutral-500">{description}</p>
+    </div>
+  )
+}
+
+ChartEmptyState.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+}
+
 export default function Dashboard({ business }) {
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -230,6 +294,7 @@ export default function Dashboard({ business }) {
   const [activities, setActivities] = useState([])
   const [showAllActivity, setShowAllActivity] = useState(false)
   const [reminders, setReminders] = useState([])
+  const [widgetErrors, setWidgetErrors] = useState({})
 
   useEffect(() => {
     if (!business?.id) return undefined
@@ -248,75 +313,129 @@ export default function Dashboard({ business }) {
   }, [business?.id])
 
   async function fetchInvoices() {
-    const joinedResponse = await supabase
-      .from('invoices')
-      .select('id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot,clients(name)')
-      .eq('business_id', business.id)
-      .order('created_at', { ascending: false })
+    const attempts = [
+      'id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot,clients(name)',
+      'id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot',
+      'id,invoice_number,total,status,due_date,created_at,updated_at,client_snapshot',
+    ]
 
-    if (!joinedResponse.error) return joinedResponse.data || []
+    let lastError = null
 
-    const fallbackResponse = await supabase
-      .from('invoices')
-      .select('id,invoice_number,total,status,due_date,amount_paid,created_at,updated_at,client_snapshot')
-      .eq('business_id', business.id)
-      .order('created_at', { ascending: false })
+    for (const selectClause of attempts) {
+      const response = await supabase
+        .from('invoices')
+        .select(selectClause)
+        .eq('business_id', business.id)
+        .order('created_at', { ascending: false })
 
-    if (!fallbackResponse.error) return fallbackResponse.data || []
+      if (!response.error) {
+        return normalizeInvoiceRows(response.data || [])
+      }
 
-    throw fallbackResponse.error || joinedResponse.error
+      lastError = response.error
+    }
+
+    throw lastError
   }
 
   async function fetchClients() {
-    const preferredResponse = await supabase
-      .from('clients')
-      .select('id,name,created_at,active')
-      .eq('business_id', business.id)
-      .order('created_at', { ascending: false })
+    const attempts = [
+      'id,name,created_at,active',
+      'id,name,created_at',
+    ]
 
-    if (!preferredResponse.error) return preferredResponse.data || []
+    let lastError = null
 
-    const fallbackResponse = await supabase
-      .from('clients')
-      .select('id,name,created_at')
-      .eq('business_id', business.id)
-      .order('created_at', { ascending: false })
+    for (const selectClause of attempts) {
+      const response = await supabase
+        .from('clients')
+        .select(selectClause)
+        .eq('business_id', business.id)
+        .order('created_at', { ascending: false })
 
-    if (!fallbackResponse.error) return fallbackResponse.data || []
+      if (!response.error) {
+        return normalizeClientRows(response.data || [])
+      }
 
-    throw fallbackResponse.error || preferredResponse.error
+      lastError = response.error
+    }
+
+    throw lastError
   }
 
   async function fetchStaff() {
-    const { data, error } = await supabase
-      .from('staff')
-      .select('*')
-      .eq('business_id', business.id)
-      .order('created_at', { ascending: false })
+    const attempts = [
+      'id,name,full_name,first_name,last_name,status,birthday,date_of_birth,created_at,role',
+      'id,name,first_name,last_name,status,date_of_birth,created_at,role',
+      'id,name,status,created_at,role',
+    ]
 
-    if (error) throw error
-    return data || []
+    let lastError = null
+
+    for (const selectClause of attempts) {
+      const response = await supabase
+        .from('staff')
+        .select(selectClause)
+        .eq('business_id', business.id)
+        .order('created_at', { ascending: false })
+
+      if (!response.error) {
+        return normalizeStaffRows(response.data || [])
+      }
+
+      lastError = response.error
+    }
+
+    throw lastError
   }
 
   async function loadDashboard() {
     if (!business?.id) return
     setLoading(true)
     setError('')
+    setWidgetErrors({})
+
+    const resources = [
+      { key: 'invoices', label: 'invoice data', loader: fetchInvoices },
+      { key: 'clients', label: 'client data', loader: fetchClients },
+      { key: 'staff', label: 'staff data', loader: fetchStaff },
+    ]
 
     try {
-      const [nextInvoices, nextClients, nextStaff] = await Promise.all([
+      const results = await Promise.allSettled([
         fetchInvoices(),
         fetchClients(),
         fetchStaff(),
       ])
+
+      const nextWidgetErrors = {}
+      const nextInvoices = results[0].status === 'fulfilled' ? results[0].value : []
+      const nextClients = results[1].status === 'fulfilled' ? results[1].value : []
+      const nextStaff = results[2].status === 'fulfilled' ? results[2].value : []
+
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const resource = resources[index]
+          logDashboardError(resource.key, result.reason, business.id)
+          nextWidgetErrors[resource.label] = result.reason?.message || 'Unable to fetch this section'
+        }
+      })
 
       setInvoiceRows(nextInvoices)
       setClients(nextClients)
       setStaff(nextStaff)
       setActivities(buildActivities(nextInvoices, nextClients, nextStaff))
       setReminders(buildReminders(nextInvoices, nextStaff))
+      setWidgetErrors(nextWidgetErrors)
+
+      const allFailed = results.every((result) => result.status === 'rejected')
+      if (allFailed) {
+        setError('We could not reach your dashboard data right now. Please retry in a moment.')
+      }
+
       setLoading(false)
     } catch (fetchError) {
+      logDashboardError('load', fetchError, business.id)
       setError(fetchError?.message || 'Unable to load dashboard')
       setLoading(false)
     }
@@ -393,6 +512,8 @@ export default function Dashboard({ business }) {
 
   const isNewWorkspace = !loading && invoiceRows.length === 0 && clients.length === 0 && staff.length === 0
   const visibleActivities = showAllActivity ? activities : activities.slice(0, 4)
+  const revenueHasData = monthlyRevenue.some((item) => item.value > 0)
+  const hasWidgetWarnings = !loading && Object.keys(widgetErrors).length > 0
 
   if (error) {
     return <DashboardErrorState onRetry={loadDashboard} />
@@ -432,6 +553,10 @@ export default function Dashboard({ business }) {
           </button>
         ) : null}
       </motion.section>
+
+      {hasWidgetWarnings ? (
+        <DashboardWarningState widgetErrors={widgetErrors} onRetry={loadDashboard} />
+      ) : null}
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard
@@ -519,6 +644,11 @@ export default function Dashboard({ business }) {
           <div className="mt-6 h-[320px]">
             {loading ? (
               <Skeleton variant="card" className="h-full rounded-[28px]" />
+            ) : !revenueHasData ? (
+              <ChartEmptyState
+                title="No revenue yet for this period"
+                description="As paid invoices start coming in, this chart will show how money is moving through the business."
+              />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={monthlyRevenue}>
@@ -552,6 +682,11 @@ export default function Dashboard({ business }) {
           <div className="mt-6 h-[280px]">
             {loading ? (
               <Skeleton variant="card" className="h-full rounded-[28px]" />
+            ) : invoiceRows.length === 0 ? (
+              <ChartEmptyState
+                title="No invoices yet"
+                description="Once you create invoices, this breakdown will show what is paid, pending, overdue, or still in draft."
+              />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -747,10 +882,6 @@ Dashboard.propTypes = {
 }
 
 function buildRevenueSeries(invoices, range) {
-  if (!invoices.length) {
-    return seedRevenue
-  }
-
   if (range === 'thirtyDays') {
     const days = Array.from({ length: 30 }).map((_, index) => {
       const date = new Date()
@@ -798,7 +929,7 @@ function buildRevenueSeries(invoices, range) {
 }
 
 function buildMiniTrend(value) {
-  const base = Math.max(1, value || 0)
+  const base = Math.max(0, value || 0)
   return [base * 0.55, base * 0.72, base * 0.88, base]
 }
 
