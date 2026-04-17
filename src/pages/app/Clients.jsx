@@ -73,6 +73,17 @@ const defaultValues = {
 
 const statusOptions = ['all', 'active', 'inactive', 'lead']
 
+function logClientError(scope, error, businessId) {
+  if (!error) return
+  console.error(`[Clients:${scope}]`, {
+    businessId,
+    message: error.message || 'Unknown client error',
+    details: error.details || null,
+    hint: error.hint || null,
+    code: error.code || null,
+  })
+}
+
 export default function Clients({ business }) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -129,12 +140,24 @@ export default function Clients({ business }) {
 
   async function loadClients() {
     setLoading(true)
-    const [clientRes, invoiceRes] = await Promise.all([
+    const [clientRes, invoiceRes] = await Promise.allSettled([
       supabase.from('clients').select('*').eq('business_id', business.id).order('created_at', { ascending: false }),
       supabase.from('invoices').select('*').eq('business_id', business.id).order('created_at', { ascending: false }),
     ])
-    setClients(clientRes.data || [])
-    setInvoices(invoiceRes.data || [])
+
+    const clientError = clientRes.status === 'fulfilled' ? clientRes.value.error : clientRes.reason
+    const invoiceError = invoiceRes.status === 'fulfilled' ? invoiceRes.value.error : invoiceRes.reason
+
+    if (clientError) logClientError('load-clients', clientError, business.id)
+    if (invoiceError) logClientError('load-invoices', invoiceError, business.id)
+
+    setClients(clientRes.status === 'fulfilled' && !clientRes.value.error ? (clientRes.value.data || []) : [])
+    setInvoices(invoiceRes.status === 'fulfilled' && !invoiceRes.value.error ? (invoiceRes.value.data || []) : [])
+
+    if (clientError && invoiceError) {
+      toast.error('We could not load client data right now.')
+    }
+
     setLoading(false)
   }
 
@@ -192,6 +215,7 @@ export default function Clients({ business }) {
     setSaving(false)
 
     if (result.error) {
+      logClientError('persist', result.error, business.id)
       toast.error(result.error.message || 'Unable to save client.')
       return
     }
@@ -204,7 +228,12 @@ export default function Clients({ business }) {
 
   async function deleteClient(id) {
     if (!window.confirm('Delete this client?')) return
-    await supabase.from('clients').delete().eq('id', id)
+    const { error } = await supabase.from('clients').delete().eq('id', id)
+    if (error) {
+      logClientError('delete', error, business.id)
+      toast.error(error.message || 'Client could not be deleted.')
+      return
+    }
     toast.success('Client deleted.')
     loadClients()
   }
@@ -212,7 +241,12 @@ export default function Clients({ business }) {
   async function bulkDelete() {
     if (!selectedIds.length) return
     if (!window.confirm(`Delete ${selectedIds.length} selected client(s)?`)) return
-    await supabase.from('clients').delete().in('id', selectedIds)
+    const { error } = await supabase.from('clients').delete().in('id', selectedIds)
+    if (error) {
+      logClientError('bulk-delete', error, business.id)
+      toast.error(error.message || 'Selected clients could not be deleted.')
+      return
+    }
     setSelectedIds([])
     toast.success('Selected clients deleted.')
     loadClients()
