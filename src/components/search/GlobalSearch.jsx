@@ -121,7 +121,7 @@ export default function GlobalSearch() {
                         key={item}
                         type="button"
                         onClick={() => setQuery(item)}
-                        className="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-700 transition hover:border-primary hover:text-primary dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200"
+                        className="rounded-full border border-emerald-400/15 bg-white/85 px-3 py-2 text-sm font-medium text-neutral-700 transition hover:border-primary hover:text-primary dark:border-emerald-400/10 dark:bg-white/8 dark:text-neutral-200"
                       >
                         {item}
                       </button>

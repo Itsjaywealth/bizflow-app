@@ -37,30 +37,30 @@ export default function Select({
 
   return (
     <div className="space-y-2" ref={ref}>
-      {label ? <label className="text-sm font-semibold text-neutral-700">{label}</label> : null}
+      {label ? <label className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">{label}</label> : null}
       <button
         type="button"
         onClick={() => setOpen((state) => !state)}
-        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-left shadow-sm ${
-          error ? 'border-danger' : 'border-neutral-200'
+        className={`flex w-full items-center justify-between rounded-xl border bg-white/90 px-4 py-3 text-left shadow-sm backdrop-blur transition-all duration-300 dark:bg-white/5 ${
+          error ? 'border-danger' : 'border-neutral-200 dark:border-emerald-400/10'
         }`}
       >
-        <span className={selected ? 'text-neutral-900' : 'text-neutral-400'}>
+        <span className={selected ? 'text-neutral-900 dark:text-white' : 'text-neutral-400'}>
           {selected?.label || placeholder}
         </span>
-        <ChevronDown className="h-4 w-4 text-neutral-400" />
+        <ChevronDown className="h-4 w-4 text-neutral-400 dark:text-neutral-300" />
       </button>
       {error ? <p className="text-sm font-medium text-danger">{error}</p> : null}
       {open ? (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-3 shadow-modal">
+        <div className="rounded-2xl border border-emerald-400/15 bg-white/94 p-3 shadow-modal backdrop-blur-xl dark:border-emerald-400/10 dark:bg-white/8">
           {searchable ? (
-            <div className="mb-3 flex items-center gap-2 rounded-xl border border-neutral-200 px-3 py-2">
-              <Search className="h-4 w-4 text-neutral-400" />
+            <div className="mb-3 flex items-center gap-2 rounded-xl border border-emerald-400/12 px-3 py-2">
+              <Search className="h-4 w-4 text-neutral-400 dark:text-neutral-300" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search options"
-                className="w-full border-0 bg-transparent text-sm outline-none"
+                className="w-full border-0 bg-transparent text-sm outline-none dark:text-white"
               />
             </div>
           ) : null}
@@ -74,7 +74,7 @@ export default function Select({
                   setOpen(false)
                   setQuery('')
                 }}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-primary/10 hover:text-primary dark:text-neutral-100 dark:hover:bg-white/10 dark:hover:text-white"
               >
                 <span>{option.label}</span>
                 {option.value === value ? <Check className="h-4 w-4 text-primary" /> : null}

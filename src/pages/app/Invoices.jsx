@@ -261,7 +261,7 @@ export default function Invoices({ business }) {
 
       <Card className="rounded-[30px]">
         <div className="grid gap-3 lg:grid-cols-[1.4fr_repeat(3,minmax(0,0.7fr))_auto]">
-          <label className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+          <label className="flex items-center gap-3 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-3">
             <Search className="h-4 w-4 text-neutral-400" />
             <input
               value={query}
@@ -270,14 +270,14 @@ export default function Invoices({ business }) {
               className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
             />
           </label>
-          <select value={status} onChange={(event) => setStatus(event.target.value)} className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800">
+          <select value={status} onChange={(event) => setStatus(event.target.value)} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 dark:bg-white/5">
             {statusOptions.map((option) => <option key={option} value={option}>{option === 'all' ? 'All' : option.charAt(0).toUpperCase() + option.slice(1)}</option>)}
           </select>
-          <label className="flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-500">
+          <label className="flex items-center gap-2 rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-500 dark:bg-white/5">
             <CalendarRange className="h-4 w-4" />
             <input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} className="border-0 bg-transparent text-neutral-800 focus:outline-none" />
           </label>
-          <label className="flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-500">
+          <label className="flex items-center gap-2 rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-500 dark:bg-white/5">
             <CalendarRange className="h-4 w-4" />
             <input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} className="border-0 bg-transparent text-neutral-800 focus:outline-none" />
           </label>
@@ -367,7 +367,7 @@ export default function Invoices({ business }) {
                         <td className="px-4 py-4 text-sm"><Badge variant={statusVariant(invoice.derivedStatus)}>{invoice.derivedStatus}</Badge></td>
                         <td className="rounded-r-2xl px-4 py-4 text-sm">
                           <Dropdown
-                            trigger={<span className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-700"><MoreHorizontal className="h-4 w-4" /> Actions</span>}
+                            trigger={<span className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/12 bg-white/90 px-3 py-2 text-sm font-semibold text-neutral-700 dark:bg-white/8"><MoreHorizontal className="h-4 w-4" /> Actions</span>}
                             items={[
                               { label: 'View', icon: <Eye className="h-4 w-4" />, onClick: () => navigate(`/app/invoices/${invoice.id}`) },
                               { label: 'Edit', icon: <FileText className="h-4 w-4" />, onClick: () => navigate(`/app/invoices/${invoice.id}/edit`) },

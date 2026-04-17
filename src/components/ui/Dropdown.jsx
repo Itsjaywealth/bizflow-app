@@ -23,7 +23,7 @@ export default function Dropdown({ trigger, items, align = 'right' }) {
       </button>
       {open ? (
         <div
-          className={`absolute top-full z-40 mt-2 min-w-[220px] rounded-2xl border border-neutral-200 bg-white p-2 shadow-modal dark:border-neutral-800 dark:bg-neutral-900 ${
+          className={`absolute top-full z-40 mt-2 min-w-[220px] rounded-2xl border border-emerald-400/15 bg-white/92 p-2 shadow-modal backdrop-blur-xl dark:border-emerald-400/10 dark:bg-white/8 ${
             align === 'right' ? 'right-0' : 'left-0'
           }`}
         >
@@ -35,7 +35,7 @@ export default function Dropdown({ trigger, items, align = 'right' }) {
                 setOpen(false)
                 item.onClick?.()
               }}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium text-neutral-700 transition-colors hover:bg-primary/10 hover:text-primary dark:text-neutral-200 dark:hover:bg-white/10 dark:hover:text-white"
             >
               {item.icon}
               <span>{item.label}</span>
