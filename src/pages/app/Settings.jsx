@@ -258,7 +258,7 @@ export default function Settings({ business, setBusiness }) {
   const invoiceForm = useForm({
     resolver: zodResolver(invoiceSchema),
     defaultValues: {
-      color_scheme: safeJson(business?.invoice_settings, {}).color_scheme || '#1A56DB',
+      color_scheme: safeJson(business?.invoice_settings, {}).color_scheme || '#16A34A',
       logo_position: safeJson(business?.invoice_settings, {}).logo_position || 'left',
       font_style: safeJson(business?.invoice_settings, {}).font_style || 'Modern',
       template: safeJson(business?.invoice_settings, {}).template || 'Signature',
@@ -352,7 +352,7 @@ export default function Settings({ business, setBusiness }) {
     })
 
     invoiceForm.reset({
-      color_scheme: invoiceSettings.color_scheme || '#1A56DB',
+      color_scheme: invoiceSettings.color_scheme || '#16A34A',
       logo_position: invoiceSettings.logo_position || 'left',
       font_style: invoiceSettings.font_style || 'Modern',
       template: invoiceSettings.template || 'Signature',

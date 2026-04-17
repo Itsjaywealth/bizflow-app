@@ -31,7 +31,7 @@ import { formatCurrency as formatNaira, getStaffFullName } from './staffShared'
 
 const tabs = ['Financial Overview', 'Invoice Analytics', 'Client Analytics', 'Staff & Payroll Analytics']
 const presets = ['This Week', 'This Month', 'This Quarter', 'This Year', 'Custom']
-const brandColors = ['#1A56DB', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#0EA5E9']
+const brandColors = ['#22C55E', '#10B981', '#34D399', '#F59E0B', '#EF4444', '#6EE7B7']
 
 function currency(value) {
   return formatCurrency(value || 0, 'NGN')
@@ -483,9 +483,9 @@ export default function Reports({ business }) {
         </div>
       </section>
 
-      <div className="inline-flex rounded-2xl border border-neutral-200 bg-neutral-50 p-1">
+      <div className="inline-flex rounded-2xl border border-emerald-400/12 bg-neutral-50 p-1 dark:bg-white/5">
         {tabs.map((tab) => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-neutral-500'}`}>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${activeTab === tab ? 'bg-brand-gradient text-white shadow-glow' : 'text-neutral-500 hover:bg-emerald-500/8 hover:text-primary'}`}>
             {tab}
           </button>
         ))}
@@ -521,7 +521,7 @@ export default function Reports({ business }) {
                   <YAxis tickFormatter={(value) => `₦${Number(value / 1000).toFixed(0)}k`} />
                   <Tooltip formatter={(value) => currency(value)} />
                   <Legend />
-                  <Bar dataKey="revenue" fill="#1A56DB" radius={[10, 10, 0, 0]} />
+                  <Bar dataKey="revenue" fill="#16A34A" radius={[10, 10, 0, 0]} />
                   <Bar dataKey="target" fill="#C7D2FE" radius={[10, 10, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -546,8 +546,8 @@ export default function Reports({ business }) {
                 <AreaChart data={financialMonthly}>
                   <defs>
                     <linearGradient id="cashIn" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#1A56DB" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#1A56DB" stopOpacity={0.02} />
+                      <stop offset="5%" stopColor="#16A34A" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#16A34A" stopOpacity={0.02} />
                     </linearGradient>
                     <linearGradient id="cashOut" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#EF4444" stopOpacity={0.35} />
@@ -558,7 +558,7 @@ export default function Reports({ business }) {
                   <XAxis dataKey="label" />
                   <YAxis tickFormatter={(value) => `₦${Number(value / 1000).toFixed(0)}k`} />
                   <Tooltip formatter={(value) => currency(value)} />
-                  <Area type="monotone" dataKey="cashIn" stroke="#1A56DB" fill="url(#cashIn)" strokeWidth={3} />
+                  <Area type="monotone" dataKey="cashIn" stroke="#16A34A" fill="url(#cashIn)" strokeWidth={3} />
                   <Area type="monotone" dataKey="cashOut" stroke="#EF4444" fill="url(#cashOut)" strokeWidth={3} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -640,7 +640,7 @@ export default function Reports({ business }) {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="sent" fill="#1A56DB" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="sent" fill="#16A34A" radius={[8, 8, 0, 0]} />
                   <Bar dataKey="paid" fill="#10B981" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -697,7 +697,7 @@ export default function Reports({ business }) {
                     <XAxis type="number" tickFormatter={(value) => `₦${Number(value / 1000).toFixed(0)}k`} />
                     <YAxis type="category" dataKey="client" width={120} />
                     <Tooltip formatter={(value) => currency(value)} />
-                    <Bar dataKey="revenue" fill="#1A56DB" radius={[0, 10, 10, 0]} />
+                    <Bar dataKey="revenue" fill="#16A34A" radius={[0, 10, 10, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -723,7 +723,7 @@ export default function Reports({ business }) {
                   <XAxis dataKey="label" />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="clients" stroke="#1A56DB" strokeWidth={3} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="clients" stroke="#16A34A" strokeWidth={3} dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -807,7 +807,7 @@ export default function Reports({ business }) {
                   <XAxis dataKey="label" />
                   <YAxis tickFormatter={(value) => `₦${Number(value / 1000).toFixed(0)}k`} />
                   <Tooltip formatter={(value) => currency(value)} />
-                  <Line type="monotone" dataKey="total" stroke="#1A56DB" strokeWidth={3} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="total" stroke="#16A34A" strokeWidth={3} dot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -847,7 +847,7 @@ export default function Reports({ business }) {
               </div>
               <div className="mt-6 grid gap-3">
                 {staff.slice(0, 6).map((member) => (
-                  <div key={member.id} className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
+                  <div key={member.id} className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 dark:bg-white/5">
                     <div>
                       <p className="font-semibold text-neutral-900">{getStaffFullName(member)}</p>
                       <p className="text-sm text-neutral-500">{member.department || 'Unassigned'} • {member.job_title || member.role || 'Team member'}</p>
