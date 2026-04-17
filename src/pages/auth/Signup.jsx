@@ -128,7 +128,7 @@ export default function Signup() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Full name"
-          placeholder="Joseph Egbedi"
+          placeholder="John Doe"
           prefixIcon={<UserRound className="h-4 w-4" />}
           error={errors.fullName?.message}
           {...register('fullName')}
