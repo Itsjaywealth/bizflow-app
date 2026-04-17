@@ -6,6 +6,7 @@ import Topbar from '../components/navigation/Topbar'
 import AnnouncementBanner from '../components/AnnouncementBanner'
 import AppShellOverlays from '../components/global/AppShellOverlays'
 import PlanLimitWarnings from '../components/global/PlanLimitWarnings'
+import AppRouteSeo from '../components/AppRouteSeo'
 
 export default function AppLayout({ children, session, business }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -17,6 +18,7 @@ export default function AppLayout({ children, session, business }) {
 
   return (
     <div className="min-h-screen bg-background text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-neutral-100">
+      <AppRouteSeo />
       <Sidebar
         collapsed={collapsed}
         mobileOpen={mobileOpen}

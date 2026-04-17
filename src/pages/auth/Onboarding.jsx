@@ -18,6 +18,7 @@ import {
   Users,
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import Seo from '../../components/Seo'
 import Button from '../../components/ui/Button'
 import Card from '../../components/ui/Card'
 import Input from '../../components/ui/Input'
@@ -293,6 +294,12 @@ export default function Onboarding({ setBusiness }) {
 
   return (
     <div className="min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8">
+      <Seo
+        title="Onboarding — BizFlow NG"
+        description="Set up your business profile and complete your BizFlow NG workspace onboarding."
+        path="/onboarding"
+        noindex
+      />
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 rounded-[32px] border border-neutral-200 bg-white p-6 shadow-card">
           <div className="flex items-center justify-between gap-4">

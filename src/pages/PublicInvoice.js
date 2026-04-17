@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ThemeToggle from '../components/ThemeToggle'
+import Seo from '../components/Seo'
 
 export default function PublicInvoice() {
   const { token } = useParams()
@@ -45,6 +46,12 @@ export default function PublicInvoice() {
 
   return (
     <div className="public-invoice-shell">
+      <Seo
+        title={`${invoice.invoice_number || 'Invoice'} — BizFlow NG`}
+        description={`View invoice ${invoice.invoice_number || ''} from ${business.name || 'a BizFlow NG business'} and review payment details securely.`}
+        path={`/invoice/${token}`}
+        type="article"
+      />
       <div className="public-invoice-actions">
         <Link to="/home" className="btn-outline public-home-button">Back to BizFlow NG</Link>
         <ThemeToggle compact />

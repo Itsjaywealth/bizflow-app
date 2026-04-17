@@ -7,7 +7,11 @@
     <title>BizFlow NG — Business Management Software for Nigerian SMEs</title>
     <meta
       name="description"
-      content="BizFlow NG helps Nigerian small businesses manage invoices, clients, products, expenses, and staff — all in one place. Start free today."
+      content="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
+    />
+    <meta
+      name="google-site-verification"
+      content="google-site-verification-placeholder"
     />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -18,7 +22,7 @@
     <meta property="og:title" content="BizFlow NG — Business Management Software for Nigerian SMEs" />
     <meta
       property="og:description"
-      content="BizFlow NG helps Nigerian small businesses manage invoices, clients, products, expenses, and staff — all in one place. Start free today."
+      content="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
     />
     <meta property="og:url" content="https://bizflowng.com" />
     <meta property="og:type" content="website" />
@@ -29,9 +33,283 @@
     <meta name="twitter:title" content="BizFlow NG — Business Management Software for Nigerian SMEs" />
     <meta
       name="twitter:description"
-      content="BizFlow NG helps Nigerian small businesses manage invoices, clients, products, expenses, and staff — all in one place. Start free today."
+      content="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
     />
     <meta name="twitter:image" content="/og-image.png" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Plus Jakarta Sans", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(26, 86, 219, 0.16), transparent 32%),
+          linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+      }
+
+      .app-shell-fallback {
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      .app-shell-frame {
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+
+      .app-shell-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 8px 0 28px;
+      }
+
+      .app-shell-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .app-shell-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #1a56db, #1341b0);
+        box-shadow: 0 12px 30px rgba(26, 86, 219, 0.2);
+      }
+
+      .app-shell-brand-copy strong {
+        display: block;
+        font-size: 16px;
+        line-height: 1.2;
+      }
+
+      .app-shell-brand-copy span {
+        display: block;
+        margin-top: 4px;
+        color: #475569;
+        font-size: 13px;
+      }
+
+      .app-shell-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 12px 18px;
+        border: 1px solid rgba(26, 86, 219, 0.15);
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .app-shell-primary {
+        background: linear-gradient(135deg, #1a56db, #1341b0);
+        color: #ffffff;
+        border-color: transparent;
+        box-shadow: 0 20px 40px rgba(26, 86, 219, 0.2);
+      }
+
+      .app-shell-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .app-shell-copy,
+      .app-shell-preview {
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 28px;
+        box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(12px);
+      }
+
+      .app-shell-copy {
+        padding: 36px;
+      }
+
+      .app-shell-preview {
+        padding: 24px;
+      }
+
+      .app-shell-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: rgba(26, 86, 219, 0.1);
+        color: #1d4ed8;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .app-shell-title {
+        margin: 18px 0 0;
+        font-size: clamp(2.4rem, 6vw, 4.5rem);
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+      }
+
+      .app-shell-description {
+        margin: 18px 0 0;
+        max-width: 620px;
+        font-size: 18px;
+        line-height: 1.7;
+        color: #475569;
+      }
+
+      .app-shell-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .app-shell-trust {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 24px;
+        color: #334155;
+        font-size: 14px;
+      }
+
+      .app-shell-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .app-shell-card {
+        height: 88px;
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 245, 249, 0.92));
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .app-shell-card::before,
+      .app-shell-card::after {
+        content: "";
+        position: absolute;
+        left: 18px;
+        right: 18px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.18);
+      }
+
+      .app-shell-card::before {
+        top: 18px;
+        height: 14px;
+      }
+
+      .app-shell-card::after {
+        top: 44px;
+        height: 10px;
+      }
+
+      .app-shell-card-highlight::before {
+        background: rgba(26, 86, 219, 0.28);
+      }
+
+      .app-shell-card-accent::before {
+        background: rgba(245, 158, 11, 0.28);
+      }
+
+      .app-shell-card-success::before {
+        background: rgba(16, 185, 129, 0.28);
+      }
+
+      .app-shell-chart {
+        height: 220px;
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(26, 86, 219, 0.1), rgba(26, 86, 219, 0.02)),
+          #ffffff;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .app-shell-chart::before {
+        content: "";
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 72%;
+        background:
+          linear-gradient(transparent 0 94%, rgba(148, 163, 184, 0.14) 94% 100%),
+          linear-gradient(90deg, transparent 0 96%, rgba(148, 163, 184, 0.14) 96% 100%);
+        background-size: 100% 48px, 64px 100%;
+      }
+
+      .app-shell-chart::after {
+        content: "";
+        position: absolute;
+        left: 22px;
+        right: 22px;
+        bottom: 24px;
+        height: 110px;
+        border-radius: 24px 24px 0 0;
+        background: linear-gradient(180deg, rgba(26, 86, 219, 0.3), rgba(26, 86, 219, 0.02));
+        clip-path: polygon(0% 85%, 12% 70%, 24% 76%, 36% 48%, 48% 58%, 62% 26%, 74% 36%, 86% 18%, 100% 0%, 100% 100%, 0% 100%);
+      }
+
+      .app-shell-footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 22px;
+        color: #64748b;
+        font-size: 13px;
+      }
+
+      @media (max-width: 960px) {
+        .app-shell-hero {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app-shell-fallback {
+          padding: 16px;
+        }
+
+        .app-shell-nav {
+          padding-bottom: 20px;
+        }
+
+        .app-shell-copy,
+        .app-shell-preview {
+          padding: 20px;
+          border-radius: 24px;
+        }
+
+        .app-shell-row {
+          grid-template-columns: 1fr;
+        }
+
+        .app-shell-footer {
+          flex-direction: column;
+        }
+      }
+    </style>
 
     <script type="application/ld+json">
       {
@@ -41,7 +319,7 @@
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
         "url": "https://bizflowng.com",
-        "description": "BizFlow NG helps Nigerian small businesses manage invoices, clients, products, expenses, and staff — all in one place.",
+        "description": "Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter.",
         "offers": [
           {
             "@type": "Offer",
@@ -66,6 +344,55 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <main class="app-shell-fallback" aria-label="BizFlow NG loading preview">
+        <div class="app-shell-frame">
+          <header class="app-shell-nav">
+            <div class="app-shell-brand">
+              <div class="app-shell-logo" aria-hidden="true"></div>
+              <div class="app-shell-brand-copy">
+                <strong>BizFlow NG</strong>
+                <span>Business management software for Nigerian SMEs</span>
+              </div>
+            </div>
+            <div class="app-shell-actions">
+              <span class="app-shell-button">Log in</span>
+              <span class="app-shell-button app-shell-primary">Start Free Trial</span>
+            </div>
+          </header>
+
+          <section class="app-shell-hero">
+            <div class="app-shell-copy">
+              <span class="app-shell-badge">🇳🇬 Built for Nigerian businesses</span>
+              <h1 class="app-shell-title">Run your business smarter. Get paid faster.</h1>
+              <p class="app-shell-description">
+                BizFlow NG helps businesses manage invoices, payroll, HR, and client relationships in one modern workspace that loads fast and works across devices.
+              </p>
+              <div class="app-shell-actions">
+                <span class="app-shell-button app-shell-primary">Start Free — No Credit Card</span>
+                <span class="app-shell-button">Explore Features</span>
+              </div>
+              <div class="app-shell-trust">
+                <span>Trusted by businesses across Lagos, Abuja, Port Harcourt, London, and Houston</span>
+                <span>Invoicing, payroll, HR, and client management in one place</span>
+              </div>
+            </div>
+
+            <div class="app-shell-preview" aria-hidden="true">
+              <div class="app-shell-row">
+                <div class="app-shell-card app-shell-card-highlight"></div>
+                <div class="app-shell-card app-shell-card-accent"></div>
+                <div class="app-shell-card app-shell-card-success"></div>
+              </div>
+              <div class="app-shell-chart"></div>
+              <div class="app-shell-footer">
+                <span>Loading your BizFlow NG experience…</span>
+                <span>Invoices • Payroll • HR • Clients</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

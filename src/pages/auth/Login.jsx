@@ -9,6 +9,7 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import useToast from '../../hooks/useToast'
 import AuthSplitLayout from './AuthSplitLayout'
+import Seo from '../../components/Seo'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -53,11 +54,18 @@ export default function Login() {
   }
 
   return (
-    <AuthSplitLayout
-      title="Welcome back 👋"
-      subtitle="Log in to your BizFlow NG account"
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <>
+      <Seo
+        title="Log in — BizFlow NG"
+        description="Log in to your BizFlow NG account and continue managing invoices, payroll, HR, and clients."
+        path="/login"
+        noindex
+      />
+      <AuthSplitLayout
+        title="Welcome back 👋"
+        subtitle="Log in to your BizFlow NG account"
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Email address"
           type="email"
@@ -113,12 +121,13 @@ export default function Login() {
         Continue with Google
       </Button>
 
-      <p className="mt-8 text-center text-sm text-neutral-500">
-        Don&apos;t have an account?{' '}
-        <Link to="/signup" className="font-semibold text-primary hover:text-primary-dark">
-          Sign up
-        </Link>
-      </p>
-    </AuthSplitLayout>
+        <p className="mt-8 text-center text-sm text-neutral-500">
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" className="font-semibold text-primary hover:text-primary-dark">
+            Sign up
+          </Link>
+        </p>
+      </AuthSplitLayout>
+    </>
   )
 }

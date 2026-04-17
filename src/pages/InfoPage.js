@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PageUtilityNav from '../components/PageUtilityNav'
+import Seo from '../components/Seo'
 
 const pages = {
   features: {
@@ -44,9 +45,20 @@ const pages = {
 
 export default function InfoPage({ type }) {
   const page = pages[type] || pages.features
+  const pathMap = {
+    features: '/features',
+    how: '/how-it-works',
+    pricing: '/pricing',
+  }
+  const descMap = {
+    features: 'Explore invoicing, payroll, HR, reporting, and business tools available inside BizFlow NG.',
+    how: 'See how BizFlow NG helps Nigerian businesses get started quickly and stay organized as they grow.',
+    pricing: 'Compare BizFlow NG plans for Nigerian businesses and choose the right setup for your operations.',
+  }
 
   return (
     <div className="legal-shell">
+      <Seo title={`${page.title} — BizFlow NG`} description={descMap[type] || page.intro} path={pathMap[type] || '/features'} />
       <div className="legal-card support-card">
         <PageUtilityNav />
         <div className="landing-eyebrow">{page.eyebrow}</div>
