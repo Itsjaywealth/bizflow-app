@@ -252,9 +252,9 @@ function DashboardWarningState({ widgetErrors, onRetry }) {
     <Card className="rounded-3xl border-amber-200 bg-amber-50">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-lg font-bold text-amber-900">Some dashboard sections need another try.</h2>
+          <h2 className="text-lg font-bold text-amber-900">We couldn't load some data. Please retry.</h2>
           <p className="mt-2 text-sm leading-6 text-amber-800">
-            We loaded what we could, but {failingWidgets.join(', ')} {failingWidgets.length === 1 ? 'is' : 'are'} unavailable right now.
+            We loaded the rest of your dashboard safely, but {failingWidgets.join(', ')} {failingWidgets.length === 1 ? 'is' : 'are'} temporarily unavailable.
           </p>
         </div>
         <Button variant="outline" onClick={onRetry}>Retry dashboard data</Button>
@@ -513,7 +513,7 @@ export default function Dashboard({ business }) {
   const isNewWorkspace = !loading && invoiceRows.length === 0 && clients.length === 0 && staff.length === 0
   const visibleActivities = showAllActivity ? activities : activities.slice(0, 4)
   const revenueHasData = monthlyRevenue.some((item) => item.value > 0)
-  const hasWidgetWarnings = !loading && Object.keys(widgetErrors).length > 0
+  const hasWidgetWarnings = !loading && !isNewWorkspace && Object.keys(widgetErrors).length > 0
 
   if (error) {
     return <DashboardErrorState onRetry={loadDashboard} />
@@ -610,8 +610,8 @@ export default function Dashboard({ business }) {
       {isNewWorkspace ? (
         <EmptyState
           illustration={<CheckCircle2 className="h-14 w-14 text-primary" />}
-          title="Your workspace is ready. Let’s bring it to life."
-          description="BizFlow NG is set up for you. The next few steps will turn this into a fully working business workspace."
+          title="You're all set! Start by creating your first invoice or adding a client."
+          description="Your workspace is ready. Add your first records and the dashboard will start filling itself in automatically."
           ctaLabel="Add your first client"
           onCta={() => navigate('/app/clients')}
         />
@@ -816,7 +816,9 @@ export default function Dashboard({ business }) {
             {loading ? (
               Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} variant="row" className="w-full rounded-2xl" />)
             ) : visibleActivities.length === 0 ? (
-              <p className="text-sm text-neutral-500">Activity will appear here once you start using BizFlow.</p>
+              <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-5 py-6 text-sm leading-6 text-neutral-500">
+                No activity yet. Once you add clients, create invoices, or grow your team, the latest actions will appear here.
+              </div>
             ) : (
               visibleActivities.map((item, index) => (
                 <div key={`${item.type}-${index}`} className="flex items-start gap-4 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
