@@ -61,6 +61,17 @@ const formSchema = z.object({
 
 const defaultItem = { description: '', qty: 1, unit_price: 0, tax_percent: 7.5 }
 
+function logInvoiceFormError(scope, error, businessId) {
+  if (!error) return
+  console.error(`[InvoiceForm:${scope}]`, {
+    businessId,
+    message: error.message || 'Unknown invoice form error',
+    details: error.details || null,
+    hint: error.hint || null,
+    code: error.code || null,
+  })
+}
+
 export default function InvoiceForm({ business }) {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -116,15 +127,25 @@ export default function InvoiceForm({ business }) {
 
   async function loadForm() {
     setLoading(true)
-    const [clientRes, invoiceRes] = await Promise.all([
+    const [clientRes, invoiceRes] = await Promise.allSettled([
       supabase.from('clients').select('*').eq('business_id', business.id).order('name'),
       supabase.from('invoices').select('*').eq('business_id', business.id).order('created_at'),
     ])
 
-    const nextClients = clientRes.data || []
-    const nextInvoices = invoiceRes.data || []
+    const clientError = clientRes.status === 'fulfilled' ? clientRes.value.error : clientRes.reason
+    const invoiceError = invoiceRes.status === 'fulfilled' ? invoiceRes.value.error : invoiceRes.reason
+
+    if (clientError) logInvoiceFormError('load-clients', clientError, business.id)
+    if (invoiceError) logInvoiceFormError('load-invoices', invoiceError, business.id)
+
+    const nextClients = clientRes.status === 'fulfilled' && !clientRes.value.error ? (clientRes.value.data || []) : []
+    const nextInvoices = invoiceRes.status === 'fulfilled' && !invoiceRes.value.error ? (invoiceRes.value.data || []) : []
     setClients(nextClients)
     setExistingInvoices(nextInvoices)
+
+    if (clientError && invoiceError) {
+      toast.error('We could not load invoice setup data right now.')
+    }
 
     if (id) {
       const current = nextInvoices.find((invoice) => invoice.id === id)
@@ -222,7 +243,10 @@ export default function InvoiceForm({ business }) {
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      logInvoiceFormError('upsert-client', error, business.id)
+      throw error
+    }
     return data
   }
 
@@ -279,6 +303,7 @@ export default function InvoiceForm({ business }) {
       toast.success(nextStatus === 'draft' ? 'Invoice saved as draft.' : 'Invoice saved successfully.')
       navigate(`/app/invoices/${invoiceId}`)
     } catch (error) {
+      logInvoiceFormError('persist', error, business.id)
       toast.error(error.message || 'Unable to save invoice.')
     } finally {
       setSaving(false)
@@ -300,13 +325,25 @@ export default function InvoiceForm({ business }) {
     }
     const nextLink = buildPaymentLink(invoiceLike, business)
     setGeneratedPaymentLink(nextLink)
-    await navigator.clipboard.writeText(nextLink)
+    try {
+      await navigator.clipboard.writeText(nextLink)
+    } catch (error) {
+      logInvoiceFormError('copy-payment-link', error, business.id)
+      toast.error('Unable to copy the payment link right now.')
+      return
+    }
     toast.success('Payment link generated and copied.')
   }
 
   async function handleDownloadPdf() {
     if (!previewRef.current) return
-    await exportInvoicePdf(previewRef.current, `${values.invoice_number || 'invoice'}.pdf`)
+    try {
+      await exportInvoicePdf(previewRef.current, `${values.invoice_number || 'invoice'}.pdf`)
+    } catch (error) {
+      logInvoiceFormError('download-pdf', error, business.id)
+      toast.error('Unable to generate the invoice PDF right now.')
+      return
+    }
     toast.success('Invoice PDF downloaded.')
   }
 

@@ -13,6 +13,18 @@ import { buildClientStats, clientAvatarTone, formatClientCurrency, getClientAddr
 
 const tabs = ['overview', 'invoices', 'activity', 'files']
 
+function logClientDetailError(scope, error, businessId, clientId) {
+  if (!error) return
+  console.error(`[ClientDetail:${scope}]`, {
+    businessId,
+    clientId,
+    message: error.message || 'Unknown client detail error',
+    details: error.details || null,
+    hint: error.hint || null,
+    code: error.code || null,
+  })
+}
+
 export default function ClientDetail({ business }) {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -33,19 +45,44 @@ export default function ClientDetail({ business }) {
 
   async function loadClient() {
     setLoading(true)
-    const [clientRes, invoiceRes] = await Promise.all([
+    const [clientRes, invoiceRes] = await Promise.allSettled([
       supabase.from('clients').select('*').eq('id', id).single(),
       supabase.from('invoices').select('*').eq('client_id', id).eq('business_id', business.id).order('created_at', { ascending: false }),
     ])
-    setClient(clientRes.data || null)
-    setInvoices(invoiceRes.data || [])
-    setNotes(clientRes.data?.notes || '')
-    await loadFiles()
+
+    const clientError = clientRes.status === 'fulfilled' ? clientRes.value.error : clientRes.reason
+    const invoiceError = invoiceRes.status === 'fulfilled' ? invoiceRes.value.error : invoiceRes.reason
+
+    if (clientError) logClientDetailError('load-client', clientError, business.id, id)
+    if (invoiceError) logClientDetailError('load-invoices', invoiceError, business.id, id)
+
+    const nextClient = clientRes.status === 'fulfilled' && !clientRes.value.error ? (clientRes.value.data || null) : null
+    const nextInvoices = invoiceRes.status === 'fulfilled' && !invoiceRes.value.error ? (invoiceRes.value.data || []) : []
+
+    setClient(nextClient)
+    setInvoices(nextInvoices)
+    setNotes(nextClient?.notes || '')
+
+    if (nextClient) {
+      await loadFiles()
+    } else {
+      setFiles([])
+    }
+
+    if (clientError && invoiceError) {
+      toast.error('We could not load this client right now.')
+    }
+
     setLoading(false)
   }
 
   async function loadFiles() {
-    const { data } = await supabase.storage.from('client-files').list(`${business.id}/${id}`, { limit: 50 })
+    const { data, error } = await supabase.storage.from('client-files').list(`${business.id}/${id}`, { limit: 50 })
+    if (error) {
+      logClientDetailError('load-files', error, business.id, id)
+      setFiles([])
+      return
+    }
     setFiles(data || [])
   }
 
@@ -55,6 +92,7 @@ export default function ClientDetail({ business }) {
     const { error } = await supabase.from('clients').update({ notes }).eq('id', client.id)
     setSavingNotes(false)
     if (error) {
+      logClientDetailError('save-notes', error, business.id, id)
       toast.error('Notes could not be saved with the current client schema.')
       return
     }
@@ -64,7 +102,12 @@ export default function ClientDetail({ business }) {
 
   async function deleteClient() {
     if (!window.confirm('Delete this client?')) return
-    await supabase.from('clients').delete().eq('id', client.id)
+    const { error } = await supabase.from('clients').delete().eq('id', client.id)
+    if (error) {
+      logClientDetailError('delete', error, business.id, id)
+      toast.error(error.message || 'Client could not be deleted.')
+      return
+    }
     toast.success('Client deleted.')
     navigate('/app/clients')
   }
@@ -77,6 +120,7 @@ export default function ClientDetail({ business }) {
     const { error } = await supabase.storage.from('client-files').upload(path, file, { upsert: true })
     setUploading(false)
     if (error) {
+      logClientDetailError('upload-file', error, business.id, id)
       toast.error('Upload failed. Make sure the client-files bucket exists.')
       return
     }

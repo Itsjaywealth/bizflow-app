@@ -37,6 +37,17 @@ import {
 const perPage = 10
 const statusOptions = ['all', 'draft', 'pending', 'paid', 'overdue']
 
+function logInvoiceError(scope, error, businessId) {
+  if (!error) return
+  console.error(`[Invoices:${scope}]`, {
+    businessId,
+    message: error.message || 'Unknown invoice error',
+    details: error.details || null,
+    hint: error.hint || null,
+    code: error.code || null,
+  })
+}
+
 export default function Invoices({ business }) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -67,19 +78,30 @@ export default function Invoices({ business }) {
 
   async function loadInvoices() {
     setLoading(true)
-    const { data, error } = await supabase
+    let result = await supabase
       .from('invoices')
       .select('*, clients(name,email), payment_history')
       .eq('business_id', business.id)
       .order('created_at', { ascending: false })
 
-    if (error) {
+    if (result.error) {
+      logInvoiceError('load-joined', result.error, business.id)
+      result = await supabase
+        .from('invoices')
+        .select('*, payment_history')
+        .eq('business_id', business.id)
+        .order('created_at', { ascending: false })
+    }
+
+    if (result.error) {
+      logInvoiceError('load-fallback', result.error, business.id)
       toast.error('Unable to load invoices right now.')
+      setInvoices([])
       setLoading(false)
       return
     }
 
-    setInvoices(data || [])
+    setInvoices(result.data || [])
     setLoading(false)
   }
 
@@ -198,7 +220,12 @@ export default function Invoices({ business }) {
   async function handleDelete(id) {
     const confirmed = window.confirm('Delete this invoice?')
     if (!confirmed) return
-    await supabase.from('invoices').delete().eq('id', id)
+    const { error } = await supabase.from('invoices').delete().eq('id', id)
+    if (error) {
+      logInvoiceError('delete', error, business.id)
+      toast.error(error.message || 'Invoice could not be deleted.')
+      return
+    }
     toast.success('Invoice deleted.')
     loadInvoices()
   }
@@ -207,7 +234,12 @@ export default function Invoices({ business }) {
     if (!selectedIds.length) return
     const confirmed = window.confirm(`Delete ${selectedIds.length} selected invoice(s)?`)
     if (!confirmed) return
-    await supabase.from('invoices').delete().in('id', selectedIds)
+    const { error } = await supabase.from('invoices').delete().in('id', selectedIds)
+    if (error) {
+      logInvoiceError('bulk-delete', error, business.id)
+      toast.error(error.message || 'Selected invoices could not be deleted.')
+      return
+    }
     setSelectedIds([])
     toast.success('Selected invoices deleted.')
     loadInvoices()
@@ -216,9 +248,17 @@ export default function Invoices({ business }) {
   async function bulkMarkPaid() {
     if (!selectedIds.length) return
     const selectedInvoices = invoices.filter((invoice) => selectedIds.includes(invoice.id))
-    await Promise.all(selectedInvoices.map((invoice) => (
+    const results = await Promise.allSettled(selectedInvoices.map((invoice) => (
       supabase.from('invoices').update({ status: 'paid', amount_paid: invoice.total || 0 }).eq('id', invoice.id)
     )))
+    const failed = results.find((result) => result.status === 'fulfilled' && result.value?.error)
+      || results.find((result) => result.status === 'rejected')
+    if (failed) {
+      const error = failed.status === 'rejected' ? failed.reason : failed.value.error
+      logInvoiceError('bulk-mark-paid', error, business.id)
+      toast.error(error?.message || 'Some invoices could not be marked as paid.')
+      return
+    }
     setSelectedIds([])
     toast.success('Selected invoices marked as paid.')
     loadInvoices()
@@ -238,7 +278,13 @@ export default function Invoices({ business }) {
 
   async function copyPaymentLink(invoice) {
     const link = buildPaymentLink(invoice, invoice.business_snapshot || business)
-    await navigator.clipboard.writeText(link)
+    try {
+      await navigator.clipboard.writeText(link)
+    } catch (error) {
+      logInvoiceError('copy-link', error, business.id)
+      toast.error('Unable to copy the payment link right now.')
+      return
+    }
     toast.success('Payment link copied.')
   }
 
