@@ -33,7 +33,7 @@ export default function VerifyEmail() {
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth`
+        emailRedirectTo: `${window.location.origin}/login`
       }
     })
 
@@ -90,7 +90,7 @@ export default function VerifyEmail() {
             {loading ? 'Sending...' : 'Resend Email →'}
           </button>
 
-          <Link className="verify-secondary-link" to="/auth">
+          <Link className="verify-secondary-link" to="/login">
             ← Back to Log In
           </Link>
         </div>

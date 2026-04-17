@@ -1,0 +1,16 @@
+{
+  "short_name": "BizFlow",
+  "name": "BizFlow NG",
+  "description": "Business management for Nigerian SMEs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1A56DB",
+  "icons": [
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
