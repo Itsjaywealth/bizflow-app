@@ -41,6 +41,7 @@ import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import BrandLogo from '../components/BrandLogo'
 import Seo from '../components/Seo'
+import { SUPPORT_EMAIL, getSupportMailto } from '../lib/support'
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -969,7 +970,7 @@ export default function Landing() {
                 <a href="#top" className="block hover:text-primary">About</a>
                 <a href="#blog" className="block hover:text-primary">Blog</a>
                 <a href="#contact" className="block hover:text-primary">Careers</a>
-                <a href="mailto:hello@bizflowng.com" className="block hover:text-primary">Contact</a>
+                <a href={getSupportMailto('BizFlow NG Support')} className="block hover:text-primary">{SUPPORT_EMAIL}</a>
               </div>
             </div>
 

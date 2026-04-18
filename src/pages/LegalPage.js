@@ -1,6 +1,7 @@
 import React from 'react'
 import PageUtilityNav from '../components/PageUtilityNav'
 import Seo from '../components/Seo'
+import { SUPPORT_EMAIL } from '../lib/support'
 
 const content = {
   terms: {
@@ -8,7 +9,7 @@ const content = {
     intro: 'These terms explain the basic rules for using BizFlow NG while the product continues to grow.',
     sections: [
       ['Use of the service', 'BizFlow NG helps businesses record clients, products, expenses, staff records, and invoices. You are responsible for the accuracy of the information you enter.'],
-      ['Account responsibility', 'Keep your login details private. If you believe your account has been accessed without permission, contact support quickly.'],
+      ['Account responsibility', `Keep your login details private. If you believe your account has been accessed without permission, contact ${SUPPORT_EMAIL} quickly.`],
       ['Payments and invoices', 'BizFlow NG can show invoice payment details and optional external payment links. Live payment collection is only available where you have connected and tested your own payment provider link.'],
       ['Changes to the product', 'Features may improve over time. We may update these terms as the product grows.']
     ]
@@ -20,7 +21,7 @@ const content = {
       ['Information you provide', 'The app stores account, business, client, invoice, product, expense, and staff information so your workspace can function.'],
       ['How information is used', 'Your information is used to provide the app experience: authentication, dashboard records, invoices, and business management tools.'],
       ['Security', 'Authentication and database storage are handled through Supabase. You should still avoid entering unnecessary sensitive information into notes fields.'],
-      ['Contact', 'For privacy requests or corrections, contact support through the support page.']
+      ['Contact', `For privacy requests or corrections, contact ${SUPPORT_EMAIL}.`]
     ]
   },
   refund: {

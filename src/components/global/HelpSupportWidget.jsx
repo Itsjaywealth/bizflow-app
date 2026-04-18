@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BookOpenText, Bug, HelpCircle, Mail, MessageCircle, PlayCircle, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { getSupportMailto } from '../../lib/support'
 
 const LINKS = [
   { label: 'Documentation', icon: BookOpenText, action: 'docs' },
@@ -24,14 +25,14 @@ export default function HelpSupportWidget() {
       } else if (window.Intercom) {
         window.Intercom('show')
       } else {
-        window.open('mailto:support@bizflowng.com?subject=BizFlow%20NG%20Live%20Chat%20Request', '_self')
+        window.open(getSupportMailto('BizFlow NG Live Chat Request'), '_self')
       }
     } else if (action === 'videos') {
       window.open('https://www.youtube.com/results?search_query=BizFlow+NG+tutorials', '_blank', 'noopener,noreferrer')
     } else if (action === 'email') {
-      window.open('mailto:support@bizflowng.com', '_self')
+      window.open(getSupportMailto(), '_self')
     } else if (action === 'bug') {
-      window.open('mailto:support@bizflowng.com?subject=BizFlow%20NG%20Bug%20Report', '_self')
+      window.open(getSupportMailto('BizFlow NG Bug Report'), '_self')
     }
 
     setOpen(false)

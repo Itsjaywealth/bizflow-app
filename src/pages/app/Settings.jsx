@@ -37,6 +37,7 @@ import EmptyState from '../../components/ui/EmptyState'
 import Input from '../../components/ui/Input'
 import Modal from '../../components/ui/Modal'
 import Select from '../../components/ui/Select'
+import { SUPPORT_EMAIL } from '../../lib/support'
 
 const tabs = [
   { key: 'business', label: 'Business Profile', icon: <Building2 className="h-4 w-4" />, description: 'Workspace identity and defaults' },
@@ -1191,7 +1192,7 @@ export default function Settings({ business, setBusiness }) {
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-neutral-950">{businessForm.watch('name') || business?.name || 'BizFlow NG Business'}</p>
-                        <p className="text-sm text-neutral-500">{businessForm.watch('email') || business?.email || 'hello@bizflowng.com'}</p>
+                        <p className="text-sm text-neutral-500">{businessForm.watch('email') || business?.email || SUPPORT_EMAIL}</p>
                       </div>
                     </div>
                     <div className="mt-6 rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-sm text-neutral-700 dark:bg-white/5">{invoicePreview.footer_text}</div>
