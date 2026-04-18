@@ -957,19 +957,19 @@ export default function Landing() {
             <div>
               <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-400">Product</p>
               <div className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
-                <a href="#features" className="block hover:text-primary">Features</a>
-                <a href="#pricing" className="block hover:text-primary">Pricing</a>
-                <a href="#blog" className="block hover:text-primary">Changelog</a>
-                <a href="#blog" className="block hover:text-primary">Roadmap</a>
+                <Link to="/features" className="block hover:text-primary">Features</Link>
+                <Link to="/pricing" className="block hover:text-primary">Pricing</Link>
+                <Link to="/changelog" className="block hover:text-primary">Changelog</Link>
+                <Link to="/roadmap" className="block hover:text-primary">Roadmap</Link>
               </div>
             </div>
 
             <div id="blog">
               <p className="text-sm font-black uppercase tracking-[0.18em] text-neutral-400">Company</p>
               <div className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
-                <a href="#top" className="block hover:text-primary">About</a>
-                <a href="#blog" className="block hover:text-primary">Blog</a>
-                <a href="#contact" className="block hover:text-primary">Careers</a>
+                <Link to="/about" className="block hover:text-primary">About</Link>
+                <Link to="/blog" className="block hover:text-primary">Blog</Link>
+                <Link to="/careers" className="block hover:text-primary">Careers</Link>
                 <a href={getSupportMailto('BizFlow NG Support')} className="block hover:text-primary">{SUPPORT_EMAIL}</a>
               </div>
             </div>
@@ -979,7 +979,7 @@ export default function Landing() {
               <div className="mt-5 space-y-3 text-sm text-neutral-700 dark:text-neutral-300">
                 <Link to="/privacy" className="block hover:text-primary">Privacy Policy</Link>
                 <Link to="/terms" className="block hover:text-primary">Terms</Link>
-                <Link to="/privacy" className="block hover:text-primary">Privacy & Cookies</Link>
+                <Link to="/privacy-cookies" className="block hover:text-primary">Privacy & Cookies</Link>
               </div>
             </div>
           </div>
