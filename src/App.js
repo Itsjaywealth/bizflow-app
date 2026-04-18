@@ -100,14 +100,19 @@ export default function App() {
 
   async function loadBusiness(userId) {
     setBusinessLoading(true)
-    const { data, error } = await supabase.from('businesses').select('*').eq('user_id', userId).maybeSingle()
+    const { data, error } = await supabase
+      .from('businesses')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true })
+      .limit(1)
     if (error) {
       console.error('Failed to load business profile after auth:', error)
       setBusiness(null)
       setBusinessLoading(false)
       return
     }
-    setBusiness(data || null)
+    setBusiness(data?.[0] || null)
     setBusinessLoading(false)
   }
 
@@ -160,8 +165,6 @@ export default function App() {
               element={
                 !session ? (
                   <Navigate to="/login" replace />
-                ) : business ? (
-                  <Navigate to="/app/dashboard" replace />
                 ) : (
                   <OnboardingWizard setBusiness={setBusiness} />
                 )
