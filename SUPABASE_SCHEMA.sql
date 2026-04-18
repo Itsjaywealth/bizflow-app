@@ -352,6 +352,18 @@ begin
     create policy "Users own businesses" on businesses for all using (auth.uid() = user_id);
   end if;
 
+  if not exists (select 1 from pg_policies where tablename = 'businesses' and policyname = 'Users can view own businesses') then
+    create policy "Users can view own businesses" on businesses for select using (auth.uid() = user_id);
+  end if;
+
+  if not exists (select 1 from pg_policies where tablename = 'businesses' and policyname = 'Users can insert own businesses') then
+    create policy "Users can insert own businesses" on businesses for insert with check (auth.uid() = user_id);
+  end if;
+
+  if not exists (select 1 from pg_policies where tablename = 'businesses' and policyname = 'Users can update own businesses') then
+    create policy "Users can update own businesses" on businesses for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  end if;
+
   if not exists (select 1 from pg_policies where tablename = 'clients' and policyname = 'Business owns clients') then
     create policy "Business owns clients" on clients for all using (
       business_id in (select id from businesses where user_id = auth.uid())
