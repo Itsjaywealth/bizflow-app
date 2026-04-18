@@ -11,6 +11,7 @@ import {
   LockKeyhole,
   Mail,
   Phone,
+  ShieldCheck,
   Sparkles,
   UserRound,
 } from 'lucide-react'
@@ -47,15 +48,16 @@ export default function Signup() {
   const toast = useToast()
   const { signInWithGoogle: startGoogleSignIn } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
-  const [passwordValue, setPasswordValue] = useState('')
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    watch,
+    formState: { errors, isSubmitting, isValid },
   } = useForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       fullName: '',
       email: '',
@@ -64,6 +66,8 @@ export default function Signup() {
       acceptedTerms: false,
     },
   })
+
+  const passwordValue = watch('password', '')
 
   const passwordRules = useMemo(
     () => ({
@@ -126,119 +130,141 @@ export default function Signup() {
         title="Create your account"
         subtitle="Start your 14-day free trial"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        <Input
-          label="Full name"
-          placeholder="John Doe"
-          prefixIcon={<UserRound className="h-4 w-4" />}
-          error={errors.fullName?.message}
-          {...register('fullName')}
-        />
-
-        <Input
-          label="Email address"
-          type="email"
-          placeholder="you@business.com"
-          prefixIcon={<Mail className="h-4 w-4" />}
-          error={errors.email?.message}
-          {...register('email')}
-        />
-
-        <label className="block space-y-2">
-          <span className="text-sm font-semibold text-neutral-700">Phone number</span>
-          <div className={`flex items-center overflow-hidden rounded-xl border bg-white shadow-sm ${errors.phone ? 'border-danger' : 'border-neutral-200'}`}>
-            <span className="inline-flex h-full items-center gap-2 border-r border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-semibold text-neutral-600">
-              <Phone className="h-4 w-4" /> +234
-            </span>
-            <input
-              className="w-full border-0 bg-transparent px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
-              placeholder="8012345678"
-              {...register('phone')}
-            />
-          </div>
-          {errors.phone ? <span className="block text-sm font-medium text-danger">{errors.phone.message}</span> : null}
-        </label>
-
-        <Input
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Create a secure password"
-          prefixIcon={<LockKeyhole className="h-4 w-4" />}
-          suffixIcon={
-            <button
-              type="button"
-              className="text-neutral-400 transition-colors hover:text-primary"
-              onClick={() => setShowPassword((value) => !value)}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          }
-          error={errors.password?.message}
-          {...register('password', {
-            onChange: (event) => setPasswordValue(event.target.value),
-          })}
-        />
-
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <div className="flex items-center justify-between gap-4">
-            <span className="text-sm font-semibold text-neutral-700">Password strength</span>
-            <span className={`text-sm font-bold ${passwordStrength.text}`}>{passwordStrength.label}</span>
-          </div>
-          <div className="mt-3 h-2 rounded-full bg-neutral-200">
-            <div className={`h-full rounded-full ${passwordStrength.tone} ${passwordStrength.width}`} />
-          </div>
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            <PasswordRule label="8+ characters" passed={passwordRules.minLength} />
-            <PasswordRule label="Uppercase letter" passed={passwordRules.uppercase} />
-            <PasswordRule label="Number" passed={passwordRules.number} />
-            <PasswordRule label="Symbol" passed={passwordRules.symbol} />
-          </div>
+        <div className="mb-6 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-4 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
+          We&apos;ll send a verification email after signup so you can activate your BizFlow NG workspace securely.
         </div>
 
-        <label className="flex items-start gap-3 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-4">
-          <input
-            type="checkbox"
-            className="mt-1 h-4 w-4 rounded border-neutral-300 text-primary focus:ring-primary"
-            {...register('acceptedTerms')}
-          />
-          <span className="text-sm leading-7 text-neutral-600">
-            I agree to the{' '}
-            <Link to="/terms" className="font-semibold text-primary hover:text-primary-dark">
-              Terms
-            </Link>{' '}
-            and{' '}
-            <Link to="/privacy" className="font-semibold text-primary hover:text-primary-dark">
-              Privacy Policy
-            </Link>
-          </span>
-        </label>
-        {errors.acceptedTerms ? <span className="block text-sm font-medium text-danger">{errors.acceptedTerms.message}</span> : null}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className="grid gap-5 md:grid-cols-2">
+            <Input
+              label="Full name"
+              placeholder="John Doe"
+              prefixIcon={<UserRound className="h-4 w-4" />}
+              helperText={!errors.fullName ? 'Use the name you want attached to your workspace ownership.' : ''}
+              error={errors.fullName?.message}
+              autoComplete="name"
+              {...register('fullName')}
+            />
 
-        <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
-          Create Account
-        </Button>
-      </form>
-
-      {ENABLE_GOOGLE_AUTH ? (
-        <>
-          <div className="my-6 flex items-center gap-4">
-            <div className="h-px flex-1 bg-neutral-200" />
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">or continue with</span>
-            <div className="h-px flex-1 bg-neutral-200" />
+            <Input
+              label="Email address"
+              type="email"
+              placeholder="you@business.com"
+              prefixIcon={<Mail className="h-4 w-4" />}
+              helperText={!errors.email ? 'Your verification email will be sent here.' : ''}
+              error={errors.email?.message}
+              autoComplete="email"
+              {...register('email')}
+            />
           </div>
 
-          <Button
-            type="button"
-            fullWidth
-            variant="outline"
-            size="lg"
-            leftIcon={<Sparkles className="h-4 w-4" />}
-            onClick={handleGoogleSignIn}
-          >
-            Continue with Google
+          <label className="block space-y-2">
+            <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">Phone number</span>
+            <div className={`flex items-center overflow-hidden rounded-xl border bg-white/90 shadow-sm transition-all duration-300 dark:bg-white/5 ${errors.phone ? 'border-danger' : 'border-neutral-200 dark:border-brand-glow/10 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15'}`}>
+              <span className="inline-flex h-full items-center gap-2 border-r border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-semibold text-neutral-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
+                <Phone className="h-4 w-4" /> +234
+              </span>
+              <input
+                className="w-full border-0 bg-transparent px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-white"
+                placeholder="8012345678"
+                autoComplete="tel"
+                {...register('phone')}
+              />
+            </div>
+            {errors.phone ? <span className="block text-sm font-medium text-danger">{errors.phone.message}</span> : <span className="block text-sm text-neutral-500 dark:text-neutral-300">Use your active business or admin contact number.</span>}
+          </label>
+
+          <div className="rounded-[24px] border border-emerald-500/12 bg-[#f9fdfb] p-5 dark:border-white/10 dark:bg-white/[0.04]">
+            <Input
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Create a secure password"
+              prefixIcon={<LockKeyhole className="h-4 w-4" />}
+              suffixIcon={
+                <button
+                  type="button"
+                  className="text-neutral-400 transition-colors hover:text-primary"
+                  onClick={() => setShowPassword((value) => !value)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              }
+              error={errors.password?.message}
+              autoComplete="new-password"
+              {...register('password')}
+            />
+
+            <div className="mt-5 rounded-2xl border border-neutral-200 bg-white px-4 py-4 dark:border-white/10 dark:bg-white/[0.03]">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">Password strength</span>
+                <span className={`text-sm font-bold ${passwordStrength.text}`}>{passwordStrength.label}</span>
+              </div>
+              <div className="mt-3 h-2 rounded-full bg-neutral-200 dark:bg-white/10">
+                <div className={`h-full rounded-full transition-all duration-300 ${passwordStrength.tone} ${passwordStrength.width}`} />
+              </div>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <PasswordRule label="8+ characters" passed={passwordRules.minLength} />
+                <PasswordRule label="Uppercase letter" passed={passwordRules.uppercase} />
+                <PasswordRule label="Number" passed={passwordRules.number} />
+                <PasswordRule label="Symbol" passed={passwordRules.symbol} />
+              </div>
+            </div>
+          </div>
+
+          <label className={`flex items-start gap-3 rounded-2xl border px-4 py-4 transition-all duration-300 ${errors.acceptedTerms ? 'border-danger bg-red-50/60 dark:bg-red-500/8' : 'border-neutral-200 bg-neutral-50 dark:border-white/10 dark:bg-white/[0.04]'}`}>
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 rounded border-neutral-300 text-primary focus:ring-primary"
+              {...register('acceptedTerms')}
+            />
+            <span className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+              I agree to the{' '}
+              <Link to="/terms" className="font-semibold text-primary hover:text-primary-dark">
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy" className="font-semibold text-primary hover:text-primary-dark">
+                Privacy Policy
+              </Link>
+            </span>
+          </label>
+          {errors.acceptedTerms ? <span className="block text-sm font-medium text-danger">{errors.acceptedTerms.message}</span> : null}
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              Email verification required
+            </div>
+            {!isValid ? (
+              <p className="text-xs leading-6 text-neutral-400">Complete all required fields to continue.</p>
+            ) : null}
+          </div>
+
+          <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
+            {isSubmitting ? 'Creating your account...' : 'Create Account'}
           </Button>
-        </>
-      ) : null}
+        </form>
+
+        {ENABLE_GOOGLE_AUTH ? (
+          <>
+            <div className="my-6 flex items-center gap-4">
+              <div className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">or continue with</span>
+              <div className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
+            </div>
+
+            <Button
+              type="button"
+              fullWidth
+              variant="outline"
+              size="lg"
+              leftIcon={<Sparkles className="h-4 w-4" />}
+              onClick={handleGoogleSignIn}
+            >
+              Continue with Google
+            </Button>
+          </>
+        ) : null}
 
         <p className={`${ENABLE_GOOGLE_AUTH ? 'mt-8' : 'mt-10'} text-center text-sm text-neutral-500`}>
           Already have an account?{' '}
