@@ -35,6 +35,7 @@ import Button from '../../components/ui/Button'
 import Skeleton from '../../components/ui/Skeleton'
 import EmptyState from '../../components/ui/EmptyState'
 import Avatar from '../../components/ui/Avatar'
+import { useAppShell } from '../../context/AppShellContext'
 
 const chartRanges = [
   { key: 'year', label: 'This Year' },
@@ -282,9 +283,35 @@ ChartEmptyState.propTypes = {
   description: PropTypes.string.isRequired,
 }
 
+function SetupLaterBanner({ missingFields }) {
+  if (!missingFields.length) return null
+
+  return (
+    <Card className="rounded-3xl border-emerald-200 bg-emerald-50/80">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Finish setup later</p>
+          <h2 className="mt-2 text-xl font-bold text-neutral-950">Your workspace is live, but a few business details are still missing.</h2>
+          <p className="mt-2 text-sm leading-6 text-neutral-600">
+            Add {missingFields.join(', ')} in Settings so invoices, billing, and workspace identity feel complete.
+          </p>
+        </div>
+        <Link to="/app/settings?tab=business">
+          <Button rightIcon={<ArrowRight className="h-4 w-4" />}>Complete business profile</Button>
+        </Link>
+      </div>
+    </Card>
+  )
+}
+
+SetupLaterBanner.propTypes = {
+  missingFields: PropTypes.arrayOf(PropTypes.string).isRequired,
+}
+
 export default function Dashboard({ business }) {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { checklist } = useAppShell()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [range, setRange] = useState('sixMonths')
@@ -514,6 +541,16 @@ export default function Dashboard({ business }) {
   const visibleActivities = showAllActivity ? activities : activities.slice(0, 4)
   const revenueHasData = monthlyRevenue.some((item) => item.value > 0)
   const hasWidgetWarnings = !loading && !isNewWorkspace && Object.keys(widgetErrors).length > 0
+  const missingBusinessFields = useMemo(() => {
+    if (!business) return []
+    return [
+      !business.name ? 'your business name' : null,
+      !business.business_type ? 'business type' : null,
+      !business.address ? 'business address' : null,
+      !business.phone ? 'business phone' : null,
+    ].filter(Boolean)
+  }, [business])
+  const showSetupBanner = !loading && checklist?.isNewUser && missingBusinessFields.length > 0
 
   if (error) {
     return <DashboardErrorState onRetry={loadDashboard} />
@@ -557,6 +594,8 @@ export default function Dashboard({ business }) {
       {hasWidgetWarnings ? (
         <DashboardWarningState widgetErrors={widgetErrors} onRetry={loadDashboard} />
       ) : null}
+
+      {showSetupBanner ? <SetupLaterBanner missingFields={missingBusinessFields} /> : null}
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard
