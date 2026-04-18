@@ -27,9 +27,8 @@ const PublicInvoice = lazy(() => import('./pages/PublicInvoice'))
 const Landing = lazy(() => import('./pages/Landing'))
 const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'))
-const LegalPage = lazy(() => import('./pages/LegalPage'))
 const SupportPage = lazy(() => import('./pages/SupportPage'))
-const InfoPage = lazy(() => import('./pages/InfoPage'))
+const PublicContentPage = lazy(() => import('./pages/PublicContentPage'))
 const Billing = lazy(() => import('./pages/app/Billing'))
 const ClientDetail = lazy(() => import('./pages/app/ClientDetail'))
 const StaffDetail = lazy(() => import('./pages/app/StaffDetail'))
@@ -143,12 +142,18 @@ export default function App() {
             <Route path="/invoice/:token" element={<PublicInvoice />} />
             <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/terms" element={<PublicLayout><LegalPage type="terms" /></PublicLayout>} />
-            <Route path="/privacy" element={<PublicLayout><LegalPage type="privacy" /></PublicLayout>} />
-            <Route path="/refund-policy" element={<PublicLayout><LegalPage type="refund" /></PublicLayout>} />
-            <Route path="/features" element={<PublicLayout><InfoPage type="features" /></PublicLayout>} />
-            <Route path="/how-it-works" element={<PublicLayout><InfoPage type="how" /></PublicLayout>} />
-            <Route path="/pricing" element={<PublicLayout><InfoPage type="pricing" /></PublicLayout>} />
+            <Route path="/terms" element={<PublicLayout><PublicContentPage type="terms" /></PublicLayout>} />
+            <Route path="/privacy" element={<PublicLayout><PublicContentPage type="privacy" /></PublicLayout>} />
+            <Route path="/privacy-cookies" element={<PublicLayout><PublicContentPage type="privacyCookies" /></PublicLayout>} />
+            <Route path="/refund-policy" element={<PublicLayout><PublicContentPage type="refund" /></PublicLayout>} />
+            <Route path="/features" element={<PublicLayout><PublicContentPage type="features" /></PublicLayout>} />
+            <Route path="/how-it-works" element={<PublicLayout><PublicContentPage type="how" /></PublicLayout>} />
+            <Route path="/pricing" element={<PublicLayout><PublicContentPage type="pricing" /></PublicLayout>} />
+            <Route path="/changelog" element={<PublicLayout><PublicContentPage type="changelog" /></PublicLayout>} />
+            <Route path="/roadmap" element={<PublicLayout><PublicContentPage type="roadmap" /></PublicLayout>} />
+            <Route path="/about" element={<PublicLayout><PublicContentPage type="about" /></PublicLayout>} />
+            <Route path="/blog" element={<PublicLayout><PublicContentPage type="blog" /></PublicLayout>} />
+            <Route path="/careers" element={<PublicLayout><PublicContentPage type="careers" /></PublicLayout>} />
             <Route path="/support" element={<PublicLayout><SupportPage /></PublicLayout>} />
             <Route
               path="/onboarding"
