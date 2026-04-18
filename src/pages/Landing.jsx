@@ -374,54 +374,54 @@ export default function Landing() {
       </motion.header>
 
       <main id="top">
-        <section className="relative overflow-hidden px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-16">
-          <div className="absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.16),_transparent_34%),radial-gradient(circle_at_left,_rgba(16,185,129,0.12),_transparent_24%),linear-gradient(180deg,#fbfefd_0%,#f4faf7_45%,#eef5f1_100%)] dark:bg-[radial-gradient(circle_at_top_right,_rgba(52,211,153,0.14),_transparent_28%),radial-gradient(circle_at_left,_rgba(34,197,94,0.10),_transparent_20%),linear-gradient(180deg,#0b1120_0%,#101827_100%)]" />
-          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
-            <Reveal className="max-w-2xl">
-              <Badge variant="info" className="rounded-full px-4 py-2 text-sm font-semibold">
+        <section className="relative overflow-hidden px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-12 lg:px-8 lg:pb-28 lg:pt-20">
+          <div className="absolute inset-x-0 top-0 -z-10 h-[620px] bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.16),_transparent_34%),radial-gradient(circle_at_left,_rgba(16,185,129,0.12),_transparent_24%),linear-gradient(180deg,#fbfefd_0%,#f4faf7_45%,#eef5f1_100%)] dark:bg-[radial-gradient(circle_at_top_right,_rgba(52,211,153,0.14),_transparent_28%),radial-gradient(circle_at_left,_rgba(34,197,94,0.10),_transparent_20%),linear-gradient(180deg,#0b1120_0%,#101827_100%)]" />
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,0.96fr)_minmax(520px,1.04fr)] lg:items-center lg:gap-14">
+            <Reveal className="mx-auto max-w-2xl lg:mx-0">
+              <Badge variant="info" className="rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] sm:text-sm">
                 🇳🇬 Built for Nigerian Businesses
               </Badge>
-              <h1 className="mt-6 text-4xl font-black tracking-tight text-neutral-950 sm:text-5xl lg:text-7xl dark:text-white">
-                Run Your Business Smarter. Get Paid Faster.
+              <h1 className="mt-6 max-w-4xl text-4xl font-black tracking-[-0.05em] text-neutral-950 sm:text-5xl sm:leading-[1.02] lg:text-[4.5rem] lg:leading-[0.95] dark:text-white">
+                All Your Business Operations. One Smart Platform for Growth.
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-neutral-700 sm:text-lg dark:text-neutral-300">
-                BizFlow NG is the all-in-one platform for invoicing, payroll, client management, and HR — built for Nigerian SMEs and growing businesses worldwide.
+              <p className="mt-5 max-w-xl text-base leading-7 text-neutral-700 sm:mt-6 sm:text-lg sm:leading-8 dark:text-neutral-300">
+                Manage clients, send invoices, run payroll, and track revenue-all in one place.
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
                 <Link to="/signup" className="w-full sm:w-auto">
                   <Button size="lg" fullWidth rightIcon={<ArrowRight className="h-4 w-4" />}>
-                    Start Free — No Credit Card
+                    Start your 14-day free trial
                   </Button>
                 </Link>
-                <a href="#dashboard-preview" className="w-full sm:w-auto">
+                <a href="#features" className="w-full sm:w-auto">
                   <Button
                     size="lg"
                     fullWidth
                     variant="outline"
                     leftIcon={<CirclePlay className="h-4 w-4" />}
                   >
-                    Watch Demo
+                    Learn more
                   </Button>
                 </a>
               </div>
-              <p className="mt-5 text-sm font-semibold text-neutral-600 dark:text-neutral-300">
-                ⭐ Trusted by 1,200+ businesses across Nigeria
+              <p className="mt-5 text-sm font-semibold text-neutral-600 dark:text-neutral-300 sm:mt-6">
+                Trusted by 1,200+ businesses across Nigeria
               </p>
             </Reveal>
 
             <Reveal delay={0.15} className="relative">
               <div className="absolute -left-6 top-16 hidden h-40 w-40 rounded-full bg-primary/10 blur-3xl lg:block" />
               <div className="absolute -right-6 bottom-8 hidden h-40 w-40 rounded-full bg-accent/20 blur-3xl lg:block" />
-              <div className="relative rounded-[32px] border border-emerald-500/12 bg-[#f8fcfa]/95 p-4 shadow-modal backdrop-blur sm:p-5 dark:border-white/10 dark:bg-white/[0.04]">
-                <div className="rounded-[28px] border border-neutral-200 bg-neutral-950 p-4 text-white">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="relative rounded-[32px] border border-emerald-500/12 bg-[#f8fcfa]/95 p-3 shadow-modal backdrop-blur sm:p-5 dark:border-white/10 dark:bg-white/[0.04]">
+                <div className="rounded-[28px] border border-neutral-200 bg-neutral-950 p-4 text-white sm:p-5">
+                  <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.22em] text-emerald-200">Live dashboard</p>
-                      <h3 className="mt-2 text-xl font-bold">BizFlow command center</h3>
+                      <h3 className="mt-2 text-lg font-bold sm:text-xl">BizFlow command center</h3>
                     </div>
                     <Badge className="bg-white/10 text-white ring-0">Realtime</Badge>
                   </div>
-                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
                     {[
                       ['Revenue', '₦4.8M', 'up 18%'],
                       ['Pending', '₦720k', '6 invoices'],
@@ -429,14 +429,14 @@ export default function Landing() {
                       ['Staff', '18', 'active team'],
                     ].map(([label, value, meta]) => (
                       <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <p className="text-sm text-neutral-300">{label}</p>
-                        <p className="mt-3 text-2xl font-black">{value}</p>
-                        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-emerald-300">{meta}</p>
+                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-300">{label}</p>
+                        <p className="mt-3 text-2xl font-black sm:text-[1.65rem]">{value}</p>
+                        <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-emerald-300">{meta}</p>
                       </div>
                     ))}
                   </div>
                   <div className="mt-5 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4">
-                    <div className="flex items-end justify-between gap-3">
+                    <div className="flex items-end justify-between gap-2 sm:gap-3">
                       {[40, 58, 52, 70, 86, 78, 92].map((value, index) => (
                         <div key={value} className="flex flex-1 flex-col items-center gap-2">
                           <motion.div
@@ -455,21 +455,21 @@ export default function Landing() {
                 <motion.div
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 4, repeat: Infinity, repeatType: 'mirror' }}
-                  className="absolute -left-1 top-8 rounded-2xl border border-emerald-200 bg-[#fcfffd] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-left-3 sm:top-10"
+                  className="absolute -left-1 top-6 max-w-[220px] rounded-2xl border border-emerald-200 bg-[#fcfffd] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-left-3 sm:top-10"
                 >
-                  <p className="text-sm font-semibold text-neutral-950 dark:text-white">✅ Invoice #1042 paid — ₦450,000</p>
+                  <p className="text-sm font-semibold leading-6 text-neutral-950 dark:text-white">✅ Invoice #1042 paid — ₦450,000</p>
                 </motion.div>
                 <motion.div
                   animate={{ y: [0, 8, 0] }}
                   transition={{ duration: 4.5, repeat: Infinity, repeatType: 'mirror' }}
-                  className="absolute right-0 top-[34%] rounded-2xl border border-neutral-200 bg-[#fbfdfc] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-right-2"
+                  className="absolute right-0 top-[32%] max-w-[190px] rounded-2xl border border-neutral-200 bg-[#fbfdfc] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-right-2"
                 >
                   <p className="text-sm font-semibold text-neutral-950 dark:text-white">👤 New client added</p>
                 </motion.div>
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 3.8, repeat: Infinity, repeatType: 'mirror' }}
-                  className="absolute bottom-0 left-4 rounded-2xl border border-amber-200 bg-[#fffdf8] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:left-8"
+                  className="absolute bottom-0 left-3 max-w-[220px] rounded-2xl border border-amber-200 bg-[#fffdf8] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:left-8"
                 >
                   <p className="text-sm font-semibold text-neutral-950 dark:text-white">💰 Payroll processed</p>
                 </motion.div>
