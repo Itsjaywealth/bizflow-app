@@ -12,11 +12,8 @@ import {
   ChevronRight,
   CirclePlay,
   CreditCard,
-  Facebook,
   FileText,
-  Instagram,
   LayoutDashboard,
-  Linkedin,
   Menu,
   MessageCircleMore,
   ReceiptText,
@@ -25,7 +22,6 @@ import {
   Users,
   Wallet,
   X,
-  Twitter,
 } from 'lucide-react'
 import {
   Line,
@@ -42,6 +38,7 @@ import Badge from '../components/ui/Badge'
 import BrandLogo from '../components/BrandLogo'
 import Seo from '../components/Seo'
 import { SUPPORT_EMAIL, getSupportMailto } from '../lib/support'
+import { SOCIAL_LINKS } from '../lib/socialLinks'
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -939,17 +936,15 @@ export default function Landing() {
                 Built for Nigerian SMEs, designed to help modern businesses invoice faster, manage teams better, and grow with clarity.
               </p>
               <div className="mt-6 flex items-center gap-3">
-                {[
-                  { icon: Twitter, href: 'https://x.com/bizflowng', label: 'Twitter' },
-                  { icon: Instagram, href: 'https://www.instagram.com/bizflowng?igsh=a2N2OXk5bHB3NDhk', label: 'Instagram' },
-                  { icon: Linkedin, href: '#', label: 'LinkedIn' },
-                  { icon: Facebook, href: '#', label: 'Facebook' },
-                ].map((item) => {
+                {SOCIAL_LINKS.map((item) => {
                   const Icon = item.icon
                   return (
                     <a
-                      key={item.label}
+                      key={item.key}
                       href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={item.label}
                       className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-500/12 bg-[#fcfffd] text-neutral-700 hover:border-primary hover:text-primary dark:border-white/10 dark:bg-white/5 dark:text-neutral-200"
                     >
                       <Icon className="h-5 w-5" />
