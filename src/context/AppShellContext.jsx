@@ -81,7 +81,7 @@ function buildChecklist({ session, business, clients, invoices, staff, savedStat
     {
       id: 'business-profile',
       label: 'Set up business profile',
-      path: '/app/settings?tab=business-profile',
+      path: '/app/settings?tab=business',
       completed:
         completion['business-profile'] ??
         Boolean(business?.name && business?.email && business?.phone),

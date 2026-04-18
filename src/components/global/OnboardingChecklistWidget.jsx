@@ -49,10 +49,7 @@ export default function OnboardingChecklistWidget() {
             <button
               key={item.id}
               type="button"
-              onClick={() => {
-                if (!item.completed) checklist.updateChecklistItem(item.id, true)
-                navigate(item.path)
-              }}
+              onClick={() => navigate(item.path)}
               className="checklist-widget__item"
             >
               <span className="mt-0.5 shrink-0">
