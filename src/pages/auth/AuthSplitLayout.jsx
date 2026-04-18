@@ -34,7 +34,7 @@ export default function AuthSplitLayout({ title, subtitle, children }) {
 
   return (
     <div className="brand-app-shell min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8 dark:bg-darkbg">
-      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-7xl overflow-hidden rounded-[36px] border border-neutral-200 bg-white shadow-modal dark:border-brand-glow/10 dark:bg-white/5 lg:grid-cols-[1.15fr_0.85fr]">
+      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-7xl overflow-hidden rounded-[36px] border border-neutral-200 bg-white shadow-modal dark:border-brand-glow/10 dark:bg-white/5 lg:grid-cols-[1.12fr_0.88fr]">
         <div className="relative hidden overflow-hidden bg-brand-dark p-10 text-white lg:flex lg:flex-col lg:justify-between">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.16),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(52,211,153,0.18),_transparent_28%)]" />
           <div className="relative z-10">
@@ -42,8 +42,13 @@ export default function AuthSplitLayout({ title, subtitle, children }) {
               <BrandLogo textClassName="text-white [&>span:last-child]:text-emerald-100" />
             </Link>
             <div className="mt-20 max-w-xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-100">Built for confident operations</p>
-              <h1 className="mt-5 text-5xl font-black leading-tight">Your business. Organized. Always.</h1>
+              <div className="inline-flex rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-emerald-100">
+                Built for confident operations
+              </div>
+              <h1 className="mt-6 text-5xl font-black leading-tight">Your business. Organized. Always.</h1>
+              <p className="mt-5 max-w-lg text-base leading-8 text-emerald-100/90">
+                Run invoicing, revenue tracking, payroll, and daily operations from a cleaner workspace that feels built for growing teams.
+              </p>
               <div className="mt-10 space-y-5">
                 {marketingFeatures.map((feature, index) => {
                   const Icon = feature.icon
@@ -84,16 +89,23 @@ export default function AuthSplitLayout({ title, subtitle, children }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-center bg-white/90 px-4 py-8 sm:px-8 dark:bg-white/5">
+        <div className="relative flex items-center justify-center bg-white/90 px-4 py-8 sm:px-8 dark:bg-white/5">
+          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_72%)] dark:bg-[radial-gradient(circle_at_top,rgba(52,211,153,0.16),transparent_72%)]" />
           <div className="w-full max-w-xl">
             <div className="mb-8 text-center lg:text-left">
               <Link to="/" className="inline-flex items-center gap-3 lg:hidden">
                 <BrandLogo />
               </Link>
-              <h2 className="mt-8 text-4xl font-black tracking-tight text-neutral-900">{title}</h2>
-              <p className="mt-3 text-sm leading-7 text-neutral-500">{subtitle}</p>
+              <div className="mt-6 inline-flex rounded-full border border-emerald-500/12 bg-emerald-50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-primary dark:border-white/10 dark:bg-white/6 dark:text-brand-glow">
+                Secure BizFlow access
+              </div>
+              <h2 className="mt-5 text-3xl font-black tracking-tight text-neutral-900 sm:text-4xl">{title}</h2>
+              <p className="mt-3 max-w-xl text-sm leading-7 text-neutral-500">{subtitle}</p>
             </div>
-            {children}
+
+            <div className="rounded-[32px] border border-emerald-500/12 bg-[#fcfffd] p-6 shadow-card backdrop-blur sm:p-8 dark:border-white/10 dark:bg-white/[0.06]">
+              {children}
+            </div>
           </div>
         </div>
       </div>

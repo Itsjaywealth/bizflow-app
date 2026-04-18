@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 
 // Form input with support for labels, validation, and optional icons.
-export default function Input({
+const Input = forwardRef(function Input({
   id,
   name,
   label,
@@ -12,7 +12,7 @@ export default function Input({
   suffixIcon = null,
   className = '',
   ...props
-}) {
+}, ref) {
   return (
     <label htmlFor={id || name} className="block space-y-2">
       {label ? (
@@ -31,6 +31,8 @@ export default function Input({
         <input
           id={id || name}
           name={name}
+          ref={ref}
+          aria-invalid={Boolean(error)}
           className="w-full border-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-0 dark:text-white dark:placeholder:text-neutral-400"
           {...props}
         />
@@ -43,7 +45,9 @@ export default function Input({
       ) : null}
     </label>
   )
-}
+})
+
+export default Input
 
 Input.propTypes = {
   id: PropTypes.string,
