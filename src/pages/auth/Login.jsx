@@ -11,6 +11,7 @@ import useToast from '../../hooks/useToast'
 import useAuth from '../../hooks/useAuth'
 import AuthSplitLayout from './AuthSplitLayout'
 import Seo from '../../components/Seo'
+import { ENABLE_GOOGLE_AUTH } from '../../lib/features'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -113,24 +114,28 @@ export default function Login() {
         </Button>
       </form>
 
-      <div className="my-6 flex items-center gap-4">
-        <div className="h-px flex-1 bg-neutral-200" />
-        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">or continue with</span>
-        <div className="h-px flex-1 bg-neutral-200" />
-      </div>
+      {ENABLE_GOOGLE_AUTH ? (
+        <>
+          <div className="my-6 flex items-center gap-4">
+            <div className="h-px flex-1 bg-neutral-200" />
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">or continue with</span>
+            <div className="h-px flex-1 bg-neutral-200" />
+          </div>
 
-      <Button
-        type="button"
-        fullWidth
-        variant="outline"
-        size="lg"
-        leftIcon={<Sparkles className="h-4 w-4" />}
-        onClick={handleGoogleSignIn}
-      >
-        Continue with Google
-      </Button>
+          <Button
+            type="button"
+            fullWidth
+            variant="outline"
+            size="lg"
+            leftIcon={<Sparkles className="h-4 w-4" />}
+            onClick={handleGoogleSignIn}
+          >
+            Continue with Google
+          </Button>
+        </>
+      ) : null}
 
-        <p className="mt-8 text-center text-sm text-neutral-500">
+        <p className={`${ENABLE_GOOGLE_AUTH ? 'mt-8' : 'mt-10'} text-center text-sm text-neutral-500`}>
           Don&apos;t have an account?{' '}
           <Link to="/signup" className="font-semibold text-primary hover:text-primary-dark">
             Sign up
