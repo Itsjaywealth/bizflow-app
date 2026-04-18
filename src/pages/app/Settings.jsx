@@ -198,7 +198,7 @@ async function updateBusinessRecord({ businessId, payload, fallbackPayload }) {
 
 export default function Settings({ business, setBusiness }) {
   const toast = useToast()
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const { theme, toggleTheme } = useAppShell()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -642,7 +642,7 @@ export default function Settings({ business, setBusiness }) {
         user_id: user?.id,
         status: 'pending',
       })
-      await supabase.auth.signOut()
+      await signOut()
       setDeleteModal(null)
       return
     }
@@ -1295,7 +1295,7 @@ export default function Settings({ business, setBusiness }) {
                       <div className="mt-5 grid gap-4">
                         <ToggleRow label="Enable 2FA" checked={securityValues.two_factor_enabled} onChange={() => securityForm.setValue('two_factor_enabled', !securityValues.two_factor_enabled)} />
                         <Select label="Session timeout" options={[15, 30, 60, 120].map((minutes) => ({ label: `${minutes} minutes`, value: minutes }))} value={securityValues.session_timeout_minutes} onChange={(value) => securityForm.setValue('session_timeout_minutes', Number(value))} />
-                        <Button type="button" variant="outline" onClick={() => supabase.auth.signOut({ scope: 'global' })}>Log out all devices</Button>
+                        <Button type="button" variant="outline" onClick={() => signOut({ scope: 'global' })}>Log out all devices</Button>
                       </div>
                     </Card>
                   </div>

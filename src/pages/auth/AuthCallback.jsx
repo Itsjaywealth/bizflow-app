@@ -9,7 +9,7 @@ export default function AuthCallback() {
   const navigate = useNavigate()
   const location = useLocation()
   const toast = useToast()
-  const { session, loading, getSafeNextPath, oauthNextStorageKey } = useAuth()
+  const { session, loading, getSafeNextPath, readOAuthNextPath, clearOAuthNextPath } = useAuth()
   const [resolving, setResolving] = useState(true)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function AuthCallback() {
 
       const params = new URLSearchParams(location.search)
       const nextParam = params.get('next')
-      const storedNext = sessionStorage.getItem(oauthNextStorageKey)
+      const storedNext = readOAuthNextPath()
       const nextPath = getSafeNextPath(nextParam || storedNext || '/app/dashboard')
       const code = params.get('code')
       const providerError = params.get('error_description') || params.get('error')
@@ -28,7 +28,7 @@ export default function AuthCallback() {
       if (providerError) {
         console.error('Google OAuth provider returned an error:', providerError)
         if (active) {
-          sessionStorage.removeItem(oauthNextStorageKey)
+          clearOAuthNextPath()
           toast.error('Google login did not complete. Please try again.')
           navigate('/login', { replace: true, state: { from: { pathname: nextPath } } })
           setResolving(false)
@@ -48,7 +48,7 @@ export default function AuthCallback() {
         if (error) throw error
 
         if (active && (data?.session || session)) {
-          sessionStorage.removeItem(oauthNextStorageKey)
+          clearOAuthNextPath()
           navigate(nextPath, { replace: true })
           setResolving(false)
           return
@@ -58,7 +58,7 @@ export default function AuthCallback() {
       } catch (error) {
         console.error('OAuth callback resolution failed:', error)
         if (!active) return
-        sessionStorage.removeItem(oauthNextStorageKey)
+        clearOAuthNextPath()
         toast.error('Google login did not complete. Please try again.')
         navigate('/login', { replace: true, state: { from: { pathname: nextPath } } })
         setResolving(false)
@@ -70,7 +70,7 @@ export default function AuthCallback() {
     return () => {
       active = false
     }
-  }, [getSafeNextPath, loading, location.search, navigate, oauthNextStorageKey, session, toast])
+  }, [clearOAuthNextPath, getSafeNextPath, loading, location.search, navigate, readOAuthNextPath, session, toast])
 
   return (
     <>

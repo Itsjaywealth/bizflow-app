@@ -6,6 +6,25 @@ const AuthContext = createContext(null)
 const OAUTH_NEXT_STORAGE_KEY = 'bizflow-auth-next'
 const DEFAULT_APP_PATH = '/app/dashboard'
 
+function writeOAuthNextPath(nextPath) {
+  if (typeof window === 'undefined') return
+  window.sessionStorage?.setItem(OAUTH_NEXT_STORAGE_KEY, nextPath)
+  window.localStorage?.setItem(OAUTH_NEXT_STORAGE_KEY, nextPath)
+}
+
+function readOAuthNextPath() {
+  if (typeof window === 'undefined') return ''
+  return window.sessionStorage?.getItem(OAUTH_NEXT_STORAGE_KEY)
+    || window.localStorage?.getItem(OAUTH_NEXT_STORAGE_KEY)
+    || ''
+}
+
+function clearOAuthNextPath() {
+  if (typeof window === 'undefined') return
+  window.sessionStorage?.removeItem(OAUTH_NEXT_STORAGE_KEY)
+  window.localStorage?.removeItem(OAUTH_NEXT_STORAGE_KEY)
+}
+
 function getSafeNextPath(nextPath) {
   if (!nextPath || typeof nextPath !== 'string') return DEFAULT_APP_PATH
   if (!nextPath.startsWith('/')) return DEFAULT_APP_PATH
@@ -57,7 +76,7 @@ export function AuthProvider({ children }) {
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (!mounted) return
       if (event === 'SIGNED_OUT') {
-        sessionStorage.removeItem(OAUTH_NEXT_STORAGE_KEY)
+        clearOAuthNextPath()
       }
       setSession(nextSession || null)
       setLoading(false)
@@ -71,7 +90,7 @@ export function AuthProvider({ children }) {
 
   async function signInWithGoogle(nextPath = '/app/dashboard') {
     const safeNextPath = getSafeNextPath(nextPath)
-    sessionStorage.setItem(OAUTH_NEXT_STORAGE_KEY, safeNextPath)
+    writeOAuthNextPath(safeNextPath)
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -92,8 +111,9 @@ export function AuthProvider({ children }) {
     return data
   }
 
-  async function signOut() {
-    const { error } = await supabase.auth.signOut()
+  async function signOut(options = {}) {
+    clearOAuthNextPath()
+    const { error } = await supabase.auth.signOut(options)
     if (error) {
       console.error('Supabase sign-out failed:', error)
       throw error
@@ -110,6 +130,8 @@ export function AuthProvider({ children }) {
       getSafeNextPath,
       getOAuthRedirectUrl,
       oauthNextStorageKey: OAUTH_NEXT_STORAGE_KEY,
+      readOAuthNextPath,
+      clearOAuthNextPath,
     }),
     [session, loading]
   )
