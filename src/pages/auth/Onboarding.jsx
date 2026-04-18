@@ -60,6 +60,23 @@ function initialWizardState() {
   }
 }
 
+function logOnboardingError(scope, error, userId) {
+  if (!error) return
+  console.error(`[Onboarding:${scope}]`, {
+    userId,
+    message: error.message || 'Unknown onboarding error',
+    details: error.details || null,
+    hint: error.hint || null,
+    code: error.code || null,
+  })
+}
+
+function isMissingColumnError(error, column) {
+  if (!error || !column) return false
+  const combined = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`.toLowerCase()
+  return error.code === '42703' || combined.includes(column.toLowerCase())
+}
+
 export default function Onboarding({ setBusiness }) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -183,37 +200,94 @@ export default function Onboarding({ setBusiness }) {
 
   async function ensureBusinessRecord(values) {
     const safeValues = buildMinimalBusinessValues(values)
-    const payload = {
+    const {
+      data: { user: authUser },
+      error: authError,
+    } = currentUser?.id
+      ? { data: { user: currentUser }, error: null }
+      : await supabase.auth.getUser()
+
+    if (authError) {
+      logOnboardingError('get-user', authError, currentUser?.id || userId)
+      throw authError
+    }
+
+    const resolvedUser = authUser || currentUser
+    if (!resolvedUser?.id) {
+      throw new Error('We could not confirm your signed-in account. Please refresh and try again.')
+    }
+
+    if (!currentUser?.id) {
+      setCurrentUser(resolvedUser)
+    }
+    if (!userId) {
+      setUserId(resolvedUser.id)
+    }
+
+    let attachedBusiness = existingBusiness
+
+    if (!attachedBusiness) {
+      const { data: lookupBusiness, error: lookupError } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('user_id', resolvedUser.id)
+        .maybeSingle()
+
+      if (lookupError) {
+        logOnboardingError('lookup-business', lookupError, resolvedUser.id)
+      }
+
+      if (lookupBusiness) {
+        attachedBusiness = lookupBusiness
+        setExistingBusiness(lookupBusiness)
+        setBusiness(lookupBusiness)
+      }
+    }
+
+    const basePayload = {
       name: safeValues.businessName,
-      business_type: safeValues.businessType || existingBusiness?.business_type || 'Other',
       address: safeValues.businessAddress,
       phone: safeValues.businessPhone,
       logo_url: safeValues.logoUrl || '',
-      email: existingBusiness?.email || currentUser?.email || '',
+      email: attachedBusiness?.email || resolvedUser.email || '',
+    }
+    const extendedPayload = {
+      ...basePayload,
+      business_type: safeValues.businessType || attachedBusiness?.business_type || 'Other',
     }
 
-    if (existingBusiness) {
-      const { data, error } = await supabase
+    async function upsertBusiness(payload) {
+      if (attachedBusiness) {
+        return supabase
+          .from('businesses')
+          .update(payload)
+          .eq('id', attachedBusiness.id)
+          .select()
+          .single()
+      }
+
+      return supabase
         .from('businesses')
-        .update(payload)
-        .eq('id', existingBusiness.id)
+        .insert({ ...payload, user_id: resolvedUser.id })
         .select()
         .single()
-      if (error) throw error
-      setExistingBusiness(data)
-      setBusiness(data)
-      return data
     }
 
-    const { data, error } = await supabase
-      .from('businesses')
-      .insert({ ...payload, user_id: userId })
-      .select()
-      .single()
-    if (error) throw error
-    setExistingBusiness(data)
-    setBusiness(data)
-    return data
+    let result = await upsertBusiness(extendedPayload)
+
+    if (result.error && isMissingColumnError(result.error, 'business_type')) {
+      logOnboardingError('workspace-schema-mismatch', result.error, resolvedUser.id)
+      result = await upsertBusiness(basePayload)
+    }
+
+    if (result.error) {
+      logOnboardingError(attachedBusiness ? 'update-business' : 'insert-business', result.error, resolvedUser.id)
+      throw result.error
+    }
+
+    setExistingBusiness(result.data)
+    setBusiness(result.data)
+    return result.data
   }
 
   async function createFirstInvoice(values, businessRecord) {
@@ -276,13 +350,11 @@ export default function Onboarding({ setBusiness }) {
       setSavingStep(true)
       try {
         await persistDraft(values)
-        try {
-          await ensureBusinessRecord(values)
-        } catch (error) {
-          console.error('Step 1 business sync failed:', error)
-          toast.error('We saved your details, but could not sync your workspace yet. You can keep going and we’ll try again.')
-        }
+        await ensureBusinessRecord(values)
         setStep(1)
+      } catch (error) {
+        logOnboardingError('step-1', error, currentUser?.id || userId)
+        setStepError('We could not create your workspace yet. Please try again in a moment.')
       } finally {
         setSavingStep(false)
       }
