@@ -27,6 +27,7 @@ export default function ForgotPassword() {
   } = useForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
+    shouldFocusError: true,
     defaultValues: {
       email: '',
     },
@@ -67,7 +68,7 @@ export default function ForgotPassword() {
                   Enter your email address and we’ll send you a secure reset link.
                 </p>
               </div>
-              <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+              <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-8 space-y-5">
                 <Input
                   label="Email address"
                   type="email"

@@ -23,12 +23,19 @@ import useAuth from '../../hooks/useAuth'
 import AuthSplitLayout from './AuthSplitLayout'
 import Seo from '../../components/Seo'
 import { ENABLE_GOOGLE_AUTH } from '../../lib/features'
+import {
+  getPasswordRules,
+  getPasswordStrengthMeta,
+  passwordRuleLabels,
+  securePasswordSchema,
+} from '../../lib/authValidation'
+import { getEmailVerificationReturnUrl } from '../../lib/appUrls'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Enter your full name'),
   email: z.string().email('Enter a valid email address'),
   phone: z.string().min(7, 'Enter a valid phone number'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: securePasswordSchema,
   acceptedTerms: z.literal(true, {
     errorMap: () => ({ message: 'You must agree to the Terms & Privacy Policy' }),
   }),
@@ -58,6 +65,7 @@ export default function Signup() {
     resolver: zodResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    shouldFocusError: true,
     defaultValues: {
       fullName: '',
       email: '',
@@ -69,22 +77,9 @@ export default function Signup() {
 
   const passwordValue = watch('password', '')
 
-  const passwordRules = useMemo(
-    () => ({
-      minLength: passwordValue.length >= 8,
-      uppercase: /[A-Z]/.test(passwordValue),
-      number: /\d/.test(passwordValue),
-      symbol: /[^A-Za-z0-9]/.test(passwordValue),
-    }),
-    [passwordValue]
-  )
+  const passwordRules = useMemo(() => getPasswordRules(passwordValue), [passwordValue])
 
-  const passwordStrength = useMemo(() => {
-    const passedCount = Object.values(passwordRules).filter(Boolean).length
-    if (passedCount <= 1) return { label: 'Weak', tone: 'bg-red-500', text: 'text-red-500', width: 'w-1/3' }
-    if (passedCount <= 3) return { label: 'Fair', tone: 'bg-amber-400', text: 'text-amber-500', width: 'w-2/3' }
-    return { label: 'Strong', tone: 'bg-emerald-500', text: 'text-emerald-600', width: 'w-full' }
-  }, [passwordRules])
+  const passwordStrength = useMemo(() => getPasswordStrengthMeta(passwordRules), [passwordRules])
 
   async function onSubmit(values) {
     const phone = values.phone.startsWith('+234') ? values.phone : `+234${values.phone.replace(/^0+/, '')}`
@@ -92,6 +87,7 @@ export default function Signup() {
       email: values.email,
       password: values.password,
       options: {
+        emailRedirectTo: getEmailVerificationReturnUrl(),
         data: {
           full_name: values.fullName,
           phone,
@@ -134,7 +130,7 @@ export default function Signup() {
           We&apos;ll send a verification email after signup so you can activate your BizFlow NG workspace securely.
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
           <div className="grid gap-5 md:grid-cols-2">
             <Input
               label="Full name"
@@ -203,10 +199,10 @@ export default function Signup() {
                 <div className={`h-full rounded-full transition-all duration-300 ${passwordStrength.tone} ${passwordStrength.width}`} />
               </div>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <PasswordRule label="8+ characters" passed={passwordRules.minLength} />
-                <PasswordRule label="Uppercase letter" passed={passwordRules.uppercase} />
-                <PasswordRule label="Number" passed={passwordRules.number} />
-                <PasswordRule label="Symbol" passed={passwordRules.symbol} />
+                <PasswordRule label={passwordRuleLabels.minLength} passed={passwordRules.minLength} />
+                <PasswordRule label={passwordRuleLabels.uppercase} passed={passwordRules.uppercase} />
+                <PasswordRule label={passwordRuleLabels.number} passed={passwordRules.number} />
+                <PasswordRule label={passwordRuleLabels.symbol} passed={passwordRules.symbol} />
               </div>
             </div>
           </div>

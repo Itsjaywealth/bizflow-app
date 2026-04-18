@@ -35,5 +35,5 @@ export function getPasswordResetUrl() {
 }
 
 export function getEmailVerificationReturnUrl() {
-  return buildAbsoluteUrl('/login')
+  return buildAbsoluteUrl('/login?verified=1')
 }
