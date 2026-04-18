@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Seo from '../components/Seo'
+import { getEmailVerificationReturnUrl } from '../lib/appUrls'
 
 export default function VerifyEmail() {
   const [visible, setVisible] = useState(false)
@@ -34,7 +35,7 @@ export default function VerifyEmail() {
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`
+        emailRedirectTo: getEmailVerificationReturnUrl()
       }
     })
 

@@ -10,6 +10,7 @@ import Card from '../../components/ui/Card'
 import Input from '../../components/ui/Input'
 import useToast from '../../hooks/useToast'
 import Seo from '../../components/Seo'
+import { getPasswordResetUrl } from '../../lib/appUrls'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -33,7 +34,7 @@ export default function ForgotPassword() {
 
   async function onSubmit(values) {
     const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: getPasswordResetUrl(),
     })
     if (error) {
       toast.error(error.message)

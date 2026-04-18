@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet-async'
+import { buildAbsoluteUrl, getSiteUrl } from '../lib/appUrls'
 
 const SITE_NAME = 'BizFlow NG'
-const SITE_URL = 'https://bizflowng.com'
+const SITE_URL = getSiteUrl()
 const DEFAULT_TITLE = 'BizFlow NG — Business Management Software for Nigerian SMEs'
 const DEFAULT_DESCRIPTION = 'Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter.'
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`
@@ -11,9 +12,7 @@ const SEARCH_CONSOLE_VERIFICATION =
   process.env.REACT_APP_GOOGLE_SITE_VERIFICATION || 'google-site-verification-placeholder'
 
 function absolutize(url) {
-  if (!url) return SITE_URL
-  if (url.startsWith('http')) return url
-  return `${SITE_URL}${url.startsWith('/') ? url : `/${url}`}`
+  return buildAbsoluteUrl(url || '/')
 }
 
 export default function Seo({
