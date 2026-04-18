@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import React, { useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,6 +21,7 @@ const schema = z.object({
 export default function Login() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const toast = useToast()
   const { signInWithGoogle: startGoogleSignIn, getSafeNextPath } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
@@ -33,11 +34,22 @@ export default function Login() {
     resolver: zodResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    shouldFocusError: true,
     defaultValues: {
       email: '',
       password: '',
     },
   })
+
+  const statusNotice = useMemo(() => {
+    if (searchParams.get('verified') === '1') {
+      return 'Email verified successfully. You can log in to continue to your workspace.'
+    }
+    if (searchParams.get('reset') === '1') {
+      return 'Password updated successfully. Log in with your new password.'
+    }
+    return ''
+  }, [searchParams])
 
   async function onSubmit(values) {
     const nextPath = getSafeNextPath(
@@ -81,8 +93,13 @@ export default function Login() {
             Sign in to continue to your secure workspace. We&apos;ll return you to the page you were trying to open.
           </div>
         ) : null}
+        {statusNotice ? (
+          <div className="mb-6 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-4 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
+            {statusNotice}
+          </div>
+        ) : null}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
           <div className="grid gap-5">
             <Input
               label="Email address"
