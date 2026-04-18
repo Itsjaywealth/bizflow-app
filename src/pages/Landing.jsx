@@ -783,21 +783,26 @@ export default function Landing() {
 
             <div className="mt-14 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
               <Reveal>
-                <Card className="h-full rounded-[30px] bg-neutral-950 p-8 text-white shadow-modal">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-200">Featured story</p>
-                  <p className="mt-6 text-2xl font-bold leading-10">
+                <Card className="relative h-full overflow-hidden rounded-[30px] border border-emerald-500/16 bg-[linear-gradient(180deg,#ffffff_0%,#fbfefb_48%,#f4fbf6_100%)] p-7 text-neutral-950 shadow-[0_28px_80px_rgba(15,23,42,0.08)] sm:p-8 dark:border-white/10 dark:bg-neutral-950 dark:text-white dark:shadow-modal">
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.14),transparent_62%)] dark:hidden" />
+                  <div className="relative">
+                  <p className="inline-flex items-center rounded-full border border-emerald-500/16 bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-primary shadow-sm dark:border-white/15 dark:bg-white/10 dark:text-emerald-100">
+                    Featured story
+                  </p>
+                  <p className="mt-6 text-xl font-black leading-9 tracking-[-0.02em] text-neutral-950 sm:text-[1.75rem] sm:leading-[2.7rem] dark:text-white">
                     “{activeTestimonial.quote}”
                   </p>
-                  <div className="mt-10 flex items-center gap-4">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-sm font-black">
+                  <div className="mt-10 flex items-center gap-4 rounded-[24px] border border-emerald-500/12 bg-white/88 px-4 py-4 shadow-[0_12px_30px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/5 dark:shadow-none">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/18 bg-[linear-gradient(180deg,rgba(22,163,74,0.16),rgba(34,197,94,0.09))] text-sm font-black text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:shadow-none">
                       {activeTestimonial.initials}
                     </div>
                     <div>
-                      <p className="font-bold">{activeTestimonial.name}</p>
-                      <p className="text-sm text-neutral-300">
+                      <p className="text-base font-black text-neutral-950 dark:text-white">{activeTestimonial.name}</p>
+                      <p className="mt-1 text-sm font-medium leading-6 text-neutral-600 dark:text-neutral-300">
                         {activeTestimonial.title} — {activeTestimonial.company}
                       </p>
                     </div>
+                  </div>
                   </div>
                 </Card>
               </Reveal>
