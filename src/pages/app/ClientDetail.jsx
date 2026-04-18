@@ -9,6 +9,7 @@ import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 import { buildClientStats, clientAvatarTone, formatClientCurrency, getClientAddress, getClientBusiness, getClientName, getClientStatus, getClientTags } from './clientShared'
 
 const tabs = ['overview', 'invoices', 'activity', 'files']
@@ -115,6 +116,12 @@ export default function ClientDetail({ business }) {
   async function uploadFile(event) {
     const file = event.target.files?.[0]
     if (!file) return
+    try {
+      validateUploadFile(file, uploadPresets.clientFile)
+    } catch (error) {
+      toast.error(error.message)
+      return
+    }
     setUploading(true)
     const path = `${business.id}/${id}/${Date.now()}-${file.name}`
     const { error } = await supabase.storage.from('client-files').upload(path, file, { upsert: true })

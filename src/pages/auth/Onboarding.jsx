@@ -24,6 +24,7 @@ import Card from '../../components/ui/Card'
 import Input from '../../components/ui/Input'
 import Select from '../../components/ui/Select'
 import useToast from '../../hooks/useToast'
+import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 
 const businessTypes = ['Retail', 'Services', 'Logistics', 'Tech', 'Food', 'Fashion', 'Other']
 const teamSizes = ['Just me', '2–5', '6–20', '21–50', '50+']
@@ -270,6 +271,12 @@ export default function Onboarding({ setBusiness }) {
   async function uploadLogo(event) {
     const file = event.target.files?.[0]
     if (!file || !userId) return
+    try {
+      validateUploadFile(file, uploadPresets.businessLogo)
+    } catch (error) {
+      toast.error(error.message)
+      return
+    }
     const ext = file.name.split('.').pop()
     const path = `${userId}/logo-${Date.now()}.${ext}`
     const { error } = await supabase.storage.from('business-logos').upload(path, file, { upsert: true })

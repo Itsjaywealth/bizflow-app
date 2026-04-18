@@ -11,6 +11,7 @@ import Input from '../../components/ui/Input'
 import Modal from '../../components/ui/Modal'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 import {
   defaultLeaveBalances,
   documentCategories,
@@ -134,6 +135,12 @@ export default function StaffDetail({ business }) {
   async function uploadDocument(event) {
     const file = event.target.files?.[0]
     if (!file) return
+    try {
+      validateUploadFile(file, uploadPresets.staffDocument)
+    } catch (error) {
+      toast.error(error.message)
+      return
+    }
     setUploading(true)
     const category = documentCategories[0]
     const path = `${business.id}/${id}/${Date.now()}-${file.name}`
