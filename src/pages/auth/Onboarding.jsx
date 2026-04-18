@@ -192,16 +192,26 @@ export default function Onboarding({ setBusiness }) {
     }
   }
 
-  async function persistDraft(values) {
+  async function persistDraft(values, { blockOnError = false, scope = 'draft-save' } = {}) {
     const draftUserId = userId || currentUser?.id
     if (!draftUserId) return
     const nextDraft = { ...draft, ...values }
     setDraft(nextDraft)
-    await supabase.auth.updateUser({
+    const { error } = await supabase.auth.updateUser({
       data: {
         onboarding_draft: nextDraft,
       },
     })
+
+    if (!error) return
+
+    logOnboardingError(scope, error, draftUserId, {
+      draftKeys: Object.keys(nextDraft),
+    })
+
+    if (blockOnError) {
+      throw error
+    }
   }
 
   function syncBusinessRecord(record) {
@@ -413,7 +423,7 @@ export default function Onboarding({ setBusiness }) {
 
       setSavingStep(true)
       try {
-        await persistDraft(values)
+        await persistDraft(values, { scope: 'draft-save-step-1' })
         await ensureBusinessRecord(values)
         setStep(1)
       } catch (error) {
@@ -432,7 +442,7 @@ export default function Onboarding({ setBusiness }) {
       }
       setSavingStep(true)
       try {
-        await persistDraft({ ...values, teamSize })
+        await persistDraft({ ...values, teamSize }, { scope: 'draft-save-step-2' })
         setStep(2)
       } finally {
         setSavingStep(false)
@@ -447,7 +457,7 @@ export default function Onboarding({ setBusiness }) {
       }
       setSavingStep(true)
       try {
-        await persistDraft({ ...values, useCases: selectedUseCases })
+        await persistDraft({ ...values, useCases: selectedUseCases }, { scope: 'draft-save-step-3' })
         setStep(3)
       } finally {
         setSavingStep(false)
@@ -458,7 +468,7 @@ export default function Onboarding({ setBusiness }) {
     if (step === 3) {
       setSavingStep(true)
       try {
-        await persistDraft(values)
+        await persistDraft(values, { scope: 'draft-save-step-4' })
         const businessRecord = await ensureBusinessRecord(values)
         await createFirstInvoice(values, businessRecord)
         setStep(4)
@@ -478,7 +488,7 @@ export default function Onboarding({ setBusiness }) {
     setSavingStep(true)
 
     try {
-      await persistDraft(nextValues)
+      await persistDraft(nextValues, { scope: 'draft-save-skip' })
       await ensureMinimalBusinessRecord(nextValues)
       toast.success('You can complete your business profile later from Settings.')
       navigate('/app/dashboard', { replace: true })
@@ -511,7 +521,7 @@ export default function Onboarding({ setBusiness }) {
     const { data } = supabase.storage.from('business-logos').getPublicUrl(path)
     setLogoPreview(data.publicUrl)
     setValue('logoUrl', data.publicUrl, { shouldValidate: true, shouldDirty: true })
-    await persistDraft({ ...getValues(), logoUrl: data.publicUrl })
+    await persistDraft({ ...getValues(), logoUrl: data.publicUrl }, { scope: 'draft-save-logo' })
   }
 
   function toggleUseCase(item) {
