@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
 import { supabase } from '../lib/supabase'
+import { DEFAULT_APP_PATH, getAuthCallbackUrl, getSafeNextPath } from '../lib/appUrls'
 
 const AuthContext = createContext(null)
 const OAUTH_NEXT_STORAGE_KEY = 'bizflow-auth-next'
-const DEFAULT_APP_PATH = '/app/dashboard'
 
 function writeOAuthNextPath(nextPath) {
   if (typeof window === 'undefined') return
@@ -23,26 +23,6 @@ function clearOAuthNextPath() {
   if (typeof window === 'undefined') return
   window.sessionStorage?.removeItem(OAUTH_NEXT_STORAGE_KEY)
   window.localStorage?.removeItem(OAUTH_NEXT_STORAGE_KEY)
-}
-
-function getSafeNextPath(nextPath) {
-  if (!nextPath || typeof nextPath !== 'string') return DEFAULT_APP_PATH
-  if (!nextPath.startsWith('/')) return DEFAULT_APP_PATH
-  if (nextPath.startsWith('//')) return DEFAULT_APP_PATH
-  return nextPath
-}
-
-function getAuthSiteUrl() {
-  const configured = process.env.REACT_APP_SITE_URL?.trim()
-  if (configured) return configured.replace(/\/$/, '')
-  if (typeof window !== 'undefined' && window.location?.origin) return window.location.origin
-  return 'https://bizflowng.com'
-}
-
-function getOAuthRedirectUrl(nextPath = DEFAULT_APP_PATH) {
-  const redirectUrl = new URL('/auth/callback', getAuthSiteUrl())
-  redirectUrl.searchParams.set('next', getSafeNextPath(nextPath))
-  return redirectUrl.toString()
 }
 
 export function AuthProvider({ children }) {
@@ -95,7 +75,7 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: getOAuthRedirectUrl(safeNextPath),
+        redirectTo: getAuthCallbackUrl(safeNextPath),
         queryParams: {
           access_type: 'offline',
           prompt: 'select_account',
@@ -128,7 +108,7 @@ export function AuthProvider({ children }) {
       signInWithGoogle,
       signOut,
       getSafeNextPath,
-      getOAuthRedirectUrl,
+      getOAuthRedirectUrl: getAuthCallbackUrl,
       oauthNextStorageKey: OAUTH_NEXT_STORAGE_KEY,
       readOAuthNextPath,
       clearOAuthNextPath,

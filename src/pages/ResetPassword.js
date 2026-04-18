@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import PageUtilityNav from '../components/PageUtilityNav'
 import Seo from '../components/Seo'
+import { getPasswordResetUrl } from '../lib/appUrls'
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('')
@@ -27,7 +28,7 @@ export default function ResetPassword() {
     setMessage('')
     setError('')
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`
+      redirectTo: getPasswordResetUrl()
     })
     if (error) setError(error.message)
     else setMessage('Password reset email sent. Check your inbox and follow the secure link.')
