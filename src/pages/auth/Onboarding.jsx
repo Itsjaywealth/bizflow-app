@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
 import confetti from 'canvas-confetti'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,6 +13,7 @@ import {
   Layers3,
   MapPin,
   Phone,
+  ShieldAlert,
   ReceiptText,
   ShieldCheck,
   Users,
@@ -25,6 +26,7 @@ import Input from '../../components/ui/Input'
 import Select from '../../components/ui/Select'
 import useToast from '../../hooks/useToast'
 import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
+import { Link, useNavigate } from 'react-router-dom'
 
 const businessTypes = ['Retail', 'Services', 'Logistics', 'Tech', 'Food', 'Fashion', 'Other']
 const teamSizes = ['Just me', '2–5', '6–20', '21–50', '50+']
@@ -59,13 +61,16 @@ function initialWizardState() {
 }
 
 export default function Onboarding({ setBusiness }) {
+  const navigate = useNavigate()
   const toast = useToast()
   const [step, setStep] = useState(0)
   const [savingStep, setSavingStep] = useState(false)
   const [userId, setUserId] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null)
   const [existingBusiness, setExistingBusiness] = useState(null)
   const [logoPreview, setLogoPreview] = useState('')
   const [draft, setDraft] = useState(initialWizardState())
+  const [stepError, setStepError] = useState('')
 
   const {
     register,
@@ -77,6 +82,8 @@ export default function Onboarding({ setBusiness }) {
   } = useForm({
     resolver: zodResolver(baseSchema),
     mode: 'onChange',
+    reValidateMode: 'onChange',
+    shouldFocusError: true,
     defaultValues: draft,
   })
 
@@ -86,6 +93,7 @@ export default function Onboarding({ setBusiness }) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!mounted || !user) return
       setUserId(user.id)
+      setCurrentUser(user)
       const metadataDraft = user.user_metadata?.onboarding_draft || {}
       const nextDraft = { ...initialWizardState(), ...metadataDraft }
       setDraft(nextDraft)
@@ -119,8 +127,48 @@ export default function Onboarding({ setBusiness }) {
   }, [step])
 
   const stepPercent = ((step + 1) / 5) * 100
+  const businessType = watch('businessType') || draft.businessType
   const teamSize = watch('teamSize') || draft.teamSize
   const selectedUseCases = watch('useCases') || draft.useCases || []
+  const stepMeta = useMemo(() => ([
+    {
+      eyebrow: 'Workspace setup',
+      title: 'Tell us about your business',
+      description: 'Add the basics so invoices, branding, and workspace defaults feel ready from day one.',
+    },
+    {
+      eyebrow: 'Team setup',
+      title: 'How big is your team?',
+      description: 'This helps us tune your HR, payroll, and workspace suggestions.',
+    },
+    {
+      eyebrow: 'Focus areas',
+      title: 'What will you use BizFlow NG for?',
+      description: 'Pick your priorities so the dashboard and onboarding checklist feel relevant.',
+    },
+    {
+      eyebrow: 'Quick start',
+      title: 'Create your first invoice',
+      description: 'You can draft one now or skip and come back later from the dashboard.',
+    },
+    {
+      eyebrow: 'Ready to go',
+      title: 'Your workspace is ready',
+      description: 'We saved your progress and prepared the workspace so you can start operating immediately.',
+    },
+  ]), [])
+
+  function buildMinimalBusinessValues(sourceValues = {}) {
+    const ownerName = currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || 'My'
+    return {
+      ...sourceValues,
+      businessName: sourceValues.businessName?.trim() || `${ownerName.replace(/\s+/g, ' ').trim()}'s Business`,
+      businessType: sourceValues.businessType || 'Other',
+      businessAddress: sourceValues.businessAddress?.trim() || 'To be updated later',
+      businessPhone: sourceValues.businessPhone?.trim() || currentUser?.user_metadata?.phone || '+2340000000000',
+      logoUrl: sourceValues.logoUrl || '',
+    }
+  }
 
   async function persistDraft(values) {
     if (!userId) return
@@ -134,31 +182,35 @@ export default function Onboarding({ setBusiness }) {
   }
 
   async function ensureBusinessRecord(values) {
+    const safeValues = buildMinimalBusinessValues(values)
     const payload = {
-      name: values.businessName,
-      address: values.businessAddress,
-      phone: values.businessPhone,
-      logo_url: values.logoUrl || '',
-      email: existingBusiness?.email || '',
+      name: safeValues.businessName,
+      business_type: safeValues.businessType || existingBusiness?.business_type || 'Other',
+      address: safeValues.businessAddress,
+      phone: safeValues.businessPhone,
+      logo_url: safeValues.logoUrl || '',
+      email: existingBusiness?.email || currentUser?.email || '',
     }
 
     if (existingBusiness) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('businesses')
         .update(payload)
         .eq('id', existingBusiness.id)
         .select()
         .single()
+      if (error) throw error
       setExistingBusiness(data)
       setBusiness(data)
       return data
     }
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('businesses')
       .insert({ ...payload, user_id: userId })
       .select()
       .single()
+    if (error) throw error
     setExistingBusiness(data)
     setBusiness(data)
     return data
@@ -208,64 +260,98 @@ export default function Onboarding({ setBusiness }) {
 
   async function handleContinue() {
     const values = getValues()
+    setStepError('')
 
     if (step === 0) {
-      const valid = await trigger(['businessName', 'businessType', 'businessAddress', 'businessPhone'])
-      if (!valid) return
+      const valid = await trigger(['businessName', 'businessType', 'businessAddress', 'businessPhone'], { shouldFocus: true })
+      if (!valid) {
+        setStepError(
+          !getValues('businessType')
+            ? 'Business type is required before you can continue.'
+            : 'Please fix the highlighted business details to continue.'
+        )
+        return
+      }
+
       setSavingStep(true)
-      await persistDraft(values)
-      await ensureBusinessRecord(values)
-      setSavingStep(false)
-      setStep(1)
+      try {
+        await persistDraft(values)
+        try {
+          await ensureBusinessRecord(values)
+        } catch (error) {
+          console.error('Step 1 business sync failed:', error)
+          toast.error('We saved your details, but could not sync your workspace yet. You can keep going and we’ll try again.')
+        }
+        setStep(1)
+      } finally {
+        setSavingStep(false)
+      }
       return
     }
 
     if (step === 1) {
       if (!teamSize) {
-        toast.error('Select your team size to continue.')
+        setStepError('Please select a team size to continue.')
         return
       }
       setSavingStep(true)
-      await persistDraft({ ...values, teamSize })
-      setSavingStep(false)
-      setStep(2)
+      try {
+        await persistDraft({ ...values, teamSize })
+        setStep(2)
+      } finally {
+        setSavingStep(false)
+      }
       return
     }
 
     if (step === 2) {
       if (!selectedUseCases.length) {
-        toast.error('Choose at least one use case to continue.')
+        setStepError('Choose at least one focus area to continue.')
         return
       }
       setSavingStep(true)
-      await persistDraft({ ...values, useCases: selectedUseCases })
-      setSavingStep(false)
-      setStep(3)
+      try {
+        await persistDraft({ ...values, useCases: selectedUseCases })
+        setStep(3)
+      } finally {
+        setSavingStep(false)
+      }
       return
     }
 
     if (step === 3) {
       setSavingStep(true)
-      await persistDraft(values)
-      const businessRecord = await ensureBusinessRecord(values)
-      await createFirstInvoice(values, businessRecord)
-      setSavingStep(false)
-      setStep(4)
+      try {
+        await persistDraft(values)
+        const businessRecord = await ensureBusinessRecord(values)
+        await createFirstInvoice(values, businessRecord)
+        setStep(4)
+      } catch (error) {
+        console.error('Final onboarding step failed:', error)
+        toast.error(error.message || 'We could not finish setup just yet. Please try again.')
+      } finally {
+        setSavingStep(false)
+      }
     }
   }
 
   async function skipStep() {
-    if (step === 3) {
-      const values = getValues()
-      setSavingStep(true)
-      await persistDraft(values)
-      await ensureBusinessRecord(values)
-      setSavingStep(false)
-      setStep(4)
-      return
-    }
+    const values = getValues()
+    const nextValues = buildMinimalBusinessValues(values)
+    setStepError('')
+    setSavingStep(true)
 
-    setStep((current) => Math.min(current + 1, 4))
+    try {
+      await persistDraft(nextValues)
+      await ensureBusinessRecord(nextValues)
+      toast.success('You can complete your business profile later from Settings.')
+      navigate('/app/dashboard', { replace: true })
+    } catch (error) {
+      console.error('Skip onboarding workspace sync failed:', error)
+      toast.error('We could not create your workspace yet. Please try again in a moment.')
+    } finally {
+      setSavingStep(false)
+    }
   }
 
   async function uploadLogo(event) {
@@ -296,11 +382,12 @@ export default function Onboarding({ setBusiness }) {
       ? current.filter((value) => value !== item)
       : [...current, item]
     setValue('useCases', next, { shouldDirty: true })
+    setStepError('')
     setDraft((currentDraft) => ({ ...currentDraft, useCases: next }))
   }
 
   return (
-    <div className="min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(52,211,153,0.16),_transparent_36%),linear-gradient(180deg,_#f5fbf8_0%,_#f8fafc_52%,_#eef6f1_100%)] px-4 py-6 dark:bg-[radial-gradient(circle_at_top,_rgba(52,211,153,0.2),_transparent_28%),linear-gradient(180deg,_#08101f_0%,_#0b1120_44%,_#101827_100%)] sm:px-6 lg:px-8">
       <Seo
         title="Onboarding — BizFlow NG"
         description="Set up your business profile and complete your BizFlow NG workspace onboarding."
@@ -308,39 +395,70 @@ export default function Onboarding({ setBusiness }) {
         noindex
       />
       <div className="mx-auto max-w-5xl">
-        <div className="mb-8 rounded-[32px] border border-neutral-200 bg-white p-6 shadow-card">
-          <div className="flex items-center justify-between gap-4">
+        <div className="mb-6 rounded-[32px] border border-emerald-500/10 bg-white/88 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur dark:border-white/10 dark:bg-white/[0.04] sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Onboarding</p>
-              <h1 className="mt-3 text-3xl font-black text-neutral-900">Set up your BizFlow NG workspace</h1>
+              <h1 className="mt-3 text-3xl font-black text-neutral-900 dark:text-white">Set up your BizFlow NG workspace</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+                Move through setup quickly now, or skip and finish details later from Settings without losing access to your workspace.
+              </p>
             </div>
-            <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+            <span className="w-fit rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
               Step {step + 1} of 5
             </span>
           </div>
-          <div className="mt-6 h-3 overflow-hidden rounded-full bg-neutral-100">
+          <div className="mt-6 h-3 overflow-hidden rounded-full bg-emerald-100/80 dark:bg-white/10">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-primary via-blue-400 to-accent"
+              className="h-full rounded-full bg-gradient-to-r from-primary via-emerald-400 to-accent"
               animate={{ width: `${stepPercent}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {stepMeta.map((item, index) => (
+              <span
+                key={item.title}
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${index === step ? 'bg-emerald-500 text-white shadow-glow' : 'bg-white text-neutral-500 ring-1 ring-emerald-500/10 dark:bg-white/[0.06] dark:text-neutral-300 dark:ring-white/10'}`}
+              >
+                {item.eyebrow}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: 32 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -32 }}
-            transition={{ duration: 0.3 }}
-          >
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            handleContinue()
+          }}
+          noValidate
+        >
+          <input type="hidden" {...register('businessType')} />
+          <input type="hidden" {...register('teamSize')} />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 32 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -32 }}
+              transition={{ duration: 0.3 }}
+            >
             {step === 0 ? (
-              <Card className="rounded-[32px] p-8">
-                <h2 className="text-3xl font-black text-neutral-900">Tell us about your business</h2>
-                <p className="mt-3 text-sm leading-7 text-neutral-500">
-                  This helps us personalize your workspace and prepare your first invoice-ready setup.
+              <Card className="rounded-[32px] border border-emerald-500/10 bg-white/92 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.04] sm:p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{stepMeta[0].eyebrow}</p>
+                <h2 className="mt-4 text-3xl font-black text-neutral-900 dark:text-white">{stepMeta[0].title}</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+                  {stepMeta[0].description}
                 </p>
+                {stepError ? (
+                  <div className="mt-6 rounded-2xl border border-red-200 bg-red-50/80 px-4 py-4 text-sm font-medium text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200">
+                    <div className="flex items-start gap-3">
+                      <ShieldAlert className="mt-0.5 h-4 w-4" />
+                      <span>{stepError}</span>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="mt-8 space-y-5">
                   <Input
                     label="Business name"
@@ -351,11 +469,19 @@ export default function Onboarding({ setBusiness }) {
                   />
                   <Select
                     label="Business type"
-                    value={watch('businessType')}
-                    onChange={(value) => setValue('businessType', value, { shouldValidate: true, shouldDirty: true })}
+                    value={businessType}
+                    onChange={(value) => {
+                      setValue('businessType', value, { shouldValidate: true, shouldDirty: true })
+                      setStepError('')
+                    }}
                     error={errors.businessType?.message}
                     options={businessTypes.map((item) => ({ label: item, value: item }))}
                   />
+                  {!errors.businessType ? (
+                    <p className="-mt-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">
+                      Required. Choose the option that best matches how your business operates.
+                    </p>
+                  ) : null}
                   <Input
                     label="Business address"
                     placeholder="12 Admiralty Way, Lekki, Lagos"
@@ -371,43 +497,53 @@ export default function Onboarding({ setBusiness }) {
                     {...register('businessPhone')}
                   />
                   <div className="space-y-3">
-                    <label className="text-sm font-semibold text-neutral-700">Upload logo</label>
-                    <label className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <label className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">Upload logo</label>
+                    <label className="flex cursor-pointer items-center gap-4 rounded-3xl border border-dashed border-emerald-400/20 bg-emerald-50/80 px-4 py-4 transition hover:border-primary/40 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.06]">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm">
                         <ImagePlus className="h-5 w-5" />
                       </span>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-neutral-800">Upload your logo</p>
-                        <p className="mt-1 text-xs text-neutral-500">PNG, JPG, or SVG. We’ll show it on invoices.</p>
+                        <p className="text-sm font-semibold text-neutral-800 dark:text-white">Upload your logo</p>
+                        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-300">PNG, JPG, WEBP, or SVG up to 5MB. We’ll use it on invoices and workspace surfaces.</p>
                       </div>
                       <input type="file" accept="image/*" className="hidden" onChange={uploadLogo} />
                     </label>
                     {logoPreview ? (
-                      <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+                      <div className="rounded-3xl border border-emerald-500/10 bg-white p-4 dark:border-white/10 dark:bg-white/[0.04]">
                         <img src={logoPreview} alt="Business logo preview" className="max-h-20 object-contain" />
                       </div>
                     ) : null}
+                    <p className="text-xs leading-6 text-neutral-500 dark:text-neutral-300">Logo upload is optional and will never block onboarding.</p>
                   </div>
                 </div>
               </Card>
             ) : null}
 
             {step === 1 ? (
-              <Card className="rounded-[32px] p-8">
-                <h2 className="text-3xl font-black text-neutral-900">How big is your team?</h2>
-                <p className="mt-3 text-sm leading-7 text-neutral-500">
-                  We’ll tailor your workspace and onboarding suggestions based on your team size.
+              <Card className="rounded-[32px] border border-emerald-500/10 bg-white/92 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.04] sm:p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{stepMeta[1].eyebrow}</p>
+                <h2 className="mt-4 text-3xl font-black text-neutral-900 dark:text-white">{stepMeta[1].title}</h2>
+                <p className="mt-3 text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+                  {stepMeta[1].description}
                 </p>
+                {stepError ? (
+                  <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-4 text-sm font-medium text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-200">
+                    {stepError}
+                  </div>
+                ) : null}
                 <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
                   {teamSizes.map((item) => (
                     <button
                       key={item}
                       type="button"
-                      onClick={() => setValue('teamSize', item, { shouldDirty: true })}
+                      onClick={() => {
+                        setValue('teamSize', item, { shouldDirty: true, shouldValidate: true })
+                        setStepError('')
+                      }}
                       className={`rounded-[28px] border px-5 py-8 text-left transition-all ${
                         teamSize === item
                           ? 'border-primary bg-primary text-white shadow-button'
-                          : 'border-neutral-200 bg-white text-neutral-800 shadow-card hover:border-primary/40'
+                          : 'border-neutral-200 bg-white text-neutral-800 shadow-card hover:border-primary/40 dark:border-white/10 dark:bg-white/[0.04] dark:text-white'
                       }`}
                     >
                       <Users className="h-6 w-6" />
@@ -419,11 +555,17 @@ export default function Onboarding({ setBusiness }) {
             ) : null}
 
             {step === 2 ? (
-              <Card className="rounded-[32px] p-8">
-                <h2 className="text-3xl font-black text-neutral-900">What will you use BizFlow NG for?</h2>
-                <p className="mt-3 text-sm leading-7 text-neutral-500">
-                  Choose the modules you care about most so we can shape your dashboard around them.
+              <Card className="rounded-[32px] border border-emerald-500/10 bg-white/92 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.04] sm:p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{stepMeta[2].eyebrow}</p>
+                <h2 className="mt-4 text-3xl font-black text-neutral-900 dark:text-white">{stepMeta[2].title}</h2>
+                <p className="mt-3 text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+                  {stepMeta[2].description}
                 </p>
+                {stepError ? (
+                  <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/80 px-4 py-4 text-sm font-medium text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-200">
+                    {stepError}
+                  </div>
+                ) : null}
                 <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {useCases.map((item) => (
                     <button
@@ -433,7 +575,7 @@ export default function Onboarding({ setBusiness }) {
                       className={`rounded-[28px] border px-5 py-6 text-left transition-all ${
                         selectedUseCases.includes(item)
                           ? 'border-primary bg-primary text-white shadow-button'
-                          : 'border-neutral-200 bg-white text-neutral-800 shadow-card hover:border-primary/40'
+                          : 'border-neutral-200 bg-white text-neutral-800 shadow-card hover:border-primary/40 dark:border-white/10 dark:bg-white/[0.04] dark:text-white'
                       }`}
                     >
                       <Layers3 className="h-6 w-6" />
@@ -445,10 +587,11 @@ export default function Onboarding({ setBusiness }) {
             ) : null}
 
             {step === 3 ? (
-              <Card className="rounded-[32px] p-8">
-                <h2 className="text-3xl font-black text-neutral-900">Let&apos;s create your first invoice</h2>
-                <p className="mt-3 text-sm leading-7 text-neutral-500">
-                  Create a simple starter invoice now or skip and come back later from your dashboard.
+              <Card className="rounded-[32px] border border-emerald-500/10 bg-white/92 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.04] sm:p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{stepMeta[3].eyebrow}</p>
+                <h2 className="mt-4 text-3xl font-black text-neutral-900 dark:text-white">{stepMeta[3].title}</h2>
+                <p className="mt-3 text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+                  {stepMeta[3].description}
                 </p>
                 <div className="mt-8 space-y-5">
                   <Input
@@ -475,65 +618,73 @@ export default function Onboarding({ setBusiness }) {
             ) : null}
 
             {step === 4 ? (
-              <Card className="rounded-[32px] p-8 text-center">
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+              <Card className="rounded-[32px] border border-emerald-500/10 bg-white/92 p-8 text-center shadow-[0_18px_50px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-white/[0.04]">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-500/12">
                   <ShieldCheck className="h-10 w-10" />
                 </div>
-                <h2 className="mt-8 text-4xl font-black text-neutral-900">You&apos;re all set! 🎉</h2>
-                <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-neutral-500">
+                <h2 className="mt-8 text-4xl font-black text-neutral-900 dark:text-white">You&apos;re all set! 🎉</h2>
+                <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-neutral-600 dark:text-neutral-300">
                   Your BizFlow NG workspace is ready. We’ve saved your onboarding choices and prepared your dashboard for action.
                 </p>
-                <div className="mx-auto mt-8 max-w-xl rounded-[28px] border border-neutral-200 bg-neutral-50 p-6 text-left">
+                <div className="mx-auto mt-8 max-w-xl rounded-[28px] border border-emerald-500/10 bg-emerald-50/70 p-6 text-left dark:border-white/10 dark:bg-white/[0.04]">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Plan summary</p>
-                  <h3 className="mt-3 text-2xl font-bold text-neutral-900">Starter Workspace</h3>
+                  <h3 className="mt-3 text-2xl font-bold text-neutral-900 dark:text-white">Starter Workspace</h3>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4">
+                    <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4 dark:border-white/10 dark:bg-white/[0.04]">
                       <p className="text-xs uppercase tracking-[0.14em] text-neutral-400">Team size</p>
-                      <p className="mt-2 text-lg font-bold text-neutral-900">{teamSize || 'Just me'}</p>
+                      <p className="mt-2 text-lg font-bold text-neutral-900 dark:text-white">{teamSize || 'Just me'}</p>
                     </div>
-                    <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4">
+                    <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-4 dark:border-white/10 dark:bg-white/[0.04]">
                       <p className="text-xs uppercase tracking-[0.14em] text-neutral-400">Focus</p>
-                      <p className="mt-2 text-lg font-bold text-neutral-900">
+                      <p className="mt-2 text-lg font-bold text-neutral-900 dark:text-white">
                         {selectedUseCases.length ? selectedUseCases.join(', ') : 'Invoicing'}
                       </p>
                     </div>
                   </div>
                 </div>
-                <div className="mt-8">
-                  <a href="/app/dashboard" className="btn-primary">
-                    Go to Dashboard →
-                  </a>
+                <div className="mt-8 flex justify-center">
+                  <Link to="/app/dashboard">
+                    <Button rightIcon={<ArrowRight className="h-4 w-4" />}>Go to Dashboard</Button>
+                  </Link>
                 </div>
               </Card>
             ) : null}
-          </motion.div>
-        </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
 
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-          <Button
-            variant="ghost"
-            onClick={() => setStep((current) => Math.max(current - 1, 0))}
-            disabled={step === 0 || savingStep}
-            leftIcon={<ArrowLeft className="h-4 w-4" />}
-          >
-            Back
-          </Button>
+          {step < 4 ? (
+            <div className="mt-6 rounded-[28px] border border-emerald-500/10 bg-white/88 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur dark:border-white/10 dark:bg-white/[0.04]">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+                  <span className="font-semibold text-neutral-900 dark:text-white">Need to come back later?</span>{' '}
+                  You can skip now and finish your business profile later from <Link to="/app/settings" className="font-semibold text-primary hover:text-primary-dark">Settings</Link>.
+                </div>
 
-          <div className="flex flex-wrap gap-3">
-            {step < 4 ? (
-              <>
-                {step >= 1 ? (
-                  <Button variant="outline" onClick={skipStep} disabled={savingStep}>
-                    {step === 3 ? 'Skip for now' : 'Skip'}
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      setStepError('')
+                      setStep((current) => Math.max(current - 1, 0))
+                    }}
+                    disabled={step === 0 || savingStep}
+                    leftIcon={<ArrowLeft className="h-4 w-4" />}
+                    className="w-full sm:w-auto"
+                  >
+                    Back
                   </Button>
-                ) : null}
-                <Button onClick={handleContinue} loading={savingStep} rightIcon={<ArrowRight className="h-4 w-4" />}>
-                  Continue
-                </Button>
-              </>
-            ) : null}
-          </div>
-        </div>
+                  <Button type="button" variant="outline" onClick={skipStep} disabled={savingStep} className="w-full sm:w-auto">
+                    Skip for now
+                  </Button>
+                  <Button type="submit" loading={savingStep} rightIcon={<ArrowRight className="h-4 w-4" />} className="w-full sm:w-auto">
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </form>
       </div>
     </div>
   )
