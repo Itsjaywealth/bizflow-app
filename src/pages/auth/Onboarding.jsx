@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import confetti from 'canvas-confetti'
 import { motion, AnimatePresence } from 'framer-motion'
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ArrowLeft,
@@ -90,6 +90,7 @@ export default function Onboarding({ setBusiness }) {
   const [stepError, setStepError] = useState('')
 
   const {
+    control,
     register,
     trigger,
     setValue,
@@ -144,7 +145,7 @@ export default function Onboarding({ setBusiness }) {
   }, [step])
 
   const stepPercent = ((step + 1) / 5) * 100
-  const businessType = watch('businessType') || draft.businessType
+  const businessType = watch('businessType')
   const teamSize = watch('teamSize') || draft.teamSize
   const selectedUseCases = watch('useCases') || draft.useCases || []
   const stepMeta = useMemo(() => ([
@@ -506,7 +507,6 @@ export default function Onboarding({ setBusiness }) {
           }}
           noValidate
         >
-          <input type="hidden" {...register('businessType')} />
           <input type="hidden" {...register('teamSize')} />
           <AnimatePresence mode="wait">
             <motion.div
@@ -539,15 +539,21 @@ export default function Onboarding({ setBusiness }) {
                     error={errors.businessName?.message}
                     {...register('businessName')}
                   />
-                  <Select
-                    label="Business type"
-                    value={businessType}
-                    onChange={(value) => {
-                      setValue('businessType', value, { shouldValidate: true, shouldDirty: true })
-                      setStepError('')
-                    }}
-                    error={errors.businessType?.message}
-                    options={businessTypes.map((item) => ({ label: item, value: item }))}
+                  <Controller
+                    name="businessType"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        label="Business type"
+                        value={field.value || ''}
+                        onChange={(value) => {
+                          field.onChange(value)
+                          setStepError('')
+                        }}
+                        error={errors.businessType?.message}
+                        options={businessTypes.map((item) => ({ label: item, value: item }))}
+                      />
+                    )}
                   />
                   {!errors.businessType ? (
                     <p className="-mt-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">
