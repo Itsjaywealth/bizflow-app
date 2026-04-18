@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ThemeToggle from '../components/ThemeToggle'
 import Seo from '../components/Seo'
+import { SUPPORT_EMAIL } from '../lib/support'
 
 export default function PublicInvoice() {
   const { token } = useParams()
@@ -143,11 +144,11 @@ export default function PublicInvoice() {
         {invoice.notes && <p style={{ marginTop: 20, color: '#64748b' }}>{invoice.notes}</p>}
         {!business.bank_name && !business.payment_link && !isPaid && (
           <div className="notice" style={{ marginTop: 20 }}>
-            Payment details have not been added to this invoice yet. Please contact {business.name || 'the issuing business'} for payment instructions.
+            Payment details have not been added to this invoice yet. Please contact {business.name || 'the issuing business'} or {SUPPORT_EMAIL} for payment instructions.
           </div>
         )}
         <div className="public-invoice-footer">
-          Generated with BizFlow NG. For questions about this invoice, contact {business.name || 'the issuing business'} directly.
+          Generated with BizFlow NG. For support, contact {SUPPORT_EMAIL}.
         </div>
       </div>
     </div>
