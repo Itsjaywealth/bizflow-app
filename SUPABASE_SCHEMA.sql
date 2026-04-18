@@ -204,6 +204,28 @@ create table if not exists deduction_configs (
 );
 
 create unique index if not exists invoices_public_token_idx on invoices(public_token);
+create index if not exists businesses_user_id_idx on businesses(user_id);
+create index if not exists clients_business_id_idx on clients(business_id);
+create index if not exists invoices_business_id_idx on invoices(business_id);
+create index if not exists invoices_client_id_idx on invoices(client_id);
+create index if not exists staff_business_id_idx on staff(business_id);
+create index if not exists products_business_id_idx on products(business_id);
+create index if not exists expenses_business_id_idx on expenses(business_id);
+create index if not exists departments_business_id_idx on departments(business_id);
+create index if not exists attendance_business_id_staff_id_idx on attendance(business_id, staff_id);
+create index if not exists leave_requests_business_id_staff_id_idx on leave_requests(business_id, staff_id);
+create index if not exists leave_balances_business_id_staff_id_idx on leave_balances(business_id, staff_id);
+create index if not exists staff_documents_business_id_staff_id_idx on staff_documents(business_id, staff_id);
+create index if not exists payroll_runs_business_id_idx on payroll_runs(business_id);
+create index if not exists payslips_business_id_staff_id_idx on payslips(business_id, staff_id);
+create index if not exists deduction_configs_business_id_idx on deduction_configs(business_id);
+create index if not exists team_invites_business_id_idx on team_invites(business_id);
+create index if not exists billing_history_business_id_idx on billing_history(business_id);
+create index if not exists login_activity_business_id_user_id_idx on login_activity(business_id, user_id);
+create index if not exists account_deletion_requests_business_id_user_id_idx on account_deletion_requests(business_id, user_id);
+create index if not exists notifications_user_id_business_id_idx on notifications(user_id, business_id);
+create index if not exists announcements_business_id_idx on announcements(business_id);
+create index if not exists user_preferences_user_id_business_id_idx on user_preferences(user_id, business_id);
 
 alter table invoices add column if not exists amount_paid numeric default 0;
 alter table invoices add column if not exists payment_history jsonb default '[]'::jsonb;
@@ -471,6 +493,11 @@ grant execute on function get_public_invoice(text) to anon, authenticated;
 -- Optional logo upload setup:
 -- In Supabase Storage, create a public bucket named: business-logos.
 -- The app uses this bucket for Business Profile logo uploads.
+--
+-- Recommended Storage policies to add in Supabase:
+-- 1. business-logos / staff-photos / profile-photos: authenticated users can upload only into a folder that starts with their business id.
+-- 2. client-files / staff-documents: keep private and serve through signed URLs where possible.
+-- 3. Restrict storage objects by mime type and file size in bucket settings as a second layer behind the frontend validation.
 
 -- Optional realtime setup:
 -- In Supabase Dashboard, enable Realtime for invoices, expenses, clients,

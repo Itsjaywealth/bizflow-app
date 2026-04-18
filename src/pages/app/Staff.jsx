@@ -31,6 +31,7 @@ import Input from '../../components/ui/Input'
 import Modal from '../../components/ui/Modal'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 import {
   bankOptions,
   buildStaffPayload,
@@ -264,6 +265,12 @@ export default function Staff({ business }) {
 
   async function uploadPhotoIfNeeded(values) {
     if (!photoFile || !business?.id) return values.photo_url || ''
+    try {
+      validateUploadFile(photoFile, uploadPresets.profilePhoto)
+    } catch (error) {
+      toast.error(error.message)
+      return values.photo_url || ''
+    }
     const path = `${business.id}/${Date.now()}-${photoFile.name}`
     const { error } = await supabase.storage.from('staff-photos').upload(path, photoFile, { upsert: true })
     if (error) {
@@ -277,6 +284,12 @@ export default function Staff({ business }) {
   async function uploadDocumentsIfNeeded(staffId) {
     if (!documentFiles.length || !business?.id || !staffId) return
     for (const item of documentFiles) {
+      try {
+        validateUploadFile(item.file, uploadPresets.staffDocument)
+      } catch (error) {
+        toast.error(`${item.file.name}: ${error.message}`)
+        continue
+      }
       const path = `${business.id}/${staffId}/${Date.now()}-${item.file.name}`
       const uploadRes = await supabase.storage.from('staff-documents').upload(path, item.file, { upsert: true })
       if (uploadRes.error) {

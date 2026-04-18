@@ -38,6 +38,7 @@ import Input from '../../components/ui/Input'
 import Modal from '../../components/ui/Modal'
 import Select from '../../components/ui/Select'
 import { SUPPORT_EMAIL } from '../../lib/support'
+import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 
 const tabs = [
   { key: 'business', label: 'Business Profile', icon: <Building2 className="h-4 w-4" />, description: 'Workspace identity and defaults' },
@@ -473,6 +474,12 @@ export default function Settings({ business, setBusiness }) {
 
   async function uploadImage(bucket, file, fallbackSetter) {
     if (!file) return ''
+    try {
+      validateUploadFile(file, uploadPresets.profilePhoto)
+    } catch (error) {
+      toast.error(error.message)
+      return ''
+    }
     const ext = file.name.split('.').pop()
     const path = `${business.id}/${bucket}-${Date.now()}.${ext}`
     const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true })
