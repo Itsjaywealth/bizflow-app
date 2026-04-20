@@ -129,7 +129,6 @@ export default function Onboarding({ setBusiness }) {
         .from('businesses')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: true })
         .limit(1)
 
       const businessRecord = businessRows?.[0] || null
@@ -259,7 +258,6 @@ export default function Onboarding({ setBusiness }) {
       .from('businesses')
       .select('*')
       .eq('user_id', resolvedUserId)
-      .order('created_at', { ascending: true })
       .limit(1)
 
     if (lookupError) {
@@ -302,6 +300,10 @@ export default function Onboarding({ setBusiness }) {
         payload,
       })
       throw error
+    }
+
+    if (data?.[0]) {
+      return syncBusinessRecord(data[0])
     }
 
     const refreshedBusiness = await lookupExistingBusiness(resolvedUser.id, `${mode}-refresh`)

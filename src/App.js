@@ -111,7 +111,6 @@ export default function App() {
       .from('businesses')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: true })
       .limit(1)
     if (error) {
       console.error('Failed to load business profile after auth:', error)
