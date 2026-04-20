@@ -11,14 +11,11 @@ import {
   CreditCard,
   Globe,
   ImageIcon,
-  KeyRound,
   Landmark,
   Mail,
-  ShieldAlert,
   Palette,
   Sparkles,
   ShieldCheck,
-  Smartphone,
   Trash2,
   UserRound,
   Users,
@@ -155,16 +152,14 @@ const integrationSchema = z.object({
   zapier_connected: z.boolean().default(false),
   whatsapp_business_connected: z.boolean().default(false),
   termii_connected: z.boolean().default(false),
-  termii_api_key: z.string().optional(),
 })
 
 const securitySchema = z.object({
   current_password: z.string().optional(),
-  new_password: z.string().min(8, 'Password must be at least 8 characters'),
+  new_password: z.union([z.literal(''), z.string().min(8, 'Password must be at least 8 characters')]),
   confirm_password: z.string(),
-  two_factor_enabled: z.boolean().default(false),
   session_timeout_minutes: z.coerce.number().min(5),
-}).refine((values) => values.new_password === values.confirm_password, {
+}).refine((values) => !values.new_password || values.new_password === values.confirm_password, {
   message: 'Passwords do not match',
   path: ['confirm_password'],
 })
@@ -178,15 +173,6 @@ function safeJson(value, fallback) {
     }
   }
   return value && typeof value === 'object' ? value : fallback
-}
-
-function buildQrGrid(seed = 'bizflow-2fa') {
-  const size = 15
-  return Array.from({ length: size * size }).map((_, index) => {
-    const row = Math.floor(index / size)
-    const col = index % size
-    return ((row * 13) + (col * 17) + seed.length * 19) % 5 < 2
-  })
 }
 
 async function updateBusinessRecord({ businessId, payload, fallbackPayload }) {
@@ -314,7 +300,6 @@ export default function Settings({ business, setBusiness }) {
       zapier_connected: safeJson(business?.integration_settings, {}).zapier_connected ?? false,
       whatsapp_business_connected: safeJson(business?.integration_settings, {}).whatsapp_business_connected ?? false,
       termii_connected: safeJson(business?.integration_settings, {}).termii_connected ?? false,
-      termii_api_key: safeJson(business?.integration_settings, {}).termii_api_key || '',
     },
   })
 
@@ -324,7 +309,6 @@ export default function Settings({ business, setBusiness }) {
       current_password: '',
       new_password: '',
       confirm_password: '',
-      two_factor_enabled: safeJson(business?.security_settings, {}).two_factor_enabled ?? false,
       session_timeout_minutes: Number(safeJson(business?.security_settings, {}).session_timeout_minutes ?? 30),
     },
   })
@@ -402,14 +386,12 @@ export default function Settings({ business, setBusiness }) {
       zapier_connected: integrationSettings.zapier_connected ?? false,
       whatsapp_business_connected: integrationSettings.whatsapp_business_connected ?? false,
       termii_connected: integrationSettings.termii_connected ?? false,
-      termii_api_key: integrationSettings.termii_api_key || '',
     })
 
     securityForm.reset({
       current_password: '',
       new_password: '',
       confirm_password: '',
-      two_factor_enabled: securitySettings.two_factor_enabled ?? false,
       session_timeout_minutes: Number(securitySettings.session_timeout_minutes ?? 30),
     })
 
@@ -619,9 +601,7 @@ export default function Settings({ business, setBusiness }) {
       return
     }
     await saveJsonSection('security_settings', {
-      two_factor_enabled: values.two_factor_enabled,
       session_timeout_minutes: values.session_timeout_minutes,
-      backup_codes: Array.from({ length: 6 }).map((_, index) => `BF-${index + 1}${Math.random().toString(36).slice(2, 8).toUpperCase()}`),
     }, 'Security preferences')
     securityForm.reset({
       ...values,
@@ -1267,18 +1247,29 @@ export default function Settings({ business, setBusiness }) {
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <h3 className="text-lg font-bold text-neutral-950">{card.name}</h3>
-                          <p className="mt-2 text-sm text-neutral-500">{card.description}</p>
+                          <p className="mt-2 text-sm text-neutral-500">
+                            {card.key === 'termii_connected'
+                              ? 'SMS credentials are now managed only through secure server-side environment configuration.'
+                              : card.description}
+                          </p>
                         </div>
                         <Badge variant={card.connected ? 'success' : 'neutral'}>{card.connected ? 'Connected' : 'Not connected'}</Badge>
                       </div>
-                      {card.key === 'termii_connected' ? <Input className="mt-4" label="Termii API key" {...integrationForm.register('termii_api_key')} /> : null}
+                      {card.key === 'termii_connected' ? (
+                        <div className="mt-4 rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 text-sm text-neutral-600 dark:bg-white/5 dark:text-neutral-300">
+                          To enable Termii safely, store the API key in a protected server environment and route SMS requests through a trusted backend function.
+                        </div>
+                      ) : null}
                       <div className="mt-4">
                         <Button
                           type="button"
                           variant={card.connected ? 'outline' : 'primary'}
-                          onClick={() => integrationForm.setValue(card.key, !integrationValues[card.key])}
+                          onClick={() => {
+                            if (card.key === 'termii_connected') return
+                            integrationForm.setValue(card.key, !integrationValues[card.key])
+                          }}
                         >
-                          {card.connected ? 'Disconnect' : card.action}
+                          {card.key === 'termii_connected' ? 'Server-side only' : card.connected ? 'Disconnect' : card.action}
                         </Button>
                       </div>
                     </Card>
@@ -1292,7 +1283,7 @@ export default function Settings({ business, setBusiness }) {
           {activeTab === 'security' ? (
             <Card className="rounded-[32px] space-y-8">
               <form onSubmit={securityForm.handleSubmit(saveSecurity)} className="space-y-8">
-                <SectionHeader title="Security" description="Protect your account with password updates, 2FA preferences, session limits, and device controls." />
+                <SectionHeader title="Security" description="Manage password updates, session limits, and device controls without relying on browser-only security shortcuts." />
                 <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
                   <div className="space-y-6">
                     <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
@@ -1307,7 +1298,6 @@ export default function Settings({ business, setBusiness }) {
                     <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
                       <h3 className="text-lg font-bold text-neutral-950">Session settings</h3>
                       <div className="mt-5 grid gap-4">
-                        <ToggleRow label="Enable 2FA" checked={securityValues.two_factor_enabled} onChange={() => securityForm.setValue('two_factor_enabled', !securityValues.two_factor_enabled)} />
                         <Select label="Session timeout" options={[15, 30, 60, 120].map((minutes) => ({ label: `${minutes} minutes`, value: minutes }))} value={securityValues.session_timeout_minutes} onChange={(value) => securityForm.setValue('session_timeout_minutes', Number(value))} />
                         <Button type="button" variant="outline" onClick={() => signOut({ scope: 'global' })}>Log out all devices</Button>
                       </div>
@@ -1316,14 +1306,17 @@ export default function Settings({ business, setBusiness }) {
 
                   <div className="space-y-6">
                     <Card className="rounded-[28px] border border-emerald-400/12 bg-neutral-50 dark:bg-white/5">
-                      <h3 className="text-lg font-bold text-neutral-950">Authenticator setup</h3>
-                      <div className="mt-5 grid grid-cols-5 gap-1 rounded-2xl border border-emerald-400/12 bg-white/90 p-4 dark:bg-white/5">
-                        {buildQrGrid(user?.id).map((filled, index) => <span key={index} className={`aspect-square rounded-sm ${filled ? 'bg-neutral-950' : 'bg-neutral-100'}`} />)}
+                      <h3 className="text-lg font-bold text-neutral-950">Authentication safeguards</h3>
+                      <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50/80 px-5 py-5 text-sm leading-7 text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-100">
+                        BizFlow NG no longer presents a fake 2FA flow. Until a real server-backed multi-factor authentication rollout is ready, this workspace relies on verified email access, strong passwords, and session controls only.
                       </div>
-                      <div className="mt-4 grid gap-2">
-                        {(safeJson(business?.security_settings, {}).backup_codes || ['BF-AX31P2', 'BF-QM72L9', 'BF-HT55X0']).map((code) => (
-                          <div key={code} className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm font-semibold text-neutral-700 dark:bg-white/5">{code}</div>
-                        ))}
+                      <div className="mt-4 grid gap-3">
+                        <div className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 text-sm text-neutral-600 dark:bg-white/5 dark:text-neutral-300">
+                          Email verification stays enforced before onboarding and workspace access.
+                        </div>
+                        <div className="rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-4 text-sm text-neutral-600 dark:bg-white/5 dark:text-neutral-300">
+                          Password changes and global sign-out remain available here while stronger server-side protections are rolled out.
+                        </div>
                       </div>
                     </Card>
 

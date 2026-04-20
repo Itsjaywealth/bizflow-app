@@ -9,6 +9,7 @@ import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { openSignedStorageUrl } from '../../lib/storageUrls'
 import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 import { buildClientStats, clientAvatarTone, formatClientCurrency, getClientAddress, getClientBusiness, getClientName, getClientStatus, getClientTags } from './clientShared'
 
@@ -133,6 +134,15 @@ export default function ClientDetail({ business }) {
     }
     toast.success('File uploaded.')
     loadFiles()
+  }
+
+  async function openFile(path) {
+    try {
+      await openSignedStorageUrl('client-files', path)
+    } catch (error) {
+      logClientDetailError('open-file', error, business.id, id)
+      toast.error('This file could not be opened securely right now.')
+    }
   }
 
   const stats = useMemo(() => buildClientStats(client || {}, invoices), [client, invoices])
@@ -280,10 +290,15 @@ export default function ClientDetail({ business }) {
           </div>
           <div className="grid gap-3">
             {files.length === 0 ? <p className="text-sm text-neutral-500">No files uploaded yet.</p> : files.map((file) => (
-              <a key={file.name} href={`${supabase.storage.from('client-files').getPublicUrl(`${business.id}/${id}/${file.name}`).data.publicUrl}`} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 transition hover:border-emerald-400/40 hover:bg-emerald-500/8 dark:bg-white/5">
+              <button
+                key={file.name}
+                type="button"
+                onClick={() => openFile(`${business.id}/${id}/${file.name}`)}
+                className="flex items-center justify-between rounded-2xl border border-emerald-400/12 bg-neutral-50 px-4 py-4 text-left transition hover:border-emerald-400/40 hover:bg-emerald-500/8 dark:bg-white/5"
+              >
                 <span className="text-sm font-medium text-neutral-700">{file.name}</span>
-                <span className="text-xs text-neutral-400">{Math.round((file.metadata?.size || 0) / 1024)} KB</span>
-              </a>
+                <span className="text-xs text-neutral-400">Open securely • {Math.round((file.metadata?.size || 0) / 1024)} KB</span>
+              </button>
             ))}
           </div>
         </Card>
