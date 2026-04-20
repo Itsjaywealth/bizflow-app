@@ -11,6 +11,7 @@ import Input from '../../components/ui/Input'
 import Modal from '../../components/ui/Modal'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { openSignedStorageUrl } from '../../lib/storageUrls'
 import { uploadPresets, validateUploadFile } from '../../lib/uploadSecurity'
 import {
   defaultLeaveBalances,
@@ -160,6 +161,14 @@ export default function StaffDetail({ business }) {
     setUploading(false)
     toast.success('Document uploaded.')
     loadStaffDetail()
+  }
+
+  async function openDocument(path) {
+    try {
+      await openSignedStorageUrl('staff-documents', path)
+    } catch (error) {
+      toast.error(error.message || 'This document could not be opened securely right now.')
+    }
   }
 
   async function deleteStaffRecord() {
@@ -401,7 +410,12 @@ export default function StaffDetail({ business }) {
                   <p className="font-semibold text-neutral-900">{document.file_name}</p>
                   <p className="text-sm text-neutral-500">{document.category || 'Document'} • uploaded {formatDate(document.created_at)}</p>
                 </div>
-                <Badge variant="info">{document.category || 'File'}</Badge>
+                <div className="flex items-center gap-3">
+                  <Badge variant="info">{document.category || 'File'}</Badge>
+                  <Button type="button" variant="outline" size="sm" onClick={() => openDocument(document.file_path)}>
+                    Open securely
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

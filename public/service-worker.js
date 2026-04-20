@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bizflow-ng-v3'
+const CACHE_NAME = 'bizflow-ng-v4'
 const CORE_ASSETS = ['/', '/index.html', '/offline.html', '/manifest.json?v=2', '/logo.png']
 
 self.addEventListener('install', (event) => {
@@ -23,8 +23,8 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
 
   const url = new URL(event.request.url)
-  const isStaticChunk = url.pathname.startsWith('/static/')
-  const isScriptOrStyle = event.request.destination === 'script' || event.request.destination === 'style'
+  const isSameOrigin = url.origin === self.location.origin
+  const isCoreAsset = CORE_ASSETS.includes(`${url.pathname}${url.search}`) || CORE_ASSETS.includes(url.pathname)
 
   if (event.request.mode === 'navigate') {
     event.respondWith(
@@ -33,21 +33,21 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  if (isStaticChunk || isScriptOrStyle) {
-    event.respondWith(fetch(event.request))
+  if (!isSameOrigin || !isCoreAsset) {
     return
   }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached
-      return fetch(event.request)
-        .then((response) => {
-          const cloned = response.clone()
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned))
+      return fetch(event.request).then((response) => {
+        if (!response || response.status !== 200 || response.type !== 'basic') {
           return response
-        })
-        .catch(() => caches.match('/logo.png'))
+        }
+        const cloned = response.clone()
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned))
+        return response
+      }).catch(() => caches.match('/logo.png'))
     })
   )
 })
