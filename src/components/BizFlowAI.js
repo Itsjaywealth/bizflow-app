@@ -109,7 +109,7 @@ export default function BizFlowAI({ business, session }) {
   const [invoiceForm, setInvoiceForm] = useState(defaultInvoiceForm)
   const [selectedReminderInvoiceId, setSelectedReminderInvoiceId] = useState('')
 
-  const hiddenRoutes = ['/verify-email', '/onboarding']
+  const hiddenRoutes = ['/verify-email', '/onboarding', '/login']
   const isVisible = !hiddenRoutes.includes(location.pathname) && location.pathname !== '/invoice/:token'
 
   const greeting = useMemo(() => {
