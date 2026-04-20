@@ -232,22 +232,30 @@ export default function InvoiceForm({ business }) {
     const existing = clients.find((client) => client.name.toLowerCase() === name.toLowerCase())
     if (existing) return existing
 
-    const { data, error } = await supabase
+    const clientId = crypto.randomUUID()
+    const clientPayload = {
+      id: clientId,
+      business_id: business.id,
+      name,
+      email: payload.client_email || null,
+      address: payload.client_address || null,
+    }
+
+    const { error } = await supabase
       .from('clients')
-      .insert({
-        business_id: business.id,
-        name,
-        email: payload.client_email || null,
-        address: payload.client_address || null,
-      })
-      .select()
-      .single()
+      .insert(clientPayload)
 
     if (error) {
       logInvoiceFormError('upsert-client', error, business.id)
       throw error
     }
-    return data
+
+    const nextClient = {
+      ...clientPayload,
+    }
+    setClients((current) => [nextClient, ...current])
+    setSelectedClientId(clientId)
+    return nextClient
   }
 
   async function persistInvoice(payload, nextStatus) {
@@ -285,19 +293,19 @@ export default function InvoiceForm({ business }) {
         status: nextStatus,
       }
 
-      let invoiceId = id
+      let invoiceId = id || crypto.randomUUID()
 
       if (id) {
         const { error } = await supabase.from('invoices').update(invoicePayload).eq('id', id)
         if (error) throw error
       } else {
-        const { data, error } = await supabase.from('invoices').insert({
+        const { error } = await supabase.from('invoices').insert({
+          id: invoiceId,
           ...invoicePayload,
           public_token: crypto.randomUUID(),
           created_at: payload.issue_date ? `${payload.issue_date}T09:00:00.000Z` : undefined,
-        }).select().single()
+        })
         if (error) throw error
-        invoiceId = data.id
       }
 
       toast.success(nextStatus === 'draft' ? 'Invoice saved as draft.' : 'Invoice saved successfully.')

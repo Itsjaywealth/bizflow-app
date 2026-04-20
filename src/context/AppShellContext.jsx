@@ -162,19 +162,34 @@ export function AppShellProvider({ children, session, business, setBusiness }) {
       return
     }
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('user_preferences')
       .select('*')
       .eq('user_id', session.user.id)
       .eq('business_id', business.id)
-      .maybeSingle()
+      .order('updated_at', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false, nullsFirst: false })
+      .limit(1)
 
-    if (data?.theme_preference) {
-      setTheme(data.theme_preference)
+    if (error) {
+      console.error('[AppShell:load-preferences]', {
+        businessId: business.id,
+        userId: session.user.id,
+        message: error.message || 'Unknown preferences error',
+        details: error.details || null,
+        hint: error.hint || null,
+        code: error.code || null,
+      })
     }
 
-    setChecklistState(data?.checklist_state || {})
-    setChecklistDismissed(Boolean(data?.checklist_dismissed))
+    const preferenceRow = data?.[0] || null
+
+    if (preferenceRow?.theme_preference) {
+      setTheme(preferenceRow.theme_preference)
+    }
+
+    setChecklistState(preferenceRow?.checklist_state || {})
+    setChecklistDismissed(Boolean(preferenceRow?.checklist_dismissed))
     setPreferencesLoaded(true)
   }, [business?.id, session?.user?.id])
 
