@@ -459,7 +459,7 @@ export default function Onboarding({ setBusiness }) {
       setSavingStep(true)
       try {
         await persistDraft(values, { scope: 'draft-save-step-1' })
-        const businessRecord = await ensureBusinessRecord(values)
+        const businessRecord = await ensureMinimalBusinessRecord(values)
         logOnboardingEvent('continue:step-1-success', {
           step,
           userId: currentUser?.id || userId,
@@ -613,16 +613,9 @@ export default function Onboarding({ setBusiness }) {
               transition={{ duration: 0.3 }}
             />
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {stepMeta.map((item, index) => (
-              <span
-                key={item.title}
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${index === step ? 'bg-emerald-500 text-white shadow-glow' : 'bg-white text-neutral-500 ring-1 ring-emerald-500/10 dark:bg-white/[0.06] dark:text-neutral-300 dark:ring-white/10'}`}
-              >
-                {item.eyebrow}
-              </span>
-            ))}
-          </div>
+          <p className="mt-4 text-sm font-medium text-neutral-500 dark:text-neutral-300">
+            {stepMeta[step].eyebrow}: <span className="text-neutral-900 dark:text-white">{stepMeta[step].title}</span>
+          </p>
         </div>
 
         <form
@@ -680,7 +673,7 @@ export default function Onboarding({ setBusiness }) {
                       />
                     )}
                   />
-                  {!errors.businessType ? (
+                  {!errors.businessType && !businessType ? (
                     <p className="-mt-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">
                       Required. Choose the option that best matches how your business operates.
                     </p>
