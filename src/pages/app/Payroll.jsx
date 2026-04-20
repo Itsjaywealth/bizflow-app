@@ -219,26 +219,43 @@ export default function Payroll({ business }) {
     loadPayrollData()
   }, [business?.id])
 
+  function logPayrollError(scope, error) {
+    if (!error) return
+    console.error(`[Payroll:${scope}]`, {
+      businessId: business?.id,
+      message: error.message || 'Unknown payroll error',
+      details: error.details || null,
+      hint: error.hint || null,
+      code: error.code || null,
+    })
+  }
+
   async function loadPayrollData() {
     setLoading(true)
     const [staffRes, runsRes, payslipsRes, configRes] = await Promise.all([
       supabase.from('staff').select('*').eq('business_id', business.id).order('created_at', { ascending: false }),
       supabase.from('payroll_runs').select('*').eq('business_id', business.id).order('processed_at', { ascending: false }),
       supabase.from('payslips').select('*').eq('business_id', business.id).order('created_at', { ascending: false }),
-      supabase.from('deduction_configs').select('*').eq('business_id', business.id).maybeSingle(),
+      supabase.from('deduction_configs').select('*').eq('business_id', business.id).order('created_at', { ascending: false }).limit(1),
     ])
 
-    setStaff(staffRes.data || [])
+    if (staffRes.error) logPayrollError('load-staff', staffRes.error)
+    if (runsRes.error) logPayrollError('load-runs', runsRes.error)
+    if (payslipsRes.error) logPayrollError('load-payslips', payslipsRes.error)
+    if (configRes.error) logPayrollError('load-deduction-config', configRes.error)
+
+    setStaff(staffRes.error ? [] : (staffRes.data || []))
     setPayrollRuns(runsRes.error ? [] : (runsRes.data || []))
     setPayslips(payslipsRes.error ? [] : (payslipsRes.data || []))
-    if (!configRes.error && configRes.data) {
+    const deductionConfig = configRes.error ? null : (configRes.data?.[0] || null)
+    if (deductionConfig) {
       deductionForm.reset({
-        pension_enabled: configRes.data.pension_enabled ?? true,
-        pension_employee_percent: Number(configRes.data.pension_employee_percent ?? 8),
-        pension_employer_percent: Number(configRes.data.pension_employer_percent ?? 10),
-        nhf_enabled: configRes.data.nhf_enabled ?? true,
-        nhf_rate: Number(configRes.data.nhf_rate ?? 2.5),
-        custom_deductions: Array.isArray(configRes.data.custom_deductions) ? configRes.data.custom_deductions : [],
+        pension_enabled: deductionConfig.pension_enabled ?? true,
+        pension_employee_percent: Number(deductionConfig.pension_employee_percent ?? 8),
+        pension_employer_percent: Number(deductionConfig.pension_employer_percent ?? 10),
+        nhf_enabled: deductionConfig.nhf_enabled ?? true,
+        nhf_rate: Number(deductionConfig.nhf_rate ?? 2.5),
+        custom_deductions: Array.isArray(deductionConfig.custom_deductions) ? deductionConfig.custom_deductions : [],
       })
     }
     setLoading(false)
