@@ -10,6 +10,7 @@ import ErrorBoundary from './components/ui/ErrorBoundary'
 import { AppToaster } from './components/ui/Toast'
 import { AppShellProvider } from './context/AppShellContext'
 import useAuth from './hooks/useAuth'
+import { isEmailVerified } from './lib/authState'
 import './App.css'
 import './sidebar-theme.css'
 import './product-upgrades.css'
@@ -95,6 +96,12 @@ export default function App() {
       return
     }
 
+    if (!isEmailVerified(session.user)) {
+      setBusiness(null)
+      setBusinessLoading(false)
+      return
+    }
+
     loadBusiness(session.user.id)
   }, [authLoading, session])
 
@@ -117,6 +124,7 @@ export default function App() {
   }
 
   function getAppHome() {
+    if (session && !isEmailVerified(session.user)) return '/verify-email'
     return business ? '/app/dashboard' : '/onboarding'
   }
 
@@ -145,7 +153,7 @@ export default function App() {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to={getAppHome()} replace />} />
             <Route path="/invoice/:token" element={<PublicInvoice />} />
-            <Route path="/verify-email" element={!session ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
+            <Route path="/verify-email" element={!session || !isEmailVerified(session.user) ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/terms" element={<PublicLayout><PublicContentPage type="terms" /></PublicLayout>} />
             <Route path="/privacy" element={<PublicLayout><PublicContentPage type="privacy" /></PublicLayout>} />
@@ -165,6 +173,8 @@ export default function App() {
               element={
                 !session ? (
                   <Navigate to="/login" replace />
+                ) : !isEmailVerified(session.user) ? (
+                  <Navigate to="/verify-email" replace />
                 ) : (
                   <OnboardingWizard setBusiness={setBusiness} />
                 )

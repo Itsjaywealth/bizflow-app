@@ -102,7 +102,8 @@ export default function Signup() {
     }
 
     localStorage.setItem('bizflow-pending-email', values.email)
-    navigate('/verify-email')
+    toast.success('Your account has been created. Please verify your email before continuing.')
+    navigate('/verify-email', { replace: true, state: { justSignedUp: true, email: values.email } })
   }
 
   async function handleGoogleSignIn() {
@@ -127,7 +128,7 @@ export default function Signup() {
         subtitle="Start your 14-day free trial"
       >
         <div className="mb-6 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-4 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
-          We&apos;ll send a verification email after signup so you can activate your BizFlow NG workspace securely.
+          We&apos;ll send a verification email after signup. Verify your email, then log in again to continue to onboarding and your workspace.
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">

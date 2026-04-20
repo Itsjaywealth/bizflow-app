@@ -1,16 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import Seo from '../components/Seo'
 import { getEmailVerificationReturnUrl } from '../lib/appUrls'
+import { isEmailVerified } from '../lib/authState'
+import useAuth from '../hooks/useAuth'
 
 export default function VerifyEmail() {
+  const location = useLocation()
+  const { user } = useAuth()
   const [visible, setVisible] = useState(false)
   const [dots, setDots] = useState(0)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-  const email = useMemo(() => localStorage.getItem('bizflow-pending-email') || '', [])
+  const email = useMemo(
+    () => location.state?.email || user?.email || localStorage.getItem('bizflow-pending-email') || '',
+    [location.state, user?.email]
+  )
+  const verified = isEmailVerified(user)
 
   useEffect(() => {
     const enterTimer = setTimeout(() => setVisible(true), 80)
@@ -76,34 +84,41 @@ export default function VerifyEmail() {
           </div>
 
           <h1>Check your inbox</h1>
+          <p className="verify-kicker">Verify your email to continue</p>
 
           <p className="verify-lead">
-            We sent a confirmation link to
+            We&apos;ve sent a verification link to
             <br />
             <strong>{email || 'your email address'}</strong>
             <br />
             <br />
-            Click the link in that email to activate your BizFlow NG account and continue.
+            Please confirm your email to access your workspace. After you verify, log in again to continue to onboarding and dashboard.
           </p>
 
           <div className="verify-status">
             <span aria-hidden="true">⏳</span>
-            Waiting for confirmation{'.'.repeat(dots)}
+            {verified ? 'Email verified. You can log in now.' : `Waiting for confirmation${'.'.repeat(dots)}`}
           </div>
 
           {error && <div className="notice error">{error}</div>}
           {message && <div className="notice success">{message}</div>}
+          {location.state?.justSignedUp ? (
+            <div className="notice success">Your account has been created. Please check your email to verify your account before continuing.</div>
+          ) : null}
+          {location.state?.fromLogin ? (
+            <div className="notice">Your account exists, but your email is not verified yet. Verify your email first, then log in again.</div>
+          ) : null}
 
-          <button type="button" className="verify-primary-button" onClick={handleResend} disabled={loading}>
-            {loading ? 'Sending...' : 'Resend Email →'}
+          <button type="button" className="verify-primary-button" onClick={handleResend} disabled={loading || verified}>
+            {loading ? 'Sending...' : verified ? 'Email verified' : 'Resend email'}
           </button>
 
           <Link className="verify-secondary-link" to="/login">
-            ← Back to Log In
+            Back to login
           </Link>
         </div>
 
-        <p className="verify-footnote">Didn&apos;t receive it? Check your spam folder.</p>
+        <p className="verify-footnote">Didn&apos;t receive it? Check your spam folder, then try resending the email.</p>
       </div>
     </div>
   )

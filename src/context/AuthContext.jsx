@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import PropTypes from 'prop-types'
 import { supabase } from '../lib/supabase'
 import { DEFAULT_APP_PATH, getAuthCallbackUrl, getSafeNextPath } from '../lib/appUrls'
+import { isEmailVerified } from '../lib/authState'
 
 const AuthContext = createContext(null)
 const OAUTH_NEXT_STORAGE_KEY = 'bizflow-auth-next'
@@ -104,6 +105,7 @@ export function AuthProvider({ children }) {
     () => ({
       session,
       user: session?.user ?? null,
+      isVerified: isEmailVerified(session?.user),
       loading,
       signInWithGoogle,
       signOut,

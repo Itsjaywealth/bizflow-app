@@ -72,6 +72,10 @@ function logOnboardingError(scope, error, userId, meta = {}) {
   })
 }
 
+function logOnboardingEvent(scope, meta = {}) {
+  console.log(`[Onboarding:${scope}]`, meta)
+}
+
 function isMissingColumnError(error, column) {
   if (!error || !column) return false
   const combined = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`.toLowerCase()
@@ -250,6 +254,7 @@ export default function Onboarding({ setBusiness }) {
   }
 
   async function lookupExistingBusiness(resolvedUserId, scope = 'lookup-business') {
+    logOnboardingEvent(`${scope}:query`, { userId: resolvedUserId })
     const { data: businessRows, error: lookupError } = await supabase
       .from('businesses')
       .select('*')
@@ -266,11 +271,30 @@ export default function Onboarding({ setBusiness }) {
   }
 
   async function writeBusinessRecord({ mode, resolvedUser, attachedBusiness, payload }) {
+    logOnboardingEvent(`${mode}:payload`, {
+      userId: resolvedUser.id,
+      businessId: attachedBusiness?.id || null,
+      payload,
+    })
+
     const query = attachedBusiness
       ? supabase.from('businesses').update(payload).eq('id', attachedBusiness.id)
       : supabase.from('businesses').insert({ ...payload, user_id: resolvedUser.id })
 
-    const { error } = await query
+    const { data, error } = await query.select().limit(1)
+
+    logOnboardingEvent(`${mode}:result`, {
+      userId: resolvedUser.id,
+      businessId: attachedBusiness?.id || data?.[0]?.id || null,
+      error: error
+        ? {
+          message: error.message || null,
+          details: error.details || null,
+          hint: error.hint || null,
+          code: error.code || null,
+        }
+        : null,
+    })
 
     if (error) {
       logOnboardingError(mode, error, resolvedUser.id, {
@@ -298,6 +322,12 @@ export default function Onboarding({ setBusiness }) {
     const resolvedUser = await resolveSignedInUser()
     let attachedBusiness = existingBusiness
 
+    logOnboardingEvent('ensure-minimal:start', {
+      userId: resolvedUser.id,
+      values: safeValues,
+      existingBusinessId: attachedBusiness?.id || null,
+    })
+
     if (!attachedBusiness) {
       attachedBusiness = await lookupExistingBusiness(resolvedUser.id)
       if (attachedBusiness) {
@@ -305,11 +335,8 @@ export default function Onboarding({ setBusiness }) {
       }
     }
 
-    const basePayload = {
+    const minimalPayload = {
       name: safeValues.businessName,
-      address: safeValues.businessAddress,
-      phone: safeValues.businessPhone,
-      logo_url: safeValues.logoUrl || '',
       email: resolvedUser.email || '',
     }
 
@@ -317,13 +344,17 @@ export default function Onboarding({ setBusiness }) {
       mode: 'insert-business-minimal',
       resolvedUser,
       attachedBusiness: null,
-      payload: basePayload,
+      payload: minimalPayload,
     })
   }
 
   async function ensureBusinessRecord(values) {
     const safeValues = buildMinimalBusinessValues(values)
     const resolvedUser = await resolveSignedInUser()
+    logOnboardingEvent('ensure-business:start', {
+      userId: resolvedUser.id,
+      values: safeValues,
+    })
     const minimalBusiness = await ensureMinimalBusinessRecord(safeValues)
 
     const basePayload = {
@@ -409,6 +440,11 @@ export default function Onboarding({ setBusiness }) {
   async function handleContinue() {
     const values = getValues()
     setStepError('')
+    logOnboardingEvent('continue:click', {
+      step,
+      userId: currentUser?.id || userId,
+      values,
+    })
 
     if (step === 0) {
       const valid = await trigger(['businessName', 'businessType', 'businessAddress', 'businessPhone'], { shouldFocus: true })
@@ -424,7 +460,12 @@ export default function Onboarding({ setBusiness }) {
       setSavingStep(true)
       try {
         await persistDraft(values, { scope: 'draft-save-step-1' })
-        await ensureBusinessRecord(values)
+        const businessRecord = await ensureBusinessRecord(values)
+        logOnboardingEvent('continue:step-1-success', {
+          step,
+          userId: currentUser?.id || userId,
+          businessId: businessRecord?.id || null,
+        })
         setStep(1)
       } catch (error) {
         logOnboardingError('step-1', error, currentUser?.id || userId)
@@ -486,16 +527,26 @@ export default function Onboarding({ setBusiness }) {
     const nextValues = buildMinimalBusinessValues(values)
     setStepError('')
     setSavingStep(true)
+    logOnboardingEvent('skip:click', {
+      userId: currentUser?.id || userId,
+      values,
+      minimalValues: nextValues,
+    })
 
     try {
       await persistDraft(nextValues, { scope: 'draft-save-skip' })
-      await ensureMinimalBusinessRecord(nextValues)
+      const businessRecord = await ensureMinimalBusinessRecord(nextValues)
+      logOnboardingEvent('skip:success', {
+        userId: currentUser?.id || userId,
+        businessId: businessRecord?.id || null,
+      })
       toast.success('You can complete your business profile later from Settings.')
       navigate('/app/dashboard', { replace: true })
     } catch (error) {
       logOnboardingError('skip-workspace-sync', error, currentUser?.id || userId, {
         payload: nextValues,
       })
+      setStepError('We could not create your workspace yet. Please try again in a moment.')
       toast.error('We could not create your workspace yet. Please try again in a moment.')
     } finally {
       setSavingStep(false)
