@@ -275,15 +275,16 @@ export default function Onboarding({ setBusiness }) {
       payload,
     })
 
+    const optimisticId = attachedBusiness?.id || crypto.randomUUID()
     const query = attachedBusiness
       ? supabase.from('businesses').update(payload).eq('id', attachedBusiness.id)
-      : supabase.from('businesses').insert({ ...payload, user_id: resolvedUser.id })
+      : supabase.from('businesses').insert({ id: optimisticId, ...payload, user_id: resolvedUser.id })
 
-    const { data, error } = await query.select().limit(1)
+    const { error } = await query
 
     logOnboardingEvent(`${mode}:result`, {
       userId: resolvedUser.id,
-      businessId: attachedBusiness?.id || data?.[0]?.id || null,
+      businessId: optimisticId,
       error: error
         ? {
           message: error.message || null,
@@ -302,21 +303,25 @@ export default function Onboarding({ setBusiness }) {
       throw error
     }
 
-    if (data?.[0]) {
-      return syncBusinessRecord(data[0])
-    }
+    const optimisticBusiness = syncBusinessRecord({
+      ...(attachedBusiness || {}),
+      id: optimisticId,
+      user_id: resolvedUser.id,
+      ...payload,
+    })
 
-    const refreshedBusiness = await lookupExistingBusiness(resolvedUser.id, `${mode}-refresh`)
-
-    if (!refreshedBusiness) {
-      const refreshError = new Error('Workspace was saved, but we could not load it afterward.')
-      logOnboardingError(`${mode}-refresh-missing`, refreshError, resolvedUser.id, {
-        businessId: attachedBusiness?.id || null,
+    try {
+      const refreshedBusiness = await lookupExistingBusiness(resolvedUser.id, `${mode}-refresh`)
+      if (refreshedBusiness) {
+        return syncBusinessRecord(refreshedBusiness)
+      }
+    } catch (refreshError) {
+      logOnboardingError(`${mode}-refresh`, refreshError, resolvedUser.id, {
+        businessId: optimisticId,
       })
-      throw refreshError
     }
 
-    return syncBusinessRecord(refreshedBusiness)
+    return optimisticBusiness
   }
 
   async function ensureMinimalBusinessRecord(values) {
