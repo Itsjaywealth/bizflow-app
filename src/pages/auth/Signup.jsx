@@ -11,7 +11,6 @@ import {
   LockKeyhole,
   Mail,
   Phone,
-  ShieldCheck,
   Sparkles,
   UserRound,
 } from 'lucide-react'
@@ -60,7 +59,7 @@ export default function Signup() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(schema),
     mode: 'onChange',
@@ -126,29 +125,24 @@ export default function Signup() {
       <AuthSplitLayout
         title="Create your account"
         subtitle="Start your 14-day free trial"
+        minimal
       >
-        <div className="mb-6 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-4 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
-          We&apos;ll send a verification email after signup. Verify your email, then log in again to continue to onboarding and your workspace.
-        </div>
-
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-4">
             <Input
               label="Full name"
               placeholder="John Doe"
               prefixIcon={<UserRound className="h-4 w-4" />}
-              helperText={!errors.fullName ? 'Use the name you want attached to your workspace ownership.' : ''}
               error={errors.fullName?.message}
               autoComplete="name"
               {...register('fullName')}
             />
 
             <Input
-              label="Email address"
+              label="Email"
               type="email"
               placeholder="you@business.com"
               prefixIcon={<Mail className="h-4 w-4" />}
-              helperText={!errors.email ? 'Your verification email will be sent here.' : ''}
               error={errors.email?.message}
               autoComplete="email"
               {...register('email')}
@@ -168,14 +162,14 @@ export default function Signup() {
                 {...register('phone')}
               />
             </div>
-            {errors.phone ? <span className="block text-sm font-medium text-danger">{errors.phone.message}</span> : <span className="block text-sm text-neutral-500 dark:text-neutral-300">Use your active business or admin contact number.</span>}
+            {errors.phone ? <span className="block text-sm font-medium text-danger">{errors.phone.message}</span> : null}
           </label>
 
           <div className="rounded-[24px] border border-emerald-500/12 bg-[#f9fdfb] p-5 dark:border-white/10 dark:bg-white/[0.04]">
             <Input
               label="Password"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Create a secure password"
+              placeholder="Create a password"
               prefixIcon={<LockKeyhole className="h-4 w-4" />}
               suffixIcon={
                 <button
@@ -191,9 +185,9 @@ export default function Signup() {
               {...register('password')}
             />
 
-            <div className="mt-5 rounded-2xl border border-neutral-200 bg-white px-4 py-4 dark:border-white/10 dark:bg-white/[0.03]">
+            <div className="mt-4 rounded-2xl border border-neutral-200 bg-white px-4 py-4 dark:border-white/10 dark:bg-white/[0.03]">
               <div className="flex items-center justify-between gap-4">
-                <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">Password strength</span>
+                <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-100">Password requirements</span>
                 <span className={`text-sm font-bold ${passwordStrength.text}`}>{passwordStrength.label}</span>
               </div>
               <div className="mt-3 h-2 rounded-full bg-neutral-200 dark:bg-white/10">
@@ -227,19 +221,13 @@ export default function Signup() {
           </label>
           {errors.acceptedTerms ? <span className="block text-sm font-medium text-danger">{errors.acceptedTerms.message}</span> : null}
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">
-              <ShieldCheck className="h-4 w-4 text-primary" />
-              Email verification required
-            </div>
-            {!isValid ? (
-              <p className="text-xs leading-6 text-neutral-400">Complete all required fields to continue.</p>
-            ) : null}
-          </div>
-
           <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
-            {isSubmitting ? 'Creating your account...' : 'Create Account'}
+            {isSubmitting ? 'Creating your account...' : 'Create your account'}
           </Button>
+
+          <p className="text-center text-xs leading-6 text-neutral-500 dark:text-neutral-300">
+            We&apos;ll send a verification link to your email
+          </p>
         </form>
 
         {ENABLE_GOOGLE_AUTH ? (
@@ -263,7 +251,7 @@ export default function Signup() {
           </>
         ) : null}
 
-        <p className={`${ENABLE_GOOGLE_AUTH ? 'mt-8' : 'mt-10'} text-center text-sm text-neutral-500`}>
+        <p className={`${ENABLE_GOOGLE_AUTH ? 'mt-7' : 'mt-8'} text-center text-sm text-neutral-500 dark:text-neutral-300`}>
           Already have an account?{' '}
           <Link to="/login" className="font-semibold text-primary hover:text-primary-dark">
             Log in
