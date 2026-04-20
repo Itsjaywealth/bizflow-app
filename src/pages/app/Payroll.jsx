@@ -29,6 +29,7 @@ import Input from '../../components/ui/Input'
 import Modal from '../../components/ui/Modal'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { csvEscape } from '../../lib/csvSecurity'
 import { getStaffFullName } from './staffShared'
 
 const tabs = ['Current Payroll', 'Payroll History', 'Deductions Setup', 'Tax & Compliance']
@@ -157,7 +158,7 @@ function buildCsv(rows) {
     row.net,
     row.status,
   ])
-  return [header, ...body].map((line) => line.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n')
+  return [header, ...body].map((line) => line.map((cell) => csvEscape(cell)).join(',')).join('\n')
 }
 
 async function downloadPdf({ title, rows, summary }) {

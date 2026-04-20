@@ -105,6 +105,7 @@ const accountSchema = z.object({
   timezone: z.string().optional(),
   language: z.string().optional(),
   profile_photo_url: z.string().optional(),
+  current_password: z.string().optional(),
 })
 
 const inviteSchema = z.object({
@@ -244,6 +245,7 @@ export default function Settings({ business, setBusiness }) {
       timezone: user?.user_metadata?.timezone || 'Africa/Lagos',
       language: user?.user_metadata?.language || 'English',
       profile_photo_url: user?.user_metadata?.profile_photo_url || '',
+      current_password: '',
     },
   })
 
@@ -344,6 +346,7 @@ export default function Settings({ business, setBusiness }) {
       timezone: nextUser?.user_metadata?.timezone || 'Africa/Lagos',
       language: nextUser?.user_metadata?.language || 'English',
       profile_photo_url: nextUser?.user_metadata?.profile_photo_url || '',
+      current_password: '',
     })
 
     invoiceForm.reset({
@@ -508,6 +511,16 @@ export default function Settings({ business, setBusiness }) {
 
   async function saveAccount(values) {
     setSavingSection('account')
+    const isEmailChange = values.email !== user?.email
+    if (isEmailChange) {
+      const verified = await verifyCurrentPassword(values.current_password)
+      if (!verified.ok) {
+        setSavingSection('')
+        accountForm.setError('current_password', { type: 'manual', message: verified.error })
+        toast.error(verified.error)
+        return
+      }
+    }
     const result = await supabase.auth.updateUser({
       email: values.email,
       data: {
@@ -532,7 +545,25 @@ export default function Settings({ business, setBusiness }) {
       location: 'Settings',
       status: 'success',
     })
+    accountForm.setValue('current_password', '')
     toast.success(values.email !== user?.email ? 'Profile updated. Check your inbox to confirm the email change.' : 'Account settings updated.')
+  }
+
+  async function verifyCurrentPassword(password) {
+    if (!password?.trim()) {
+      return { ok: false, error: 'Current password is required for this action.' }
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: user?.email || '',
+      password,
+    })
+
+    if (error) {
+      return { ok: false, error: error.message || 'Current password could not be verified.' }
+    }
+
+    return { ok: true }
   }
 
   async function inviteTeamMember(values) {
@@ -594,6 +625,15 @@ export default function Settings({ business, setBusiness }) {
 
   async function saveSecurity(values) {
     setSavingSection('security')
+    if (values.new_password) {
+      const verified = await verifyCurrentPassword(values.current_password)
+      if (!verified.ok) {
+        setSavingSection('')
+        securityForm.setError('current_password', { type: 'manual', message: verified.error })
+        toast.error(verified.error)
+        return
+      }
+    }
     const passwordResult = values.new_password ? await supabase.auth.updateUser({ password: values.new_password }) : { error: null }
     if (passwordResult.error) {
       setSavingSection('')
@@ -629,6 +669,11 @@ export default function Settings({ business, setBusiness }) {
     }
 
     if (deleteModal.type === 'delete-account') {
+      const verified = await verifyCurrentPassword(deleteModal.password)
+      if (!verified.ok) {
+        toast.error(verified.error)
+        return
+      }
       await supabase.from('account_deletion_requests').insert({
         business_id: business.id,
         user_id: user?.id,
@@ -879,6 +924,7 @@ export default function Settings({ business, setBusiness }) {
                   <Input label="First name" error={accountForm.formState.errors.first_name?.message} {...accountForm.register('first_name')} />
                   <Input label="Last name" error={accountForm.formState.errors.last_name?.message} {...accountForm.register('last_name')} />
                   <Input label="Email" type="email" error={accountForm.formState.errors.email?.message} {...accountForm.register('email')} helperText="Changing email will trigger a verification flow." />
+                  <Input label="Current password" type="password" error={accountForm.formState.errors.current_password?.message} helperText="Required only when changing your email." {...accountForm.register('current_password')} />
                   <Input label="Phone number" {...accountForm.register('phone')} />
                   <Select label="Timezone" options={timezones.map((item) => ({ label: item, value: item }))} value={accountForm.watch('timezone')} onChange={(value) => accountForm.setValue('timezone', value)} />
                   <Select label="Language" options={languages.map((item) => ({ label: item, value: item }))} value={accountForm.watch('language')} onChange={(value) => accountForm.setValue('language', value)} />
@@ -908,9 +954,9 @@ export default function Settings({ business, setBusiness }) {
               <DangerZone
                 className="mt-8"
                 title="Delete Account"
-                description="This creates an account deletion request and signs you out after confirmation."
+                description="This creates an account deletion request after you confirm the action and re-enter your current password."
                 actionLabel="Delete Account"
-                onAction={() => setDeleteModal({ type: 'delete-account', value: '' })}
+                onAction={() => setDeleteModal({ type: 'delete-account', value: '', password: '' })}
               />
             </Card>
           ) : null}
@@ -1374,6 +1420,14 @@ export default function Settings({ business, setBusiness }) {
           <div className="space-y-5">
             <p className="text-sm leading-7 text-neutral-600">Type <strong>DELETE</strong> to continue.</p>
             <Input label="Confirmation" value={deleteModal.value} onChange={(event) => setDeleteModal((current) => ({ ...current, value: event.target.value }))} />
+            {deleteModal.type === 'delete-account' ? (
+              <Input
+                label="Current password"
+                type="password"
+                value={deleteModal.password || ''}
+                onChange={(event) => setDeleteModal((current) => ({ ...current, password: event.target.value }))}
+              />
+            ) : null}
             <div className="flex justify-end gap-3">
               <Button type="button" variant="ghost" onClick={() => setDeleteModal(null)}>Cancel</Button>
               <Button type="button" variant="danger" leftIcon={<Trash2 className="h-4 w-4" />} onClick={confirmDangerAction}>Confirm</Button>
