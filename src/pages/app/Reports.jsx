@@ -179,6 +179,17 @@ export default function Reports({ business }) {
     }
   }, [business?.id])
 
+  function logReportsError(scope, error) {
+    if (!error) return
+    console.error(`[Reports:${scope}]`, {
+      businessId: business?.id,
+      message: error.message || 'Unknown reports error',
+      details: error.details || null,
+      hint: error.hint || null,
+      code: error.code || null,
+    })
+  }
+
   async function loadReports() {
     setLoading(true)
     const [invoiceRes, expenseRes, clientRes, staffRes, payrollRes, leaveRes] = await Promise.all([
@@ -189,10 +200,18 @@ export default function Reports({ business }) {
       supabase.from('payroll_runs').select('*').eq('business_id', business.id).order('processed_at', { ascending: true }),
       supabase.from('leave_requests').select('*').eq('business_id', business.id).order('created_at', { ascending: true }),
     ])
-    setInvoices(invoiceRes.data || [])
+
+    if (invoiceRes.error) logReportsError('load-invoices', invoiceRes.error)
+    if (expenseRes.error) logReportsError('load-expenses', expenseRes.error)
+    if (clientRes.error) logReportsError('load-clients', clientRes.error)
+    if (staffRes.error) logReportsError('load-staff', staffRes.error)
+    if (payrollRes.error) logReportsError('load-payroll', payrollRes.error)
+    if (leaveRes.error) logReportsError('load-leave', leaveRes.error)
+
+    setInvoices(invoiceRes.error ? [] : (invoiceRes.data || []))
     setExpenses(expenseRes.error ? [] : (expenseRes.data || []))
-    setClients(clientRes.data || [])
-    setStaff(staffRes.data || [])
+    setClients(clientRes.error ? [] : (clientRes.data || []))
+    setStaff(staffRes.error ? [] : (staffRes.data || []))
     setPayrollRuns(payrollRes.error ? [] : (payrollRes.data || []))
     setLeaveRequests(leaveRes.error ? [] : (leaveRes.data || []))
     setLoading(false)

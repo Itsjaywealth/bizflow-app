@@ -309,20 +309,21 @@ export default function Staff({ business }) {
   async function onSaveStaff(values) {
     setSavingStaff(true)
     const photoUrl = await uploadPhotoIfNeeded(values)
+    const staffId = editingStaff?.id || crypto.randomUUID()
     const payload = {
       ...buildStaffPayload({ ...values, photo_url: photoUrl }),
       business_id: business.id,
     }
 
     let result = editingStaff
-      ? await supabase.from('staff').update(payload).eq('id', editingStaff.id).select().single()
-      : await supabase.from('staff').insert(payload).select().single()
+      ? await supabase.from('staff').update(payload).eq('id', staffId)
+      : await supabase.from('staff').insert({ id: staffId, ...payload })
 
     if (result.error) {
       const fallback = minimalStaffPayload(values, business.id)
       result = editingStaff
-        ? await supabase.from('staff').update(fallback).eq('id', editingStaff.id).select().single()
-        : await supabase.from('staff').insert(fallback).select().single()
+        ? await supabase.from('staff').update(fallback).eq('id', staffId)
+        : await supabase.from('staff').insert({ id: staffId, ...fallback })
     }
 
     setSavingStaff(false)
@@ -332,7 +333,7 @@ export default function Staff({ business }) {
       return
     }
 
-    await uploadDocumentsIfNeeded(result.data.id)
+    await uploadDocumentsIfNeeded(staffId)
     toast.success(editingStaff ? 'Staff member updated.' : 'Staff member added.')
     setShowStaffModal(false)
     resetStaffForm()
