@@ -337,7 +337,6 @@ export default function Onboarding({ setBusiness }) {
 
     const minimalPayload = {
       name: safeValues.businessName,
-      email: resolvedUser.email || '',
     }
 
     return writeBusinessRecord({
