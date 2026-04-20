@@ -76,6 +76,12 @@ function logOnboardingEvent(scope, meta = {}) {
   console.log(`[Onboarding:${scope}]`, meta)
 }
 
+function getOnboardingErrorMessage(error) {
+  if (!error) return 'We could not create your workspace yet. Please try again in a moment.'
+  const code = error.code ? ` (${error.code})` : ''
+  return error.message ? `${error.message}${code}` : `We could not create your workspace yet. Please try again in a moment.${code}`
+}
+
 function isMissingColumnError(error, column) {
   if (!error || !column) return false
   const combined = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`.toLowerCase()
@@ -475,7 +481,9 @@ export default function Onboarding({ setBusiness }) {
         setStep(1)
       } catch (error) {
         logOnboardingError('step-1', error, currentUser?.id || userId)
-        setStepError('We could not create your workspace yet. Please try again in a moment.')
+        const message = getOnboardingErrorMessage(error)
+        setStepError(message)
+        toast.error(message)
       } finally {
         setSavingStep(false)
       }
@@ -552,8 +560,9 @@ export default function Onboarding({ setBusiness }) {
       logOnboardingError('skip-workspace-sync', error, currentUser?.id || userId, {
         payload: nextValues,
       })
-      setStepError('We could not create your workspace yet. Please try again in a moment.')
-      toast.error('We could not create your workspace yet. Please try again in a moment.')
+      const message = getOnboardingErrorMessage(error)
+      setStepError(message)
+      toast.error(message)
     } finally {
       setSavingStep(false)
     }
