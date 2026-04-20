@@ -1154,9 +1154,11 @@ export default function Settings({ business, setBusiness }) {
               </SettingsSectionShell>
 
               <DangerZone
+                eyebrow="Manage Subscription"
                 title="Cancel Subscription"
-                description="Canceling your subscription will stop future renewals while preserving your billing record and workspace history according to policy."
+                description="You can cancel your subscription at any time. Your plan will remain active until the end of the current billing period."
                 actionLabel="Cancel Subscription"
+                tone="neutral"
                 onAction={() => setDeleteModal({ type: 'cancel-subscription', value: '' })}
               />
             </div>
@@ -1531,28 +1533,39 @@ PolishedEmptyState.propTypes = {
   onAction: PropTypes.func,
 }
 
-function DangerZone({ title, description, actionLabel, onAction, className = '' }) {
+function DangerZone({ eyebrow = 'Account Deletion', title, description, actionLabel, onAction, className = '', tone = 'danger' }) {
+  const isNeutral = tone === 'neutral'
   return (
-    <Card className={`rounded-[32px] border border-red-300/70 bg-red-50/95 p-6 shadow-card dark:border-red-500/20 dark:bg-red-500/10 ${className}`}>
+    <Card className={`rounded-[32px] p-6 shadow-card ${
+      isNeutral
+        ? 'border border-emerald-500/12 bg-white/88 dark:border-white/10 dark:bg-white/5'
+        : 'border border-red-300/70 bg-red-50/95 dark:border-red-500/20 dark:bg-red-500/10'
+    } ${className}`}>
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-red-300/70 bg-white/70 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-red-600 dark:border-red-400/20 dark:bg-red-500/10 dark:text-red-200">
+          <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] ${
+            isNeutral
+              ? 'border border-emerald-500/12 bg-emerald-500/8 text-emerald-700 dark:border-emerald-400/15 dark:bg-emerald-400/10 dark:text-emerald-200'
+              : 'border border-red-300/70 bg-white/70 text-red-600 dark:border-red-400/20 dark:bg-red-500/10 dark:text-red-200'
+          }`}>
             <ShieldAlert className="h-3.5 w-3.5" />
-            Danger zone
+            {eyebrow}
           </div>
-          <h3 className="mt-4 text-xl font-black text-red-700 dark:text-red-200">{title}</h3>
-          <p className="mt-2 text-sm leading-7 text-red-700/90 dark:text-red-100/80">{description}</p>
+          <h3 className={`mt-4 text-xl font-black ${isNeutral ? 'text-neutral-950 dark:text-white' : 'text-red-700 dark:text-red-200'}`}>{title}</h3>
+          <p className={`mt-2 text-sm leading-7 ${isNeutral ? 'text-neutral-500 dark:text-neutral-400' : 'text-red-700/90 dark:text-red-100/80'}`}>{description}</p>
         </div>
-        <Button className="w-full lg:w-auto" variant="danger" leftIcon={<Trash2 className="h-4 w-4" />} onClick={onAction}>{actionLabel}</Button>
+        <Button className="w-full lg:w-auto" variant={isNeutral ? 'outline' : 'danger'} leftIcon={<Trash2 className="h-4 w-4" />} onClick={onAction}>{actionLabel}</Button>
       </div>
     </Card>
   )
 }
 
 DangerZone.propTypes = {
+  eyebrow: PropTypes.string,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   actionLabel: PropTypes.string.isRequired,
   onAction: PropTypes.func.isRequired,
   className: PropTypes.string,
+  tone: PropTypes.oneOf(['danger', 'neutral']),
 }
