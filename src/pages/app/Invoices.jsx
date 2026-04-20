@@ -24,6 +24,7 @@ import Skeleton from '../../components/ui/Skeleton'
 import EmptyState from '../../components/ui/EmptyState'
 import Dropdown from '../../components/ui/Dropdown'
 import useToast from '../../hooks/useToast'
+import { csvEscape } from '../../lib/csvSecurity'
 import {
   buildPaymentLink,
   buildPublicInvoiceUrl,
@@ -203,10 +204,9 @@ export default function Invoices({ business }) {
       balance: '',
       status: '',
     })
-    const csv = [
-      headers.join(','),
-      ...rows.map((row) => headers.map((header) => `"${String(row[header] ?? '').replace(/"/g, '""')}"`).join(',')),
-    ].join('\n')
+    const csv = [headers.join(',')]
+      .concat(rows.map((row) => headers.map((header) => csvEscape(row[header])).join(',')))
+      .join('\n')
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -246,22 +246,7 @@ export default function Invoices({ business }) {
   }
 
   async function bulkMarkPaid() {
-    if (!selectedIds.length) return
-    const selectedInvoices = invoices.filter((invoice) => selectedIds.includes(invoice.id))
-    const results = await Promise.allSettled(selectedInvoices.map((invoice) => (
-      supabase.from('invoices').update({ status: 'paid', amount_paid: invoice.total || 0 }).eq('id', invoice.id)
-    )))
-    const failed = results.find((result) => result.status === 'fulfilled' && result.value?.error)
-      || results.find((result) => result.status === 'rejected')
-    if (failed) {
-      const error = failed.status === 'rejected' ? failed.reason : failed.value.error
-      logInvoiceError('bulk-mark-paid', error, business.id)
-      toast.error(error?.message || 'Some invoices could not be marked as paid.')
-      return
-    }
-    setSelectedIds([])
-    toast.success('Selected invoices marked as paid.')
-    loadInvoices()
+    toast.error('Payment status can no longer be changed from the browser. Use a verified payment flow or a trusted backend process instead.')
   }
 
   function sendReminder(invoice) {
@@ -349,7 +334,6 @@ export default function Invoices({ business }) {
           <div className="mb-5 flex flex-wrap items-center gap-3 rounded-2xl border border-primary/15 bg-primary/5 px-4 py-4">
             <p className="text-sm font-semibold text-neutral-900">{selectedIds.length} invoice{selectedIds.length === 1 ? '' : 's'} selected</p>
             <Button variant="outline" size="sm" leftIcon={<Trash2 className="h-4 w-4" />} onClick={bulkDelete}>Delete selected</Button>
-            <Button variant="outline" size="sm" leftIcon={<CheckCircle2 className="h-4 w-4" />} onClick={bulkMarkPaid}>Mark as paid</Button>
             <Button variant="outline" size="sm" leftIcon={<Mail className="h-4 w-4" />} onClick={bulkReminders}>Send reminders</Button>
           </div>
         ) : null}

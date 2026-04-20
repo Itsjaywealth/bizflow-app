@@ -47,9 +47,7 @@ export default function InvoiceDetail({ business }) {
   }
 
   async function markPaid() {
-    await supabase.from('invoices').update({ status: 'paid', amount_paid: invoice.total || 0 }).eq('id', invoice.id)
-    toast.success('Invoice marked as paid.')
-    loadInvoice()
+    toast.error('Payment status is read-only here until a verified payment reconciliation flow is available.')
   }
 
   async function deleteInvoice() {
@@ -203,7 +201,9 @@ export default function InvoiceDetail({ business }) {
           <Card className="rounded-[32px]">
             <h2 className="text-xl font-bold text-neutral-950">Action sidebar</h2>
             <div className="mt-5 grid gap-3">
-              <Button leftIcon={<CheckCircle2 className="h-4 w-4" />} onClick={markPaid}>Mark as Paid</Button>
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
+                Payment status is read-only in the browser now. Use a verified payment flow or trusted backend reconciliation before marking invoices as paid.
+              </div>
               <Button variant="outline" leftIcon={<Mail className="h-4 w-4" />} onClick={sendReminder}>Send Reminder</Button>
               <Button variant="outline" leftIcon={<Pencil className="h-4 w-4" />} onClick={() => navigate(`/app/invoices/${invoice.id}/edit`)}>Edit</Button>
               <Button variant="outline" leftIcon={<Link2 className="h-4 w-4" />} onClick={() => navigator.clipboard.writeText(paymentLink)}>Copy Payment Link</Button>
