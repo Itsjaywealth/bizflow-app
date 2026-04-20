@@ -17,32 +17,56 @@ import './product-upgrades.css'
 import './worldclass.css'
 import './mobile.css'
 
-const Dashboard = lazy(() => import('./pages/app/Dashboard'))
-const Clients = lazy(() => import('./pages/app/Clients'))
-const Staff = lazy(() => import('./pages/app/Staff'))
-const Products = lazy(() => import('./pages/app/Products'))
-const Expenses = lazy(() => import('./pages/app/Expenses'))
-const Reports = lazy(() => import('./pages/app/Reports'))
-const Settings = lazy(() => import('./pages/app/Settings'))
-const PublicInvoice = lazy(() => import('./pages/PublicInvoice'))
-const Landing = lazy(() => import('./pages/Landing'))
-const ResetPassword = lazy(() => import('./pages/ResetPassword'))
-const VerifyEmail = lazy(() => import('./pages/VerifyEmail'))
-const SupportPage = lazy(() => import('./pages/SupportPage'))
-const PublicContentPage = lazy(() => import('./pages/PublicContentPage'))
-const Billing = lazy(() => import('./pages/app/Billing'))
-const ClientDetail = lazy(() => import('./pages/app/ClientDetail'))
-const StaffDetail = lazy(() => import('./pages/app/StaffDetail'))
-const BizFlowAI = lazy(() => import('./components/BizFlowAI'))
-const Payroll = lazy(() => import('./pages/app/Payroll'))
-const LoginPage = lazy(() => import('./pages/auth/Login'))
-const SignupPage = lazy(() => import('./pages/auth/Signup'))
-const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'))
-const OnboardingWizard = lazy(() => import('./pages/auth/Onboarding'))
-const AuthCallback = lazy(() => import('./pages/auth/AuthCallback'))
-const AppInvoices = lazy(() => import('./pages/app/Invoices'))
-const InvoiceForm = lazy(() => import('./pages/app/InvoiceForm'))
-const InvoiceDetail = lazy(() => import('./pages/app/InvoiceDetail'))
+const CHUNK_RELOAD_FLAG = 'bizflow-chunk-reload'
+
+function lazyWithReload(importer) {
+  return lazy(async () => {
+    try {
+      const module = await importer()
+      window.sessionStorage?.removeItem(CHUNK_RELOAD_FLAG)
+      return module
+    } catch (error) {
+      const message = `${error?.name || ''} ${error?.message || ''}`.toLowerCase()
+      const isChunkError = message.includes('chunkloaderror') || message.includes('loading chunk') || message.includes('failed to fetch dynamically imported module')
+      const hasReloaded = window.sessionStorage?.getItem(CHUNK_RELOAD_FLAG) === '1'
+
+      if (isChunkError && !hasReloaded) {
+        window.sessionStorage?.setItem(CHUNK_RELOAD_FLAG, '1')
+        window.location.reload()
+        return new Promise(() => {})
+      }
+
+      throw error
+    }
+  })
+}
+
+const Dashboard = lazyWithReload(() => import('./pages/app/Dashboard'))
+const Clients = lazyWithReload(() => import('./pages/app/Clients'))
+const Staff = lazyWithReload(() => import('./pages/app/Staff'))
+const Products = lazyWithReload(() => import('./pages/app/Products'))
+const Expenses = lazyWithReload(() => import('./pages/app/Expenses'))
+const Reports = lazyWithReload(() => import('./pages/app/Reports'))
+const Settings = lazyWithReload(() => import('./pages/app/Settings'))
+const PublicInvoice = lazyWithReload(() => import('./pages/PublicInvoice'))
+const Landing = lazyWithReload(() => import('./pages/Landing'))
+const ResetPassword = lazyWithReload(() => import('./pages/ResetPassword'))
+const VerifyEmail = lazyWithReload(() => import('./pages/VerifyEmail'))
+const SupportPage = lazyWithReload(() => import('./pages/SupportPage'))
+const PublicContentPage = lazyWithReload(() => import('./pages/PublicContentPage'))
+const Billing = lazyWithReload(() => import('./pages/app/Billing'))
+const ClientDetail = lazyWithReload(() => import('./pages/app/ClientDetail'))
+const StaffDetail = lazyWithReload(() => import('./pages/app/StaffDetail'))
+const BizFlowAI = lazyWithReload(() => import('./components/BizFlowAI'))
+const Payroll = lazyWithReload(() => import('./pages/app/Payroll'))
+const LoginPage = lazyWithReload(() => import('./pages/auth/Login'))
+const SignupPage = lazyWithReload(() => import('./pages/auth/Signup'))
+const ForgotPassword = lazyWithReload(() => import('./pages/auth/ForgotPassword'))
+const OnboardingWizard = lazyWithReload(() => import('./pages/auth/Onboarding'))
+const AuthCallback = lazyWithReload(() => import('./pages/auth/AuthCallback'))
+const AppInvoices = lazyWithReload(() => import('./pages/app/Invoices'))
+const InvoiceForm = lazyWithReload(() => import('./pages/app/InvoiceForm'))
+const InvoiceDetail = lazyWithReload(() => import('./pages/app/InvoiceDetail'))
 
 function AppFrame({ children, session, business, setBusiness }) {
   return (
