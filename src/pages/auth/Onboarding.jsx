@@ -223,10 +223,12 @@ export default function Onboarding({ setBusiness }) {
     }
   }
 
-  function syncBusinessRecord(record) {
+  function syncBusinessRecord(record, { syncApp = true } = {}) {
     if (!record) return null
     setExistingBusiness(record)
-    setBusiness(record)
+    if (syncApp) {
+      setBusiness(record)
+    }
     return record
   }
 
@@ -274,7 +276,7 @@ export default function Onboarding({ setBusiness }) {
     return businessRows?.[0] || null
   }
 
-  async function writeBusinessRecord({ mode, resolvedUser, attachedBusiness, payload }) {
+  async function writeBusinessRecord({ mode, resolvedUser, attachedBusiness, payload, syncApp = true }) {
     logOnboardingEvent(`${mode}:payload`, {
       userId: resolvedUser.id,
       businessId: attachedBusiness?.id || null,
@@ -314,12 +316,12 @@ export default function Onboarding({ setBusiness }) {
       id: optimisticId,
       user_id: resolvedUser.id,
       ...payload,
-    })
+    }, { syncApp })
 
     try {
       const refreshedBusiness = await lookupExistingBusiness(resolvedUser.id, `${mode}-refresh`)
       if (refreshedBusiness) {
-        return syncBusinessRecord(refreshedBusiness)
+        return syncBusinessRecord(refreshedBusiness, { syncApp })
       }
     } catch (refreshError) {
       logOnboardingError(`${mode}-refresh`, refreshError, resolvedUser.id, {
@@ -330,7 +332,7 @@ export default function Onboarding({ setBusiness }) {
     return optimisticBusiness
   }
 
-  async function ensureMinimalBusinessRecord(values) {
+  async function ensureMinimalBusinessRecord(values, { syncApp = true } = {}) {
     const safeValues = buildMinimalBusinessValues(values)
     const resolvedUser = await resolveSignedInUser()
     let attachedBusiness = existingBusiness
@@ -344,7 +346,7 @@ export default function Onboarding({ setBusiness }) {
     if (!attachedBusiness) {
       attachedBusiness = await lookupExistingBusiness(resolvedUser.id)
       if (attachedBusiness) {
-        return syncBusinessRecord(attachedBusiness)
+        return syncBusinessRecord(attachedBusiness, { syncApp })
       }
     }
 
@@ -357,17 +359,18 @@ export default function Onboarding({ setBusiness }) {
       resolvedUser,
       attachedBusiness: null,
       payload: minimalPayload,
+      syncApp,
     })
   }
 
-  async function ensureBusinessRecord(values) {
+  async function ensureBusinessRecord(values, { syncApp = true } = {}) {
     const safeValues = buildMinimalBusinessValues(values)
     const resolvedUser = await resolveSignedInUser()
     logOnboardingEvent('ensure-business:start', {
       userId: resolvedUser.id,
       values: safeValues,
     })
-    const minimalBusiness = await ensureMinimalBusinessRecord(safeValues)
+    const minimalBusiness = await ensureMinimalBusinessRecord(safeValues, { syncApp })
 
     const basePayload = {
       name: safeValues.businessName,
@@ -387,6 +390,7 @@ export default function Onboarding({ setBusiness }) {
         resolvedUser,
         attachedBusiness: minimalBusiness,
         payload: extendedPayload,
+        syncApp,
       })
     } catch (error) {
       if (!isMissingColumnError(error, 'business_type')) {
@@ -403,6 +407,7 @@ export default function Onboarding({ setBusiness }) {
         resolvedUser,
         attachedBusiness: minimalBusiness,
         payload: basePayload,
+        syncApp,
       })
     }
   }
@@ -472,7 +477,7 @@ export default function Onboarding({ setBusiness }) {
       setSavingStep(true)
       try {
         await persistDraft(values, { scope: 'draft-save-step-1' })
-        const businessRecord = await ensureMinimalBusinessRecord(values)
+        const businessRecord = await ensureMinimalBusinessRecord(values, { syncApp: false })
         logOnboardingEvent('continue:step-1-success', {
           step,
           userId: currentUser?.id || userId,

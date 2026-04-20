@@ -174,6 +174,8 @@ export default function App() {
                   <Navigate to="/login" replace />
                 ) : !isEmailVerified(session.user) ? (
                   <Navigate to="/verify-email" replace />
+                ) : business ? (
+                  <Navigate to="/app/dashboard" replace />
                 ) : (
                   <OnboardingWizard setBusiness={setBusiness} />
                 )
