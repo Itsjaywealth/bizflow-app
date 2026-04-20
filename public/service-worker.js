@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bizflow-ng-v2'
+const CACHE_NAME = 'bizflow-ng-v3'
 const CORE_ASSETS = ['/', '/index.html', '/offline.html', '/manifest.json?v=2', '/logo.png']
 
 self.addEventListener('install', (event) => {
@@ -22,10 +22,19 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
 
+  const url = new URL(event.request.url)
+  const isStaticChunk = url.pathname.startsWith('/static/')
+  const isScriptOrStyle = event.request.destination === 'script' || event.request.destination === 'style'
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('/offline.html'))
     )
+    return
+  }
+
+  if (isStaticChunk || isScriptOrStyle) {
+    event.respondWith(fetch(event.request))
     return
   }
 
