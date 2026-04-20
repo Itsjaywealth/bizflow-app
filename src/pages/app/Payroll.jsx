@@ -320,9 +320,21 @@ export default function Payroll({ business }) {
       business_id: business.id,
       ...values,
     }
-    const existing = await supabase.from('deduction_configs').select('id').eq('business_id', business.id).maybeSingle()
-    const result = existing.data?.id
-      ? await supabase.from('deduction_configs').update(payload).eq('id', existing.data.id)
+    const existing = await supabase
+      .from('deduction_configs')
+      .select('id')
+      .eq('business_id', business.id)
+      .order('created_at', { ascending: true })
+      .limit(1)
+
+    if (existing.error) {
+      console.error('[Payroll:deduction-config-lookup]', existing.error)
+      toast.error(existing.error.message || 'Deductions setup could not be loaded.')
+      return
+    }
+
+    const result = existing.data?.[0]?.id
+      ? await supabase.from('deduction_configs').update(payload).eq('id', existing.data[0].id)
       : await supabase.from('deduction_configs').insert(payload)
 
     if (result.error) {

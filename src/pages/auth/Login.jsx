@@ -12,6 +12,7 @@ import useAuth from '../../hooks/useAuth'
 import AuthSplitLayout from './AuthSplitLayout'
 import Seo from '../../components/Seo'
 import { ENABLE_GOOGLE_AUTH } from '../../lib/features'
+import { isEmailVerified } from '../../lib/authState'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -55,10 +56,15 @@ export default function Login() {
     const nextPath = getSafeNextPath(
       `${location.state?.from?.pathname || '/app/dashboard'}${location.state?.from?.search || ''}${location.state?.from?.hash || ''}`
     )
-    const { error } = await supabase.auth.signInWithPassword(values)
+    const { data, error } = await supabase.auth.signInWithPassword(values)
     if (error) {
       console.error('Email/password login failed:', error)
       toast.error('Incorrect email or password. Please try again.')
+      return
+    }
+    if (!isEmailVerified(data?.user)) {
+      localStorage.setItem('bizflow-pending-email', values.email)
+      navigate('/verify-email', { replace: true, state: { fromLogin: true, email: values.email } })
       return
     }
     navigate(nextPath, { replace: true })
@@ -98,6 +104,9 @@ export default function Login() {
             {statusNotice}
           </div>
         ) : null}
+        <div className="mb-6 rounded-2xl border border-neutral-200/80 bg-neutral-50/90 px-4 py-4 text-sm leading-7 text-neutral-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-300">
+          If you just created your account, verify your email first, then log in again to continue to onboarding.
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
           <div className="grid gap-5">

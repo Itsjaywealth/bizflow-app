@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Navigate, useLocation } from 'react-router-dom'
+import { isEmailVerified } from '../lib/authState'
 
 export default function ProtectedRoute({
   session,
@@ -12,6 +13,10 @@ export default function ProtectedRoute({
 
   if (!session) {
     return <Navigate to="/login" state={{ from: { pathname: location.pathname, search: location.search, hash: location.hash } }} replace />
+  }
+
+  if (!isEmailVerified(session.user)) {
+    return <Navigate to="/verify-email" replace />
   }
 
   if (requireBusiness && !business) {
