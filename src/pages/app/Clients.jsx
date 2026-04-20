@@ -197,17 +197,18 @@ export default function Clients({ business }) {
     setSaving(true)
     const richPayload = buildRichClientPayload(values, business.id)
     const corePayload = buildCoreClientPayload(values, business.id)
+    const clientId = editingClient?.id || crypto.randomUUID()
 
     const primaryQuery = editingClient
-      ? supabase.from('clients').update(richPayload).eq('id', editingClient.id).select().single()
-      : supabase.from('clients').insert(richPayload).select().single()
+      ? supabase.from('clients').update(richPayload).eq('id', clientId)
+      : supabase.from('clients').insert({ id: clientId, ...richPayload })
 
     let result = await primaryQuery
 
     if (result.error) {
       const fallbackQuery = editingClient
-        ? supabase.from('clients').update(corePayload).eq('id', editingClient.id).select().single()
-        : supabase.from('clients').insert(corePayload).select().single()
+        ? supabase.from('clients').update(corePayload).eq('id', clientId)
+        : supabase.from('clients').insert({ id: clientId, ...corePayload })
 
       result = await fallbackQuery
     }

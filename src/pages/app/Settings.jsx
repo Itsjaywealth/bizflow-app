@@ -190,11 +190,16 @@ function buildQrGrid(seed = 'bizflow-2fa') {
 }
 
 async function updateBusinessRecord({ businessId, payload, fallbackPayload }) {
-  let result = await supabase.from('businesses').update(payload).eq('id', businessId).select().single()
+  let result = await supabase.from('businesses').update(payload).eq('id', businessId)
   if (result.error && fallbackPayload && Object.keys(fallbackPayload).length) {
-    result = await supabase.from('businesses').update(fallbackPayload).eq('id', businessId).select().single()
+    result = await supabase.from('businesses').update(fallbackPayload).eq('id', businessId)
   }
-  return result
+  if (result.error) return { data: null, error: result.error }
+
+  const refresh = await supabase.from('businesses').select('*').eq('id', businessId).maybeSingle()
+  return refresh.error
+    ? { data: null, error: refresh.error }
+    : { data: refresh.data, error: null }
 }
 
 export default function Settings({ business, setBusiness }) {
