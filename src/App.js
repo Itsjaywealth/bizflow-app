@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { supabase } from './lib/supabase'
 import AppLayout from './layouts/AppLayout'
 import PublicLayout from './layouts/PublicLayout'
@@ -97,6 +97,112 @@ function RouteFallback() {
   )
 }
 
+function AppRoutes({ session, business, setBusiness, getAppHome }) {
+  const location = useLocation()
+
+  return (
+    <>
+      <ErrorBoundary
+        key={`route-${location.pathname}`}
+        onError={(error, info) => {
+          console.error('[AppRouteBoundary]', {
+            pathname: location.pathname,
+            message: error?.message || 'Unknown route error',
+            stack: error?.stack || null,
+            componentStack: info?.componentStack || null,
+          })
+        }}
+      >
+        <Routes>
+          <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <PublicLayout><Landing /></PublicLayout>} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={!session ? <LoginPage /> : <Navigate to={getAppHome()} replace />} />
+          <Route path="/signup" element={!session ? <SignupPage /> : <Navigate to={getAppHome()} replace />} />
+          <Route path="/auth" element={<Navigate to="/signup" replace />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to={getAppHome()} replace />} />
+          <Route path="/invoice/:token" element={<PublicInvoice />} />
+          <Route path="/verify-email" element={!session || !isEmailVerified(session.user) ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/terms" element={<PublicLayout><PublicContentPage type="terms" /></PublicLayout>} />
+          <Route path="/privacy" element={<PublicLayout><PublicContentPage type="privacy" /></PublicLayout>} />
+          <Route path="/privacy-cookies" element={<PublicLayout><PublicContentPage type="privacyCookies" /></PublicLayout>} />
+          <Route path="/refund-policy" element={<PublicLayout><PublicContentPage type="refund" /></PublicLayout>} />
+          <Route path="/features" element={<PublicLayout><PublicContentPage type="features" /></PublicLayout>} />
+          <Route path="/how-it-works" element={<PublicLayout><PublicContentPage type="how" /></PublicLayout>} />
+          <Route path="/pricing" element={<PublicLayout><PublicContentPage type="pricing" /></PublicLayout>} />
+          <Route path="/changelog" element={<PublicLayout><PublicContentPage type="changelog" /></PublicLayout>} />
+          <Route path="/roadmap" element={<PublicLayout><PublicContentPage type="roadmap" /></PublicLayout>} />
+          <Route path="/about" element={<PublicLayout><PublicContentPage type="about" /></PublicLayout>} />
+          <Route path="/blog" element={<PublicLayout><PublicContentPage type="blog" /></PublicLayout>} />
+          <Route path="/careers" element={<PublicLayout><PublicContentPage type="careers" /></PublicLayout>} />
+          <Route path="/support" element={<PublicLayout><SupportPage /></PublicLayout>} />
+          <Route
+            path="/onboarding"
+            element={
+              !session ? (
+                <Navigate to="/login" replace />
+              ) : !isEmailVerified(session.user) ? (
+                <Navigate to="/verify-email" replace />
+              ) : business ? (
+                <Navigate to="/app/dashboard" replace />
+              ) : (
+                <OnboardingWizard setBusiness={setBusiness} />
+              )
+            }
+          />
+          <Route path="/app/dashboard" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Dashboard business={business} /></AppFrame>} />
+          <Route path="/app/invoices" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><AppInvoices business={business} /></AppFrame>} />
+          <Route path="/app/invoices/new" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
+          <Route path="/app/invoices/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceDetail business={business} /></AppFrame>} />
+          <Route path="/app/invoices/:id/edit" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
+          <Route path="/app/clients" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Clients business={business} /></AppFrame>} />
+          <Route path="/app/clients/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><ClientDetail business={business} /></AppFrame>} />
+          <Route path="/app/staff" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Staff business={business} /></AppFrame>} />
+          <Route path="/app/staff/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><StaffDetail business={business} /></AppFrame>} />
+          <Route path="/app/payroll" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Payroll business={business} /></AppFrame>} />
+          <Route path="/app/products" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Products business={business} /></AppFrame>} />
+          <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Expenses business={business} /></AppFrame>} />
+          <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Reports business={business} /></AppFrame>} />
+          <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
+          <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Billing /></AppFrame>} />
+          <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
+          <Route path="/invoices" element={<Navigate to="/app/invoices" replace />} />
+          <Route path="/clients" element={<Navigate to="/app/clients" replace />} />
+          <Route path="/staff" element={<Navigate to="/app/staff" replace />} />
+          <Route path="/products" element={<Navigate to="/app/products" replace />} />
+          <Route path="/expenses" element={<Navigate to="/app/expenses" replace />} />
+          <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
+          <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+          <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
+          <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
+        </Routes>
+      </ErrorBoundary>
+
+      <ErrorBoundary
+        key={`assistant-${location.pathname}`}
+        onError={(error, info) => {
+          console.error('[BizFlowAIBoundary]', {
+            pathname: location.pathname,
+            message: error?.message || 'Unknown BizFlow AI error',
+            stack: error?.stack || null,
+            componentStack: info?.componentStack || null,
+          })
+        }}
+      >
+        <BizFlowAI session={session} business={business} />
+      </ErrorBoundary>
+    </>
+  )
+}
+
+AppRoutes.propTypes = {
+  session: PropTypes.object,
+  business: PropTypes.object,
+  setBusiness: PropTypes.func,
+  getAppHome: PropTypes.func.isRequired,
+}
+
 export default function App() {
   const { session, loading: authLoading } = useAuth()
   const [business, setBusiness] = useState(null)
@@ -164,76 +270,10 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <ErrorBoundary>
-        <AppToaster />
-        <Suspense fallback={<RouteFallback />}>
-          <Routes>
-            <Route path="/" element={session ? <Navigate to={getAppHome()} replace /> : <PublicLayout><Landing /></PublicLayout>} />
-            <Route path="/home" element={<Navigate to="/" replace />} />
-            <Route path="/login" element={!session ? <LoginPage /> : <Navigate to={getAppHome()} replace />} />
-            <Route path="/signup" element={!session ? <SignupPage /> : <Navigate to={getAppHome()} replace />} />
-            <Route path="/auth" element={<Navigate to="/signup" replace />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to={getAppHome()} replace />} />
-            <Route path="/invoice/:token" element={<PublicInvoice />} />
-            <Route path="/verify-email" element={!session || !isEmailVerified(session.user) ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/terms" element={<PublicLayout><PublicContentPage type="terms" /></PublicLayout>} />
-            <Route path="/privacy" element={<PublicLayout><PublicContentPage type="privacy" /></PublicLayout>} />
-            <Route path="/privacy-cookies" element={<PublicLayout><PublicContentPage type="privacyCookies" /></PublicLayout>} />
-            <Route path="/refund-policy" element={<PublicLayout><PublicContentPage type="refund" /></PublicLayout>} />
-            <Route path="/features" element={<PublicLayout><PublicContentPage type="features" /></PublicLayout>} />
-            <Route path="/how-it-works" element={<PublicLayout><PublicContentPage type="how" /></PublicLayout>} />
-            <Route path="/pricing" element={<PublicLayout><PublicContentPage type="pricing" /></PublicLayout>} />
-            <Route path="/changelog" element={<PublicLayout><PublicContentPage type="changelog" /></PublicLayout>} />
-            <Route path="/roadmap" element={<PublicLayout><PublicContentPage type="roadmap" /></PublicLayout>} />
-            <Route path="/about" element={<PublicLayout><PublicContentPage type="about" /></PublicLayout>} />
-            <Route path="/blog" element={<PublicLayout><PublicContentPage type="blog" /></PublicLayout>} />
-            <Route path="/careers" element={<PublicLayout><PublicContentPage type="careers" /></PublicLayout>} />
-            <Route path="/support" element={<PublicLayout><SupportPage /></PublicLayout>} />
-            <Route
-              path="/onboarding"
-              element={
-                !session ? (
-                  <Navigate to="/login" replace />
-                ) : !isEmailVerified(session.user) ? (
-                  <Navigate to="/verify-email" replace />
-                ) : business ? (
-                  <Navigate to="/app/dashboard" replace />
-                ) : (
-                  <OnboardingWizard setBusiness={setBusiness} />
-                )
-              }
-            />
-            <Route path="/app/dashboard" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Dashboard business={business} /></AppFrame>} />
-            <Route path="/app/invoices" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><AppInvoices business={business} /></AppFrame>} />
-            <Route path="/app/invoices/new" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
-            <Route path="/app/invoices/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceDetail business={business} /></AppFrame>} />
-            <Route path="/app/invoices/:id/edit" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
-            <Route path="/app/clients" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Clients business={business} /></AppFrame>} />
-            <Route path="/app/clients/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><ClientDetail business={business} /></AppFrame>} />
-            <Route path="/app/staff" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Staff business={business} /></AppFrame>} />
-            <Route path="/app/staff/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><StaffDetail business={business} /></AppFrame>} />
-            <Route path="/app/payroll" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Payroll business={business} /></AppFrame>} />
-            <Route path="/app/products" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Products business={business} /></AppFrame>} />
-            <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Expenses business={business} /></AppFrame>} />
-            <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Reports business={business} /></AppFrame>} />
-            <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
-            <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Billing /></AppFrame>} />
-            <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
-            <Route path="/invoices" element={<Navigate to="/app/invoices" replace />} />
-            <Route path="/clients" element={<Navigate to="/app/clients" replace />} />
-            <Route path="/staff" element={<Navigate to="/app/staff" replace />} />
-            <Route path="/products" element={<Navigate to="/app/products" replace />} />
-            <Route path="/expenses" element={<Navigate to="/app/expenses" replace />} />
-            <Route path="/reports" element={<Navigate to="/app/reports" replace />} />
-            <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
-            <Route path="/billing" element={<Navigate to="/app/billing" replace />} />
-            <Route path="*" element={<Navigate to={session ? getAppHome() : '/'} replace />} />
-          </Routes>
-          <BizFlowAI session={session} business={business} />
-        </Suspense>
-      </ErrorBoundary>
+      <AppToaster />
+      <Suspense fallback={<RouteFallback />}>
+        <AppRoutes session={session} business={business} setBusiness={setBusiness} getAppHome={getAppHome} />
+      </Suspense>
     </BrowserRouter>
   )
 }
