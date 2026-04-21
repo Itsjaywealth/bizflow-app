@@ -103,6 +103,8 @@ function AppRoutes({ session, business, setBusiness, getAppHome }) {
   return (
     <>
       <ErrorBoundary
+        boundaryName="AppRoutes"
+        routeName={location.pathname}
         key={`route-${location.pathname}`}
         onError={(error, info) => {
           console.error('[AppRouteBoundary]', {
@@ -180,6 +182,8 @@ function AppRoutes({ session, business, setBusiness, getAppHome }) {
       </ErrorBoundary>
 
       <ErrorBoundary
+        boundaryName="BizFlowAI"
+        routeName={location.pathname}
         key={`assistant-${location.pathname}`}
         onError={(error, info) => {
           console.error('[BizFlowAIBoundary]', {
