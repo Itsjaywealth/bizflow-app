@@ -15,6 +15,7 @@ import {
   Mail,
   Palette,
   Sparkles,
+  ShieldAlert,
   ShieldCheck,
   Trash2,
   UserRound,
@@ -529,7 +530,7 @@ export default function Settings({ business, setBusiness }) {
         phone: values.phone,
         timezone: values.timezone,
         language: values.language,
-        profile_photo_url: photoUrl,
+        profile_photo_url: values.profile_photo_url,
       },
     })
     setSavingSection('')
