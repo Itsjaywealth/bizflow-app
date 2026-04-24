@@ -764,36 +764,36 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="testimonials" className="bg-[linear-gradient(180deg,#fbfdfc_0%,#f3f8f5_100%)] px-4 py-18 sm:px-6 lg:px-8 lg:py-24 dark:bg-transparent">
+        <section id="testimonials" className="bg-[linear-gradient(180deg,#f7fcf9_0%,#edf6f1_100%)] px-4 py-18 sm:px-6 lg:px-8 lg:py-24 dark:bg-[linear-gradient(180deg,#0d1622_0%,#111c2a_100%)]">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">Testimonials</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-emerald-700 dark:text-emerald-200">Testimonials</p>
               <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 What business owners are saying
               </h2>
-              <p className="mt-5 text-base leading-8 text-neutral-700 dark:text-neutral-300">
+              <p className="mt-5 text-base leading-8 text-neutral-700 dark:text-neutral-200">
                 Real feedback from teams using BizFlow NG to run smoother daily operations.
               </p>
             </Reveal>
 
             <div className="mt-14 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
               <Reveal>
-                <Card className="relative h-full overflow-hidden rounded-[28px] border border-emerald-500/14 bg-[linear-gradient(180deg,rgba(236,247,240,0.96)_0%,rgba(228,242,234,0.98)_100%)] p-7 text-neutral-950 shadow-[0_24px_70px_-48px_rgba(15,23,42,0.22)] sm:p-8 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(12,23,33,0.96)_0%,rgba(10,18,28,0.98)_100%)] dark:text-white dark:shadow-[0_28px_80px_-52px_rgba(0,0,0,0.72)]">
+                <Card className="relative h-full overflow-hidden rounded-[28px] border border-emerald-600/18 bg-[linear-gradient(180deg,rgba(233,247,238,0.98)_0%,rgba(223,240,230,0.98)_100%)] p-7 text-neutral-950 shadow-[0_24px_70px_-48px_rgba(15,23,42,0.24)] sm:p-8 dark:border-emerald-400/14 dark:bg-[linear-gradient(180deg,rgba(13,27,38,0.98)_0%,rgba(10,19,29,0.98)_100%)] dark:text-white dark:shadow-[0_28px_80px_-52px_rgba(0,0,0,0.72)]">
                   <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.18),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.16),transparent_58%)]" />
                   <div className="relative">
-                  <p className="inline-flex items-center rounded-full border border-emerald-500/16 bg-white/72 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-emerald-700 shadow-sm backdrop-blur dark:border-white/15 dark:bg-white/8 dark:text-emerald-100">
+                  <p className="inline-flex items-center rounded-full border border-emerald-600/18 bg-white/78 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-emerald-800 shadow-sm backdrop-blur dark:border-emerald-300/18 dark:bg-white/10 dark:text-emerald-100">
                     Featured story
                   </p>
                   <p className="mt-6 text-xl font-black leading-9 tracking-[-0.02em] text-neutral-950 sm:text-[1.75rem] sm:leading-[2.7rem] dark:text-white">
                     “{activeTestimonial.quote}”
                   </p>
-                  <div className="mt-10 flex items-center gap-4 rounded-[24px] border border-emerald-500/14 bg-white/58 px-4 py-4 shadow-[0_14px_32px_-24px_rgba(15,23,42,0.28)] backdrop-blur dark:border-white/10 dark:bg-white/[0.06] dark:shadow-none">
+                  <div className="mt-10 flex items-center gap-4 rounded-[24px] border border-emerald-600/14 bg-white/64 px-4 py-4 shadow-[0_14px_32px_-24px_rgba(15,23,42,0.28)] backdrop-blur dark:border-white/10 dark:bg-white/[0.08] dark:shadow-none">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/18 bg-[linear-gradient(180deg,rgba(22,163,74,0.18),rgba(34,197,94,0.1))] text-sm font-black text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:shadow-none">
                       {activeTestimonial.initials}
                     </div>
                     <div>
                       <p className="text-base font-black text-neutral-950 dark:text-white">{activeTestimonial.name}</p>
-                      <p className="mt-1 text-sm font-medium leading-6 text-neutral-700 dark:text-neutral-200">
+                      <p className="mt-1 text-sm font-medium leading-6 text-neutral-800 dark:text-neutral-100">
                         {activeTestimonial.title} — {activeTestimonial.company}
                       </p>
                     </div>
@@ -806,22 +806,22 @@ export default function Landing() {
                 {testimonials.map((testimonial, index) => (
                   <Reveal key={testimonial.name} delay={index * 0.07}>
                     <motion.div
-                      animate={{ opacity: testimonialIndex === index ? 1 : 0.72, scale: testimonialIndex === index ? 1 : 0.98 }}
-                      className="rounded-[28px] border border-emerald-500/12 bg-white/96 p-6 shadow-[0_22px_60px_-40px_rgba(15,23,42,0.18)] dark:border-white/10 dark:bg-white/5 sm:p-7"
+                      animate={{ opacity: testimonialIndex === index ? 1 : 0.9, scale: testimonialIndex === index ? 1 : 0.985 }}
+                      className="rounded-[28px] border border-emerald-500/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(247,252,249,0.98)_100%)] p-6 shadow-[0_22px_60px_-40px_rgba(15,23,42,0.2)] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(20,29,40,0.96)_0%,rgba(17,25,36,0.96)_100%)] sm:p-7"
                     >
-                      <div className="mb-4 flex items-center gap-1 text-amber-500">
+                      <div className="mb-4 flex items-center gap-1 text-amber-500 dark:text-amber-300">
                         {Array.from({ length: 5 }).map((_, star) => (
                           <span key={star}>★</span>
                         ))}
                       </div>
-                      <p className="text-base leading-8 text-neutral-800 dark:text-neutral-200">{testimonial.quote}</p>
+                      <p className="text-base leading-8 text-neutral-900 dark:text-neutral-100">{testimonial.quote}</p>
                       <div className="mt-6 flex items-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 font-black text-primary">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/12 font-black text-primary dark:bg-emerald-400/12 dark:text-emerald-200">
                           {testimonial.initials}
                         </div>
                         <div>
                           <p className="font-bold text-neutral-900 dark:text-white">{testimonial.name}</p>
-                          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                          <p className="text-sm text-neutral-700 dark:text-neutral-200">
                             {testimonial.title} — {testimonial.company}
                           </p>
                         </div>
@@ -835,7 +835,7 @@ export default function Landing() {
                       key={item.name}
                       type="button"
                       onClick={() => setTestimonialIndex(index)}
-                      className={`h-3 w-3 rounded-full transition-all ${testimonialIndex === index ? 'bg-primary w-8' : 'bg-neutral-300 dark:bg-neutral-600'}`}
+                      className={`h-3 w-3 rounded-full transition-all ${testimonialIndex === index ? 'bg-primary w-8' : 'bg-neutral-400 dark:bg-neutral-500'}`}
                       aria-label={`Show testimonial ${index + 1}`}
                     />
                   ))}
