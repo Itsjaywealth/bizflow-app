@@ -110,7 +110,8 @@ export default function BizFlowAI({ business, session }) {
   const [selectedReminderInvoiceId, setSelectedReminderInvoiceId] = useState('')
 
   const hiddenRoutes = ['/verify-email', '/onboarding', '/login', '/signup']
-  const isVisible = !hiddenRoutes.includes(location.pathname) && location.pathname !== '/invoice/:token'
+  const isVisible = !hiddenRoutes.includes(location.pathname) && !location.pathname.startsWith('/invoice/')
+  const isPublicRoute = !location.pathname.startsWith('/app')
 
   const greeting = useMemo(() => {
     if (business?.name) return `Ask me anything about ${business.name}`
@@ -391,7 +392,7 @@ export default function BizFlowAI({ business, session }) {
     <>
       <button
         type="button"
-        className="bizflow-ai-launcher"
+        className={`bizflow-ai-launcher ${isPublicRoute ? 'is-public-route' : ''}`}
         onClick={() => setOpen(true)}
         aria-label="Open BizFlow AI"
       >
@@ -402,7 +403,7 @@ export default function BizFlowAI({ business, session }) {
       {open && (
         <div className="bizflow-ai-shell" role="dialog" aria-modal="true" aria-label="BizFlow AI assistant">
           <div className="bizflow-ai-backdrop" onClick={() => setOpen(false)} />
-          <div className="bizflow-ai-panel">
+          <div className={`bizflow-ai-panel ${isPublicRoute ? 'is-public-route' : ''}`}>
             <div className="bizflow-ai-header">
               <div>
                 <strong>BizFlow AI</strong>
