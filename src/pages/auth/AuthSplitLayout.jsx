@@ -34,7 +34,7 @@ export default function AuthSplitLayout({ title, subtitle, children, minimal = f
 
   return (
     <div className="brand-app-shell min-h-screen bg-background px-4 py-6 sm:px-6 lg:px-8 dark:bg-darkbg">
-      <div className={`mx-auto ${minimal ? 'flex min-h-[calc(100vh-3rem)] max-w-2xl items-center justify-center' : 'grid min-h-[calc(100vh-3rem)] max-w-7xl overflow-hidden rounded-[36px] border border-neutral-200 bg-white shadow-modal dark:border-brand-glow/10 dark:bg-white/5 lg:grid-cols-[1.12fr_0.88fr]'}`}>
+      <div className={`mx-auto ${minimal ? 'flex min-h-[calc(100vh-3rem)] max-w-[460px] items-center justify-center' : 'grid min-h-[calc(100vh-3rem)] max-w-7xl overflow-hidden rounded-[36px] border border-neutral-200 bg-white shadow-modal dark:border-brand-glow/10 dark:bg-white/5 lg:grid-cols-[1.12fr_0.88fr]'}`}>
         {!minimal ? (
         <div className="relative hidden overflow-hidden bg-brand-dark p-10 text-white lg:flex lg:flex-col lg:justify-between">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.16),_transparent_28%),radial-gradient(circle_at_bottom_left,_rgba(52,211,153,0.18),_transparent_28%)]" />
@@ -91,9 +91,9 @@ export default function AuthSplitLayout({ title, subtitle, children, minimal = f
         </div>
         ) : null}
 
-        <div className={`relative flex items-center justify-center ${minimal ? 'w-full rounded-[36px] border border-neutral-200 bg-white/92 px-4 py-8 shadow-modal dark:border-brand-glow/10 dark:bg-white/5 sm:px-8' : 'bg-white/90 px-4 py-8 sm:px-8 dark:bg-white/5'}`}>
+        <div className={`relative flex items-center justify-center ${minimal ? 'w-full rounded-[28px] border border-neutral-200/90 bg-white/94 px-4 py-6 shadow-[0_28px_80px_-40px_rgba(15,23,42,0.4)] dark:border-brand-glow/10 dark:bg-[#07140d]/90 sm:px-6 sm:py-7' : 'bg-white/90 px-4 py-8 sm:px-8 dark:bg-white/5'}`}>
           <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.12),transparent_72%)] dark:bg-[radial-gradient(circle_at_top,rgba(52,211,153,0.16),transparent_72%)]" />
-          <div className={`w-full ${minimal ? 'max-w-md' : 'max-w-xl'}`}>
+          <div className={`w-full ${minimal ? 'max-w-[430px]' : 'max-w-xl'}`}>
             <div className={`mb-8 ${minimal ? 'text-center' : 'text-center lg:text-left'}`}>
               <Link to="/" className={`inline-flex items-center gap-3 ${minimal ? '' : 'lg:hidden'}`}>
                 <BrandLogo />
@@ -102,7 +102,7 @@ export default function AuthSplitLayout({ title, subtitle, children, minimal = f
               <p className={`text-sm leading-7 text-neutral-500 ${minimal ? 'mt-2' : 'mt-3 max-w-xl'}`}>{subtitle}</p>
             </div>
 
-            <div className={`rounded-[32px] border border-emerald-500/12 bg-[#fcfffd] shadow-card backdrop-blur dark:border-white/10 dark:bg-white/[0.06] ${minimal ? 'p-6 sm:p-7' : 'p-6 sm:p-8'}`}>
+            <div className={`rounded-[28px] border border-emerald-500/12 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(248,252,249,0.98))] shadow-[0_22px_60px_-36px_rgba(22,163,74,0.22)] backdrop-blur dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.04))] ${minimal ? 'p-5 sm:p-7' : 'p-6 sm:p-8'}`}>
               {children}
             </div>
           </div>

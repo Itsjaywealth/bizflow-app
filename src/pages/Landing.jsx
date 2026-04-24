@@ -478,7 +478,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <Reveal className="border-y border-emerald-500/10 bg-[#f2f7f4] px-4 py-6 sm:px-6 lg:px-8 dark:border-white/10 dark:bg-white/[0.03]">
+        <Reveal className="border-y border-emerald-500/8 bg-[#f4f8f5] px-4 py-7 sm:px-6 lg:px-8 dark:border-white/10 dark:bg-white/[0.03]">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <p className="max-w-2xl text-sm font-semibold leading-6 text-neutral-700 dark:text-neutral-200">
@@ -499,12 +499,12 @@ export default function Landing() {
                 {repeatedLogos.map((logo, index) => (
                   <div
                     key={`${logo}-${index}`}
-                    className="flex min-w-[180px] items-center gap-3 rounded-2xl border border-emerald-500/12 bg-white/90 px-5 py-4 shadow-sm dark:border-white/10 dark:bg-white/5"
+                    className="flex min-w-[180px] items-center gap-3 rounded-[24px] border border-emerald-500/12 bg-white/94 px-5 py-4 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.28)] dark:border-white/10 dark:bg-white/5"
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
                       <Sparkles className="h-5 w-5" />
                     </span>
-                    <span className="text-sm font-bold text-neutral-700">{logo}</span>
+                    <span className="text-sm font-bold text-neutral-700 dark:text-neutral-100">{logo}</span>
                   </div>
                 ))}
               </motion.div>
@@ -542,35 +542,30 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="border-y border-emerald-500/10 bg-[#eff6f2] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:border-white/10 dark:bg-white/[0.03]">
+        <section className="bg-[linear-gradient(180deg,#f3f9f5_0%,#edf6f1_100%)] px-4 py-18 sm:px-6 lg:px-8 lg:py-24 dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02))]">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">How it works</p>
               <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 Get started in 3 simple steps
               </h2>
+              <p className="mt-5 text-base leading-8 text-neutral-700 dark:text-neutral-300">
+                Move from setup to day-to-day operations with a simple workflow that stays clear on desktop and mobile.
+              </p>
             </Reveal>
 
-            <div className="relative mt-14 grid gap-6 lg:grid-cols-3">
-              <div className="absolute left-[16.5%] right-[16.5%] top-14 hidden h-1 rounded-full bg-neutral-200 lg:block">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-primary via-sky-400 to-accent"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: '100%' }}
-                  transition={{ duration: 1.1 }}
-                  viewport={{ once: true }}
-                />
-              </div>
+            <div className="mt-14 grid gap-6 lg:grid-cols-3">
               {steps.map((step, index) => {
                 const Icon = step.icon
                 return (
                   <Reveal key={step.title} delay={index * 0.08}>
-                    <div className="relative rounded-[28px] border border-emerald-500/12 bg-white/90 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-8">
+                    <div className="relative h-full rounded-[30px] border border-emerald-500/12 bg-white/92 p-6 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.28)] transition-transform duration-300 hover:-translate-y-1 dark:border-white/10 dark:bg-white/[0.05] sm:p-8">
+                      <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/80 to-transparent dark:via-emerald-400/25" />
                       <div className="flex items-center justify-between">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-base font-black text-white">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-gradient text-base font-black text-white shadow-glow">
                           0{index + 1}
                         </span>
-                        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:bg-emerald-400/10 dark:text-emerald-200">
                           <Icon className="h-6 w-6" />
                         </span>
                       </div>
@@ -769,33 +764,36 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="testimonials" className="bg-[#fbfdfc] px-4 py-16 sm:px-6 lg:px-8 lg:py-20 dark:bg-transparent">
+        <section id="testimonials" className="bg-[linear-gradient(180deg,#fbfdfc_0%,#f3f8f5_100%)] px-4 py-18 sm:px-6 lg:px-8 lg:py-24 dark:bg-transparent">
           <div className="mx-auto max-w-7xl">
             <Reveal className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary">Testimonials</p>
               <h2 className="mt-4 text-3xl font-black text-neutral-950 sm:text-5xl dark:text-white">
                 What business owners are saying
               </h2>
+              <p className="mt-5 text-base leading-8 text-neutral-700 dark:text-neutral-300">
+                Real feedback from teams using BizFlow NG to run smoother daily operations.
+              </p>
             </Reveal>
 
             <div className="mt-14 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
               <Reveal>
-                <Card className="relative h-full overflow-hidden rounded-[30px] border border-emerald-500/16 bg-[linear-gradient(180deg,#ffffff_0%,#fbfefb_48%,#f4fbf6_100%)] p-7 text-neutral-950 shadow-[0_28px_80px_rgba(15,23,42,0.08)] sm:p-8 dark:border-white/10 dark:bg-neutral-950 dark:text-white dark:shadow-modal">
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.14),transparent_62%)] dark:hidden" />
+                <Card className="relative h-full overflow-hidden rounded-[28px] border border-emerald-500/14 bg-[linear-gradient(180deg,rgba(236,247,240,0.96)_0%,rgba(228,242,234,0.98)_100%)] p-7 text-neutral-950 shadow-[0_24px_70px_-48px_rgba(15,23,42,0.22)] sm:p-8 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(12,23,33,0.96)_0%,rgba(10,18,28,0.98)_100%)] dark:text-white dark:shadow-[0_28px_80px_-52px_rgba(0,0,0,0.72)]">
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.18),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.16),transparent_58%)]" />
                   <div className="relative">
-                  <p className="inline-flex items-center rounded-full border border-emerald-500/16 bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-primary shadow-sm dark:border-white/15 dark:bg-white/10 dark:text-emerald-100">
+                  <p className="inline-flex items-center rounded-full border border-emerald-500/16 bg-white/72 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-emerald-700 shadow-sm backdrop-blur dark:border-white/15 dark:bg-white/8 dark:text-emerald-100">
                     Featured story
                   </p>
                   <p className="mt-6 text-xl font-black leading-9 tracking-[-0.02em] text-neutral-950 sm:text-[1.75rem] sm:leading-[2.7rem] dark:text-white">
                     “{activeTestimonial.quote}”
                   </p>
-                  <div className="mt-10 flex items-center gap-4 rounded-[24px] border border-emerald-500/12 bg-white/88 px-4 py-4 shadow-[0_12px_30px_rgba(15,23,42,0.05)] dark:border-white/10 dark:bg-white/5 dark:shadow-none">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/18 bg-[linear-gradient(180deg,rgba(22,163,74,0.16),rgba(34,197,94,0.09))] text-sm font-black text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:shadow-none">
+                  <div className="mt-10 flex items-center gap-4 rounded-[24px] border border-emerald-500/14 bg-white/58 px-4 py-4 shadow-[0_14px_32px_-24px_rgba(15,23,42,0.28)] backdrop-blur dark:border-white/10 dark:bg-white/[0.06] dark:shadow-none">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500/18 bg-[linear-gradient(180deg,rgba(22,163,74,0.18),rgba(34,197,94,0.1))] text-sm font-black text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:shadow-none">
                       {activeTestimonial.initials}
                     </div>
                     <div>
                       <p className="text-base font-black text-neutral-950 dark:text-white">{activeTestimonial.name}</p>
-                      <p className="mt-1 text-sm font-medium leading-6 text-neutral-600 dark:text-neutral-300">
+                      <p className="mt-1 text-sm font-medium leading-6 text-neutral-700 dark:text-neutral-200">
                         {activeTestimonial.title} — {activeTestimonial.company}
                       </p>
                     </div>
@@ -809,7 +807,7 @@ export default function Landing() {
                   <Reveal key={testimonial.name} delay={index * 0.07}>
                     <motion.div
                       animate={{ opacity: testimonialIndex === index ? 1 : 0.72, scale: testimonialIndex === index ? 1 : 0.98 }}
-                      className="rounded-[28px] border border-emerald-500/12 bg-white/94 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-7"
+                      className="rounded-[28px] border border-emerald-500/12 bg-white/96 p-6 shadow-[0_22px_60px_-40px_rgba(15,23,42,0.18)] dark:border-white/10 dark:bg-white/5 sm:p-7"
                     >
                       <div className="mb-4 flex items-center gap-1 text-amber-500">
                         {Array.from({ length: 5 }).map((_, star) => (
@@ -822,7 +820,7 @@ export default function Landing() {
                           {testimonial.initials}
                         </div>
                         <div>
-                          <p className="font-bold text-neutral-900">{testimonial.name}</p>
+                          <p className="font-bold text-neutral-900 dark:text-white">{testimonial.name}</p>
                           <p className="text-sm text-neutral-600 dark:text-neutral-400">
                             {testimonial.title} — {testimonial.company}
                           </p>
