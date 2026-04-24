@@ -96,25 +96,16 @@ export default function Login() {
         minimal
       >
         {location.state?.from ? (
-          <div className="mb-5 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-3 text-sm text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
+          <div className="mb-6 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-3 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
             Sign in to continue to your secure workspace. We&apos;ll return you to the page you were trying to open.
           </div>
         ) : null}
         {statusNotice ? (
-          <div className="mb-5 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-3 text-sm text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
+          <div className="mb-6 rounded-2xl border border-emerald-500/12 bg-emerald-50/80 px-4 py-3 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200">
             {statusNotice}
           </div>
         ) : null}
-        <div className="mx-auto mb-6 max-w-md rounded-2xl border border-neutral-200/80 bg-neutral-50/90 px-5 py-4 text-center dark:border-white/10 dark:bg-white/[0.04]">
-          <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-            If you just created your account, verify your email first.
-          </p>
-          <p className="mt-2 text-sm leading-7 text-neutral-500 dark:text-neutral-400">
-            Then log in again to continue to onboarding.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
           <div className="grid gap-5">
             <Input
               label="Email address"
@@ -146,20 +137,26 @@ export default function Login() {
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-1">
             <Link to="/forgot-password" className="text-sm font-semibold text-primary hover:text-primary-dark">
               Forgot password?
             </Link>
           </div>
 
-          <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
+          <Button type="submit" fullWidth size="lg" loading={isSubmitting} className="min-h-[56px] rounded-2xl">
             {isSubmitting ? 'Signing you in...' : 'Log In'}
           </Button>
+
+          <div className="mx-auto max-w-sm px-2 pt-1 text-center">
+            <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
+              New here? <span className="font-medium text-neutral-600 dark:text-neutral-300">Verify your email</span> first, then log in to continue.
+            </p>
+          </div>
         </form>
 
         {ENABLE_GOOGLE_AUTH ? (
           <>
-            <div className="my-6 flex items-center gap-4">
+            <div className="my-7 flex items-center gap-4">
               <div className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-400">or continue with</span>
               <div className="h-px flex-1 bg-neutral-200 dark:bg-white/10" />
@@ -178,7 +175,7 @@ export default function Login() {
           </>
         ) : null}
 
-        <p className={`${ENABLE_GOOGLE_AUTH ? 'mt-8' : 'mt-8'} text-center text-sm text-neutral-500`}>
+        <p className="mt-8 text-center text-sm leading-7 text-neutral-500 dark:text-neutral-400">
           Don&apos;t have an account?{' '}
           <Link to="/signup" className="font-semibold text-primary hover:text-primary-dark">
             Sign up
