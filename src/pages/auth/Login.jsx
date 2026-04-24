@@ -105,10 +105,13 @@ export default function Login() {
             {statusNotice}
           </div>
         ) : null}
-        <div className="mb-5 rounded-2xl border border-neutral-200/80 bg-neutral-50/90 px-4 py-4 text-sm leading-6 text-neutral-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-300">
-          If you just created your account, verify your email first.
-          <br />
-          Then log in again to continue to onboarding.
+        <div className="mx-auto mb-6 max-w-md rounded-2xl border border-neutral-200/80 bg-neutral-50/90 px-5 py-4 text-center dark:border-white/10 dark:bg-white/[0.04]">
+          <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
+            If you just created your account, verify your email first.
+          </p>
+          <p className="mt-2 text-sm leading-7 text-neutral-500 dark:text-neutral-400">
+            Then log in again to continue to onboarding.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
