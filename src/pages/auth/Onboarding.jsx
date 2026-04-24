@@ -61,6 +61,7 @@ function initialWizardState() {
 }
 
 function logOnboardingError(scope, error, userId, meta = {}) {
+  if (process.env.NODE_ENV !== 'development') return
   if (!error) return
   console.error(`[Onboarding:${scope}]`, {
     userId,
@@ -73,6 +74,7 @@ function logOnboardingError(scope, error, userId, meta = {}) {
 }
 
 function logOnboardingEvent(scope, meta = {}) {
+  if (process.env.NODE_ENV !== 'development') return
   console.log(`[Onboarding:${scope}]`, meta)
 }
 
