@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Building2,
+  FileText,
   ImagePlus,
   Layers3,
   MapPin,
@@ -31,6 +32,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const businessTypes = ['Retail', 'Services', 'Logistics', 'Tech', 'Food', 'Fashion', 'Other']
 const teamSizes = ['Just me', '2–5', '6–20', '21–50', '50+']
 const useCases = ['Invoicing', 'Payroll', 'Client Management', 'HR', 'Reports', 'All of the above']
+const ONBOARDING_BUSINESS_READY_KEY = 'bizflow-onboarding-business-ready'
 
 const baseSchema = z.object({
   businessName: z.string().min(2, 'Enter your business name'),
@@ -88,6 +90,17 @@ function isMissingColumnError(error, column) {
   if (!error || !column) return false
   const combined = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`.toLowerCase()
   return error.code === '42703' || combined.includes(column.toLowerCase())
+}
+
+function markBusinessReadyForRedirect(businessId) {
+  if (typeof window === 'undefined') return
+  window.sessionStorage?.setItem(
+    ONBOARDING_BUSINESS_READY_KEY,
+    JSON.stringify({
+      businessId: businessId || null,
+      at: Date.now(),
+    })
+  )
 }
 
 export default function Onboarding({ setBusiness }) {
@@ -533,6 +546,7 @@ export default function Onboarding({ setBusiness }) {
         await persistDraft(values, { scope: 'draft-save-step-4' })
         const businessRecord = await ensureBusinessRecord(values)
         await createFirstInvoice(values, businessRecord)
+        markBusinessReadyForRedirect(businessRecord?.id)
         setStep(4)
       } catch (error) {
         console.error('Final onboarding step failed:', error)
@@ -557,6 +571,7 @@ export default function Onboarding({ setBusiness }) {
     try {
       await persistDraft(nextValues, { scope: 'draft-save-skip' })
       const businessRecord = await ensureMinimalBusinessRecord(nextValues)
+      markBusinessReadyForRedirect(businessRecord?.id)
       logOnboardingEvent('skip:success', {
         userId: currentUser?.id || userId,
         businessId: businessRecord?.id || null,
@@ -689,6 +704,11 @@ export default function Onboarding({ setBusiness }) {
                         value={field.value || ''}
                         onChange={(value) => {
                           field.onChange(value)
+                          setValue('businessType', value, {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true,
+                          })
                           setStepError('')
                         }}
                         error={errors.businessType?.message}

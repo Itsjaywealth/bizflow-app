@@ -18,6 +18,12 @@ import './worldclass.css'
 import './mobile.css'
 
 const CHUNK_RELOAD_FLAG = 'bizflow-chunk-reload'
+const ONBOARDING_BUSINESS_READY_KEY = 'bizflow-onboarding-business-ready'
+
+function clearOnboardingBusinessFlag() {
+  if (typeof window === 'undefined') return
+  window.sessionStorage?.removeItem(ONBOARDING_BUSINESS_READY_KEY)
+}
 
 function lazyWithReload(importer) {
   return lazy(async () => {
@@ -225,12 +231,14 @@ export default function App() {
     if (authLoading) return
 
     if (!session) {
+      clearOnboardingBusinessFlag()
       setBusiness(null)
       setBusinessLoading(false)
       return
     }
 
     if (!isEmailVerified(session.user)) {
+      clearOnboardingBusinessFlag()
       setBusiness(null)
       setBusinessLoading(false)
       return
@@ -248,11 +256,15 @@ export default function App() {
       .limit(1)
     if (error) {
       console.error('Failed to load business profile after auth:', error)
+      clearOnboardingBusinessFlag()
       setBusiness(null)
       setBusinessLoading(false)
       return
     }
-    setBusiness(data?.[0] || null)
+
+    const nextBusiness = data?.[0] || null
+    clearOnboardingBusinessFlag()
+    setBusiness(nextBusiness)
     setBusinessLoading(false)
   }
 
