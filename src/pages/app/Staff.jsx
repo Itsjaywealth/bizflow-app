@@ -187,6 +187,17 @@ export default function Staff({ business }) {
   const watchedValues = staffForm.watch()
   const grossSalary = useMemo(() => calculateGrossSalary(watchedValues), [watchedValues])
 
+  function logStaffError(scope, error) {
+    if (!error) return
+    console.error(`[Staff:${scope}]`, {
+      businessId: business?.id || null,
+      message: error.message || 'Unknown staff error',
+      details: error.details || null,
+      hint: error.hint || null,
+      code: error.code || null,
+    })
+  }
+
   async function loadHrData() {
     setLoading(true)
     const [staffRes, departmentsRes, leaveRes, attendanceRes] = await Promise.all([
@@ -293,16 +304,21 @@ export default function Staff({ business }) {
       const path = `${business.id}/${staffId}/${Date.now()}-${item.file.name}`
       const uploadRes = await supabase.storage.from('staff-documents').upload(path, item.file, { upsert: true })
       if (uploadRes.error) {
+        logStaffError('upload-document', uploadRes.error)
         toast.error(`Could not upload ${item.file.name}. Create the staff-documents bucket to enable staff files.`)
         continue
       }
-      await supabase.from('staff_documents').insert({
+      const documentInsert = await supabase.from('staff_documents').insert({
         business_id: business.id,
         staff_id: staffId,
         category: item.category,
         file_name: item.file.name,
         file_path: path,
       })
+      if (documentInsert.error) {
+        logStaffError('insert-document-record', documentInsert.error)
+        toast.error(`Uploaded ${item.file.name}, but we could not save its record.`)
+      }
     }
   }
 
@@ -329,6 +345,7 @@ export default function Staff({ business }) {
     setSavingStaff(false)
 
     if (result.error) {
+      logStaffError('save-staff', result.error)
       toast.error(result.error.message || 'We could not save this staff profile yet.')
       return
     }
@@ -358,6 +375,7 @@ export default function Staff({ business }) {
     setSavingDepartment(false)
 
     if (result.error) {
+      logStaffError('save-department', result.error)
       toast.error(result.error.message || 'Department changes could not be saved.')
       return
     }
@@ -372,6 +390,7 @@ export default function Staff({ business }) {
     if (!window.confirm('Delete this department?')) return
     const result = await supabase.from('departments').delete().eq('id', id)
     if (result.error) {
+      logStaffError('delete-department', result.error)
       toast.error(result.error.message || 'Department could not be deleted.')
       return
     }
@@ -383,6 +402,7 @@ export default function Staff({ business }) {
     if (!window.confirm('Delete this staff member?')) return
     const result = await supabase.from('staff').delete().eq('id', id)
     if (result.error) {
+      logStaffError('delete-staff', result.error)
       toast.error(result.error.message || 'Staff member could not be deleted.')
       return
     }
@@ -394,6 +414,7 @@ export default function Staff({ business }) {
     if (!selectedIds.length || !window.confirm(`Delete ${selectedIds.length} selected staff record(s)?`)) return
     const result = await supabase.from('staff').delete().in('id', selectedIds)
     if (result.error) {
+      logStaffError('bulk-delete-staff', result.error)
       toast.error(result.error.message || 'Selected staff records could not be deleted.')
       return
     }
@@ -411,6 +432,7 @@ export default function Staff({ business }) {
     }
     const result = await supabase.from('leave_requests').update(payload).eq('id', pendingAction.request.id)
     if (result.error) {
+      logStaffError('apply-leave-decision', result.error)
       toast.error(result.error.message || 'Leave request could not be updated.')
       return
     }
