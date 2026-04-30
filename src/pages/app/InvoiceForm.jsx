@@ -32,6 +32,7 @@ import {
   exportInvoicePdf,
   formatCurrency,
   generateInvoiceNumber,
+  getClientName,
   getBalance,
 } from './invoiceShared'
 
@@ -60,6 +61,25 @@ const formSchema = z.object({
 })
 
 const defaultItem = { description: '', qty: 1, unit_price: 0, tax_percent: 7.5 }
+
+function getInitialInvoiceValues() {
+  return {
+    client_search: '',
+    client_name: '',
+    client_email: '',
+    client_address: '',
+    invoice_number: '',
+    issue_date: new Date().toISOString().slice(0, 10),
+    due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    currency: 'NGN',
+    payment_terms: 'Net 7',
+    discount_type: 'amount',
+    discount_value: 0,
+    notes: '',
+    payment_terms_note: '',
+    items: [defaultItem],
+  }
+}
 
 function logInvoiceFormError(scope, error, businessId) {
   if (!error) return
@@ -97,22 +117,7 @@ export default function InvoiceForm({ business }) {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      client_search: '',
-      client_name: '',
-      client_email: '',
-      client_address: '',
-      invoice_number: '',
-      issue_date: new Date().toISOString().slice(0, 10),
-      due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-      currency: 'NGN',
-      payment_terms: 'Net 7',
-      discount_type: 'amount',
-      discount_value: 0,
-      notes: '',
-      payment_terms_note: '',
-      items: [defaultItem],
-    },
+    defaultValues: getInitialInvoiceValues(),
   })
 
   const { fields, append, remove, move } = useFieldArray({
@@ -175,24 +180,25 @@ export default function InvoiceForm({ business }) {
         setGeneratedPaymentLink(buildPaymentLink(current, current.business_snapshot || business))
       }
     } else {
-      reset((current) => ({
-        ...current,
+      reset({
+        ...getInitialInvoiceValues(),
         invoice_number: generateInvoiceNumber(nextInvoices),
-      }))
+      })
 
       const prefillClientId = searchParams.get('clientId')
       if (prefillClientId) {
         const prefillClient = nextClients.find((client) => client.id === prefillClientId)
         if (prefillClient) {
+          const prefillClientName = getClientName(prefillClient)
           setSelectedClientId(prefillClient.id)
-          reset((current) => ({
-            ...current,
+          reset({
+            ...getInitialInvoiceValues(),
             invoice_number: generateInvoiceNumber(nextInvoices),
-            client_search: prefillClient.name,
-            client_name: prefillClient.name,
+            client_search: prefillClientName,
+            client_name: prefillClientName,
             client_email: prefillClient.email || '',
             client_address: prefillClient.address || '',
-          }))
+          })
         }
       }
     }
@@ -204,7 +210,7 @@ export default function InvoiceForm({ business }) {
   const searchedClients = useMemo(() => {
     const term = (values.client_search || '').toLowerCase()
     if (!term) return clients.slice(0, 6)
-    return clients.filter((client) => `${client.name} ${client.email || ''}`.toLowerCase().includes(term)).slice(0, 6)
+    return clients.filter((client) => `${getClientName(client)} ${client.email || ''}`.toLowerCase().includes(term)).slice(0, 6)
   }, [clients, values.client_search])
 
   const lineItems = values.items || []
@@ -216,9 +222,10 @@ export default function InvoiceForm({ business }) {
   const grandTotal = Math.max(subtotal + taxTotal - discountAmount, 0)
 
   function chooseClient(client) {
+    const clientName = getClientName(client)
     setSelectedClientId(client.id)
-    setValue('client_search', client.name)
-    setValue('client_name', client.name)
+    setValue('client_search', clientName)
+    setValue('client_name', clientName)
     setValue('client_email', client.email || '')
     setValue('client_address', client.address || '')
   }
@@ -229,7 +236,7 @@ export default function InvoiceForm({ business }) {
     }
 
     const name = payload.client_name.trim()
-    const existing = clients.find((client) => client.name.toLowerCase() === name.toLowerCase())
+    const existing = clients.find((client) => getClientName(client).toLowerCase() === name.toLowerCase())
     if (existing) return existing
 
     const clientId = crypto.randomUUID()
@@ -417,7 +424,7 @@ export default function InvoiceForm({ business }) {
                       onClick={() => chooseClient(client)}
                       className={`rounded-2xl border px-4 py-3 text-left transition ${selectedClientId === client.id ? 'border-primary bg-primary/8 shadow-glow' : 'border-emerald-400/12 bg-neutral-50 hover:border-primary/40 hover:bg-emerald-500/8 dark:bg-white/5'}`}
                     >
-                      <div className="font-semibold text-neutral-900">{client.name}</div>
+                      <div className="font-semibold text-neutral-900">{getClientName(client)}</div>
                       <div className="text-sm text-neutral-500">{client.email || 'No email'}</div>
                     </button>
                   ))}
