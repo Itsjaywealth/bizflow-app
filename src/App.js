@@ -56,6 +56,7 @@ const Reports = lazyWithReload(() => import('./pages/app/Reports'))
 const Settings = lazyWithReload(() => import('./pages/app/Settings'))
 const PublicInvoice = lazyWithReload(() => import('./pages/PublicInvoice'))
 const Landing = lazyWithReload(() => import('./pages/Landing'))
+const BrandVerseDemo = lazyWithReload(() => import('./pages/BrandVerseDemo'))
 const ResetPassword = lazyWithReload(() => import('./pages/ResetPassword'))
 const VerifyEmail = lazyWithReload(() => import('./pages/VerifyEmail'))
 const SupportPage = lazyWithReload(() => import('./pages/SupportPage'))
@@ -130,6 +131,7 @@ function AppRoutes({ session, business, setBusiness, getAppHome }) {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/forgot-password" element={!session ? <ForgotPassword /> : <Navigate to={getAppHome()} replace />} />
           <Route path="/invoice/:token" element={<PublicInvoice />} />
+          <Route path="/brandverse-demo" element={<PublicLayout><BrandVerseDemo /></PublicLayout>} />
           <Route path="/verify-email" element={!session || !isEmailVerified(session.user) ? <VerifyEmail /> : <Navigate to={getAppHome()} replace />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/terms" element={<PublicLayout><PublicContentPage type="terms" /></PublicLayout>} />
