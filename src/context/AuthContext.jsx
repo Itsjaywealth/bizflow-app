@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
-import { supabase } from '../lib/supabase'
-import { DEFAULT_APP_PATH, getAuthCallbackUrl, getSafeNextPath } from '../lib/appUrls'
+import { getAuthCallbackUrl, getSafeNextPath } from '../lib/appUrls'
 import { isEmailVerified } from '../lib/authState'
 
 const AuthContext = createContext(null)
@@ -26,21 +25,39 @@ function clearOAuthNextPath() {
   window.localStorage?.removeItem(OAUTH_NEXT_STORAGE_KEY)
 }
 
+async function getSupabaseClient() {
+  const { supabase } = await import('../lib/supabase')
+  return supabase
+}
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let mounted = true
+    let subscription = null
+    let authTimer = null
 
     async function bootstrapSession() {
       try {
+        const supabase = await getSupabaseClient()
         const { data, error } = await supabase.auth.getSession()
         if (error) {
           console.error('Failed to read Supabase session on app load:', error)
         }
         if (!mounted) return
         setSession(data?.session || null)
+
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, nextSession) => {
+          if (!mounted) return
+          if (event === 'SIGNED_OUT') {
+            clearOAuthNextPath()
+          }
+          setSession(nextSession || null)
+          setLoading(false)
+        })
+        subscription = authListener.subscription
       } catch (error) {
         console.error('Unexpected auth bootstrap failure:', error)
         if (!mounted) return
@@ -50,26 +67,19 @@ export function AuthProvider({ children }) {
       }
     }
 
-    bootstrapSession()
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (!mounted) return
-      if (event === 'SIGNED_OUT') {
-        clearOAuthNextPath()
-      }
-      setSession(nextSession || null)
-      setLoading(false)
-    })
+    const shouldDeferPublicBootstrap =
+      typeof window !== 'undefined' && window.location.pathname === '/'
+    authTimer = window.setTimeout(bootstrapSession, shouldDeferPublicBootstrap ? 1200 : 0)
 
     return () => {
       mounted = false
-      subscription.unsubscribe()
+      if (authTimer) window.clearTimeout(authTimer)
+      subscription?.unsubscribe()
     }
   }, [])
 
   async function signInWithGoogle(nextPath = '/app/dashboard') {
+    const supabase = await getSupabaseClient()
     const safeNextPath = getSafeNextPath(nextPath)
     writeOAuthNextPath(safeNextPath)
 
@@ -93,6 +103,7 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut(options = {}) {
+    const supabase = await getSupabaseClient()
     clearOAuthNextPath()
     const { error } = await supabase.auth.signOut(options)
     if (error) {

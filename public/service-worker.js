@@ -1,5 +1,5 @@
-const CACHE_NAME = 'bizflow-ng-v4'
-const CORE_ASSETS = ['/', '/index.html', '/offline.html', '/manifest.json?v=2', '/logo.png']
+const CACHE_NAME = 'bizflow-ng-v5'
+const CORE_ASSETS = ['/', '/index.html', '/offline.html', '/manifest.json?v=2', '/logo.svg']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -47,7 +47,7 @@ self.addEventListener('fetch', (event) => {
         const cloned = response.clone()
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned))
         return response
-      }).catch(() => caches.match('/logo.png'))
+      }).catch(() => caches.match('/logo.svg'))
     })
   )
 })

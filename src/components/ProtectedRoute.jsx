@@ -33,8 +33,17 @@ export default function ProtectedRoute({
   business,
   children,
   requireBusiness = true,
+  loading = false,
 }) {
   const location = useLocation()
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[320px] items-center justify-center rounded-3xl border border-neutral-200 bg-white px-6 text-center shadow-card dark:border-white/10 dark:bg-white/[0.04]">
+        <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-300">Loading BizFlow NG...</p>
+      </div>
+    )
+  }
 
   if (!session) {
     return <Navigate to="/login" state={{ from: { pathname: location.pathname, search: location.search, hash: location.hash } }} replace />
@@ -70,4 +79,5 @@ ProtectedRoute.propTypes = {
   business: PropTypes.object,
   children: PropTypes.node.isRequired,
   requireBusiness: PropTypes.bool,
+  loading: PropTypes.bool,
 }
