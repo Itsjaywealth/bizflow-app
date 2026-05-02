@@ -23,7 +23,7 @@
       ]
     },
     {
-      "source": "/(manifest.json|robots.txt|sitemap.xml|asset-manifest.json|favicon.ico)",
+      "source": "/(manifest.json|robots.txt|sitemap.xml|asset-manifest.json|favicon.ico|health.json)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -75,7 +75,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!static/|favicon.ico|manifest.json|robots.txt|asset-manifest.json).*)",
+      "source": "/((?!static/|favicon.ico|manifest.json|robots.txt|asset-manifest.json|health.json).*)",
       "destination": "/index.html"
     }
   ]

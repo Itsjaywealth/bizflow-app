@@ -13,6 +13,7 @@ import AuthSplitLayout from './AuthSplitLayout'
 import Seo from '../../components/Seo'
 import { ENABLE_GOOGLE_AUTH } from '../../lib/features'
 import { isEmailVerified } from '../../lib/authState'
+import { trackEvent } from '../../lib/analytics'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -53,31 +54,37 @@ export default function Login() {
   }, [searchParams])
 
   async function onSubmit(values) {
+    trackEvent('login_submit', { method: 'email' })
     const nextPath = getSafeNextPath(
       `${location.state?.from?.pathname || '/app/dashboard'}${location.state?.from?.search || ''}${location.state?.from?.hash || ''}`
     )
     const { data, error } = await supabase.auth.signInWithPassword(values)
     if (error) {
       console.error('Email/password login failed:', error)
+      trackEvent('login_error', { method: 'email', reason: 'invalid_credentials' })
       toast.error('Incorrect email or password. Please try again.')
       return
     }
     if (!isEmailVerified(data?.user)) {
+      trackEvent('login_email_unverified', { method: 'email' })
       localStorage.setItem('bizflow-pending-email', values.email)
       navigate('/verify-email', { replace: true, state: { fromLogin: true, email: values.email } })
       return
     }
+    trackEvent('login_success', { method: 'email' })
     navigate(nextPath, { replace: true })
   }
 
   async function handleGoogleSignIn() {
     try {
+      trackEvent('login_submit', { method: 'google' })
       const nextPath = getSafeNextPath(
         `${location.state?.from?.pathname || '/app/dashboard'}${location.state?.from?.search || ''}${location.state?.from?.hash || ''}`
       )
       await startGoogleSignIn(nextPath)
     } catch (error) {
       console.error('Google sign-in launch failed:', error)
+      trackEvent('login_error', { method: 'google', reason: error.message })
       toast.error('Google login failed. Please try again.')
     }
   }
@@ -125,6 +132,7 @@ export default function Login() {
               suffixIcon={
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="text-neutral-400 transition-colors hover:text-primary"
                   onClick={() => setShowPassword((value) => !value)}
                 >

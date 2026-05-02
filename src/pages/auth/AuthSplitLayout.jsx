@@ -98,7 +98,7 @@ export default function AuthSplitLayout({ title, subtitle, children, minimal = f
               <Link to="/" className={`inline-flex items-center gap-3 ${minimal ? '' : 'lg:hidden'}`}>
                 <BrandLogo />
               </Link>
-              <h2 className={`text-3xl font-black tracking-tight text-neutral-900 sm:text-4xl ${minimal ? 'mt-6' : 'mt-5'}`}>{title}</h2>
+              <h1 className={`text-3xl font-black tracking-tight text-neutral-900 sm:text-4xl ${minimal ? 'mt-6' : 'mt-5'}`}>{title}</h1>
               <p className={`text-sm leading-7 text-neutral-500 ${minimal ? 'mt-2' : 'mt-3 max-w-xl'}`}>{subtitle}</p>
             </div>
 
