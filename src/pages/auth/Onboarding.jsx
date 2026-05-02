@@ -372,7 +372,7 @@ export default function Onboarding({ setBusiness }) {
     return writeBusinessRecord({
       mode: 'insert-business-minimal',
       resolvedUser,
-      attachedBusiness: null,
+      attachedBusiness,
       payload: minimalPayload,
       syncApp,
     })
