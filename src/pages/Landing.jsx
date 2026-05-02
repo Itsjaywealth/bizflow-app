@@ -393,6 +393,8 @@ export default function Landing() {
 
           <button
             type="button"
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileMenuOpen}
             className="inline-flex rounded-2xl border border-emerald-500/15 bg-white/90 p-3 text-neutral-800 shadow-sm dark:bg-white/5 dark:text-neutral-100 lg:hidden"
             onClick={() => setMobileMenuOpen((value) => !value)}
           >
@@ -470,7 +472,7 @@ export default function Landing() {
                   <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.22em] text-emerald-200">Live dashboard</p>
-                      <h3 className="mt-2 text-lg font-bold sm:text-xl">BizFlow command center</h3>
+                      <p className="mt-2 text-lg font-bold sm:text-xl">BizFlow command center</p>
                     </div>
                     <Badge className="bg-white/10 text-white ring-0">Realtime</Badge>
                   </div>
@@ -749,32 +751,32 @@ export default function Landing() {
                   <div
                     className={`h-full rounded-[30px] border p-8 shadow-card ${
                       plan.highlight
-                        ? 'border-primary bg-primary text-white shadow-modal'
+                        ? 'border-emerald-800 bg-emerald-800 text-white shadow-modal'
                         : 'border-emerald-500/12 bg-white/92 text-neutral-950 dark:border-white/10 dark:bg-white/5 dark:text-white'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h3 className="text-2xl font-black">{plan.name}</h3>
-                        <p className={`mt-3 text-sm leading-7 ${plan.highlight ? 'text-emerald-100' : 'text-neutral-700 dark:text-neutral-300'}`}>
+                        <p className={`mt-3 text-sm leading-7 ${plan.highlight ? 'text-white' : 'text-neutral-700 dark:text-neutral-300'}`}>
                           {plan.description}
                         </p>
                       </div>
                       {plan.highlight ? (
-                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-primary">
+                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-emerald-800">
                           Most Popular
                         </span>
                       ) : null}
                     </div>
                     <div className="mt-8 flex items-end gap-2">
                       <span className="text-5xl font-black">{plan.price}</span>
-                      {plan.period ? <span className={plan.highlight ? 'text-emerald-100' : 'text-neutral-600 dark:text-neutral-400'}>{plan.period}</span> : null}
+                      {plan.period ? <span className={plan.highlight ? 'text-white' : 'text-neutral-600 dark:text-neutral-400'}>{plan.period}</span> : null}
                     </div>
                     <div className="mt-8 space-y-4">
                       {plan.features.map((feature) => (
                         <div key={feature} className="flex items-start gap-3">
                           <Check className={`mt-1 h-4 w-4 shrink-0 ${plan.highlight ? 'text-white' : 'text-success'}`} />
-                          <span className={`text-sm ${plan.highlight ? 'text-emerald-50' : 'text-neutral-700 dark:text-neutral-300'}`}>{feature}</span>
+                          <span className={`text-sm ${plan.highlight ? 'text-white' : 'text-neutral-700 dark:text-neutral-300'}`}>{feature}</span>
                         </div>
                       ))}
                     </div>
