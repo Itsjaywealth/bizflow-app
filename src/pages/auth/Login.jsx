@@ -61,6 +61,12 @@ export default function Login() {
     const { data, error } = await supabase.auth.signInWithPassword(values)
     if (error) {
       console.error('Email/password login failed:', error)
+      if (error.code === 'email_not_confirmed' || /email not confirmed/i.test(error.message || '')) {
+        trackEvent('login_email_unverified', { method: 'email' })
+        localStorage.setItem('bizflow-pending-email', values.email)
+        navigate('/verify-email', { replace: true, state: { fromLogin: true, email: values.email } })
+        return
+      }
       trackEvent('login_error', { method: 'email', reason: 'invalid_credentials' })
       toast.error('Incorrect email or password. Please try again.')
       return
