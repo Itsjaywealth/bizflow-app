@@ -178,7 +178,7 @@ function AppRoutes({ session, business, setBusiness, getAppHome, authLoading }) 
           <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Expenses business={business} /></AppFrame>} />
           <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Reports business={business} /></AppFrame>} />
           <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
-          <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Billing /></AppFrame>} />
+          <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Billing business={business} /></AppFrame>} />
           <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
           <Route path="/invoices" element={<Navigate to="/app/invoices" replace />} />
           <Route path="/clients" element={<Navigate to="/app/clients" replace />} />

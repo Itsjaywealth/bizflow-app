@@ -6,6 +6,9 @@ export function registerClientMonitoring() {
   window.__bizflowMonitoringRegistered = true
 
   window.addEventListener('error', (event) => {
+    if (window.Sentry?.captureException) {
+      window.Sentry.captureException(event.error || new Error(event.message || 'Window error'))
+    }
     trackError('window.error', event.error || event.message, {
       filename: event.filename || '',
       lineno: event.lineno || 0,
@@ -14,6 +17,9 @@ export function registerClientMonitoring() {
   })
 
   window.addEventListener('unhandledrejection', (event) => {
+    if (window.Sentry?.captureException) {
+      window.Sentry.captureException(event.reason)
+    }
     trackError('window.unhandledrejection', event.reason)
   })
 }
