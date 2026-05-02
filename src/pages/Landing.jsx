@@ -1,17 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
 import {
   ArrowRight,
   BadgeCheck,
-  BellRing,
   Building2,
   Check,
   ChevronDown,
   ChevronRight,
   CirclePlay,
-  CreditCard,
   FileText,
   LayoutDashboard,
   Menu,
@@ -23,8 +19,6 @@ import {
   Wallet,
   X,
 } from 'lucide-react'
-import Button from '../components/ui/Button'
-import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import BrandLogo from '../components/BrandLogo'
 import Seo from '../components/Seo'
@@ -279,18 +273,54 @@ function CashflowTrendPreview() {
 }
 
 function Reveal({ children, className = '', delay = 0 }) {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 })
-
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, delay }}
+    <div
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
+  )
+}
+
+function LandingButton({
+  children,
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  leftIcon = null,
+  rightIcon = null,
+  className = '',
+  ...props
+}) {
+  const variantClasses = {
+    primary: 'bg-brand-gradient text-white shadow-glow hover:brightness-110 focus-visible:ring-primary',
+    secondary: 'bg-darkbg-card text-white shadow-card hover:bg-darkbg-hover focus-visible:ring-brand-glow',
+    outline: 'border border-primary/30 bg-white text-neutral-900 hover:bg-primary/10 hover:text-primary focus-visible:ring-primary dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+    ghost: 'bg-transparent text-neutral-700 hover:bg-primary/10 hover:text-primary focus-visible:ring-primary dark:text-neutral-200 dark:hover:bg-white/10 dark:hover:text-white',
+  }
+  const sizeClasses = {
+    md: 'h-11 px-5 text-sm',
+    lg: 'h-12 px-6 text-base',
+  }
+
+  return (
+    <button
+      type="button"
+      className={[
+        'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ring-offset-background',
+        variantClasses[variant],
+        sizeClasses[size],
+        fullWidth ? 'w-full' : '',
+        className,
+      ].join(' ').trim()}
+      {...props}
+    >
+      {leftIcon}
+      <span>{children}</span>
+      {rightIcon}
+    </button>
   )
 }
 
@@ -336,7 +366,7 @@ export default function Landing() {
         description="Invoicing, payroll, HR and client management built for Nigerian businesses. Get paid faster. Run smarter."
         path="/"
       />
-      <motion.header
+      <header
         className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'border-b border-emerald-500/12 bg-white/88 shadow-card backdrop-blur-xl dark:border-white/10 dark:bg-darkbg/84' : 'bg-transparent'}`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -354,10 +384,10 @@ export default function Landing() {
 
           <div className="hidden items-center gap-3 lg:flex">
             <Link to="/login">
-              <Button variant="ghost">Login</Button>
+              <LandingButton variant="ghost">Login</LandingButton>
             </Link>
             <Link to="/signup">
-              <Button>Start Free Trial</Button>
+              <LandingButton>Start Free Trial</LandingButton>
             </Link>
           </div>
 
@@ -370,14 +400,8 @@ export default function Landing() {
           </button>
         </div>
 
-        <AnimatePresence>
-          {mobileMenuOpen ? (
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="border-t border-emerald-500/12 bg-[#f7fbf9] shadow-card dark:border-white/10 dark:bg-darkbg-card lg:hidden"
-            >
+        {mobileMenuOpen ? (
+          <div className="border-t border-emerald-500/12 bg-[#f7fbf9] shadow-card transition-all duration-200 dark:border-white/10 dark:bg-darkbg-card lg:hidden">
               <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6">
                 {navLinks.map((item) => (
                   <a
@@ -391,17 +415,16 @@ export default function Landing() {
                 ))}
                 <div className="flex flex-col gap-3">
                   <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" fullWidth>Login</Button>
+                    <LandingButton variant="ghost" fullWidth>Login</LandingButton>
                   </Link>
                   <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
-                    <Button fullWidth>Start Free Trial</Button>
+                    <LandingButton fullWidth>Start Free Trial</LandingButton>
                   </Link>
                 </div>
               </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </motion.header>
+            </div>
+        ) : null}
+      </header>
 
       <main id="top">
         <section className="relative overflow-hidden px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-12 lg:px-8 lg:pb-28 lg:pt-20">
@@ -419,19 +442,19 @@ export default function Landing() {
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
                 <Link to="/signup" className="w-full sm:w-auto">
-                  <Button size="lg" fullWidth rightIcon={<ArrowRight className="h-4 w-4" />}>
+                  <LandingButton size="lg" fullWidth rightIcon={<ArrowRight className="h-4 w-4" />}>
                     Start your 14-day free trial
-                  </Button>
+                  </LandingButton>
                 </Link>
                 <a href="#features" className="w-full sm:w-auto">
-                  <Button
+                  <LandingButton
                     size="lg"
                     fullWidth
                     variant="outline"
                     leftIcon={<CirclePlay className="h-4 w-4" />}
                   >
                     Learn more
-                  </Button>
+                  </LandingButton>
                 </a>
               </div>
               <p className="mt-5 text-sm font-semibold text-neutral-600 dark:text-neutral-300 sm:mt-6">
@@ -469,10 +492,8 @@ export default function Landing() {
                     <div className="flex items-end justify-between gap-2 sm:gap-3">
                       {[40, 58, 52, 70, 86, 78, 92].map((value, index) => (
                         <div key={value} className="flex flex-1 flex-col items-center gap-2">
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: `${value}%` }}
-                            transition={{ duration: 0.7, delay: index * 0.06 }}
+                          <div
+                            style={{ height: `${value}%` }}
                             className="w-full rounded-full bg-gradient-to-t from-primary via-emerald-400 to-accent"
                           />
                           <span className="text-[10px] text-neutral-400">W{index + 1}</span>
@@ -482,27 +503,21 @@ export default function Landing() {
                   </div>
                 </div>
 
-                <motion.div
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, repeatType: 'mirror' }}
+                <div
                   className="absolute -left-1 top-6 max-w-[220px] rounded-2xl border border-emerald-200 bg-[#fcfffd] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-left-3 sm:top-10"
                 >
                   <p className="text-sm font-semibold leading-6 text-neutral-950 dark:text-white">✅ Invoice #1042 paid — ₦450,000</p>
-                </motion.div>
-                <motion.div
-                  animate={{ y: [0, 8, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, repeatType: 'mirror' }}
+                </div>
+                <div
                   className="absolute right-0 top-[32%] max-w-[190px] rounded-2xl border border-neutral-200 bg-[#fbfdfc] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:-right-2"
                 >
                   <p className="text-sm font-semibold text-neutral-950 dark:text-white">👤 New client added</p>
-                </motion.div>
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 3.8, repeat: Infinity, repeatType: 'mirror' }}
+                </div>
+                <div
                   className="absolute bottom-0 left-3 max-w-[220px] rounded-2xl border border-amber-200 bg-[#fffdf8] px-4 py-3 shadow-card dark:border-white/10 dark:bg-darkbg-card sm:left-8"
                 >
                   <p className="text-sm font-semibold text-neutral-950 dark:text-white">💰 Payroll processed</p>
-                </motion.div>
+                </div>
               </div>
             </Reveal>
           </div>
@@ -521,11 +536,7 @@ export default function Landing() {
               </div>
             </div>
             <div className="relative mt-6 overflow-hidden">
-              <motion.div
-                className="flex gap-4"
-                animate={{ x: ['0%', '-50%'] }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              >
+              <div className="flex gap-4">
                 {repeatedLogos.map((logo, index) => (
                   <div
                     key={`${logo}-${index}`}
@@ -537,7 +548,7 @@ export default function Landing() {
                     <span className="text-sm font-bold text-neutral-700 dark:text-neutral-100">{logo}</span>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </div>
         </Reveal>
@@ -558,13 +569,13 @@ export default function Landing() {
                 const Icon = feature.icon
                 return (
                   <Reveal key={feature.title} delay={index * 0.07}>
-                    <Card hover className="h-full rounded-[28px] border-emerald-500/12 bg-white/92 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-7">
+                    <div className="h-full rounded-[28px] border-emerald-500/12 bg-white/92 p-6 shadow-card dark:border-white/10 dark:bg-white/5 sm:p-7">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                         <Icon className="h-7 w-7" />
                       </div>
                       <h3 className="mt-6 text-xl font-bold text-neutral-950 dark:text-white">{feature.title}</h3>
                       <p className="mt-4 text-sm leading-7 text-neutral-700 dark:text-neutral-300">{feature.description}</p>
-                    </Card>
+                    </div>
                   </Reveal>
                 )
               })}
@@ -696,9 +707,9 @@ export default function Landing() {
 
               <div className="mt-8 text-center">
                 <Link to="/signup">
-                  <Button variant="outline" rightIcon={<ChevronRight className="h-4 w-4" />}>
+                  <LandingButton variant="outline" rightIcon={<ChevronRight className="h-4 w-4" />}>
                     See BizFlow NG in action
-                  </Button>
+                  </LandingButton>
                 </Link>
               </div>
             </Reveal>
@@ -769,13 +780,13 @@ export default function Landing() {
                     </div>
                     <div className="mt-8">
                       <Link to={plan.name === 'Enterprise' ? '/support' : '/signup'}>
-                        <Button
+                        <LandingButton
                           fullWidth
                           variant={plan.highlight ? 'secondary' : 'primary'}
                           className={plan.highlight ? 'bg-white text-primary hover:bg-neutral-100' : ''}
                         >
                           {plan.cta}
-                        </Button>
+                        </LandingButton>
                       </Link>
                     </div>
                   </div>
@@ -799,7 +810,7 @@ export default function Landing() {
 
             <div className="mt-14 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
               <Reveal>
-                <Card className="relative h-full overflow-hidden rounded-[28px] border border-emerald-600/18 bg-[linear-gradient(180deg,rgba(233,247,238,0.98)_0%,rgba(223,240,230,0.98)_100%)] p-7 text-neutral-950 shadow-[0_24px_70px_-48px_rgba(15,23,42,0.24)] sm:p-8 dark:border-emerald-400/14 dark:bg-[linear-gradient(180deg,rgba(13,27,38,0.98)_0%,rgba(10,19,29,0.98)_100%)] dark:text-white dark:shadow-[0_28px_80px_-52px_rgba(0,0,0,0.72)]">
+                <div className="relative h-full overflow-hidden rounded-[28px] border border-emerald-600/18 bg-[linear-gradient(180deg,rgba(233,247,238,0.98)_0%,rgba(223,240,230,0.98)_100%)] p-7 text-neutral-950 shadow-[0_24px_70px_-48px_rgba(15,23,42,0.24)] sm:p-8 dark:border-emerald-400/14 dark:bg-[linear-gradient(180deg,rgba(13,27,38,0.98)_0%,rgba(10,19,29,0.98)_100%)] dark:text-white dark:shadow-[0_28px_80px_-52px_rgba(0,0,0,0.72)]">
                   <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.18),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.16),transparent_58%)]" />
                   <div className="relative">
                   <p className="inline-flex items-center rounded-full border border-emerald-600/18 bg-white/78 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-emerald-800 shadow-sm backdrop-blur dark:border-emerald-300/18 dark:bg-white/10 dark:text-emerald-100">
@@ -820,15 +831,14 @@ export default function Landing() {
                     </div>
                   </div>
                   </div>
-                </Card>
+                </div>
               </Reveal>
 
               <div className="space-y-5">
                 {testimonials.map((testimonial, index) => (
                   <Reveal key={testimonial.name} delay={index * 0.07}>
-                    <motion.div
-                      animate={{ opacity: testimonialIndex === index ? 1 : 0.9, scale: testimonialIndex === index ? 1 : 0.985 }}
-                      className="rounded-[28px] border border-emerald-500/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(247,252,249,0.98)_100%)] p-6 shadow-[0_22px_60px_-40px_rgba(15,23,42,0.2)] dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(20,29,40,0.96)_0%,rgba(17,25,36,0.96)_100%)] sm:p-7"
+                    <div
+                      className={`rounded-[28px] border border-emerald-500/14 bg-[linear-gradient(180deg,rgba(255,255,255,0.98)_0%,rgba(247,252,249,0.98)_100%)] p-6 shadow-[0_22px_60px_-40px_rgba(15,23,42,0.2)] transition-all duration-300 dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(20,29,40,0.96)_0%,rgba(17,25,36,0.96)_100%)] sm:p-7 ${testimonialIndex === index ? 'opacity-100 scale-100' : 'opacity-90 scale-[0.985]'}`}
                     >
                       <div className="mb-4 flex items-center gap-1 text-amber-500 dark:text-amber-300">
                         {Array.from({ length: 5 }).map((_, star) => (
@@ -847,7 +857,7 @@ export default function Landing() {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   </Reveal>
                 ))}
                 <div className="flex justify-center gap-3 pt-3">
@@ -885,28 +895,17 @@ export default function Landing() {
                       className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
                     >
                       <span className="text-base font-bold text-neutral-950 dark:text-white">{faq.question}</span>
-                      <motion.span
-                        animate={{ rotate: openFaq === index ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-neutral-500"
+                      <span
+                        className={`text-neutral-500 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`}
                       >
                         <ChevronDown className="h-5 w-5" />
-                      </motion.span>
+                      </span>
                     </button>
-                    <AnimatePresence initial={false}>
-                      {openFaq === index ? (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.24 }}
-                        >
-                          <div className="border-t border-emerald-500/12 px-5 py-5 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:text-neutral-300 sm:px-6">
-                            {faq.answer}
-                          </div>
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
+                    {openFaq === index ? (
+                      <div className="border-t border-emerald-500/12 px-5 py-5 text-sm leading-7 text-neutral-700 dark:border-white/10 dark:text-neutral-300 sm:px-6">
+                        {faq.answer}
+                      </div>
+                    ) : null}
                   </div>
                 </Reveal>
               ))}
@@ -927,14 +926,14 @@ export default function Landing() {
                 </p>
                 <div className="mt-8">
                   <Link to="/signup">
-                    <Button
+                    <LandingButton
                       size="lg"
                       variant="secondary"
                       rightIcon={<ArrowRight className="h-4 w-4" />}
                       className="bg-white text-primary hover:bg-neutral-100"
                     >
                       Get Started Free Today
-                    </Button>
+                    </LandingButton>
                   </Link>
                 </div>
                 <p className="mt-5 text-sm font-semibold text-emerald-100">
@@ -1013,14 +1012,8 @@ export default function Landing() {
         </div>
       </footer>
 
-      <AnimatePresence>
-        {showCookieBanner ? (
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 24 }}
-            className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-[28px] border border-emerald-500/12 bg-[#fbfdfc] p-5 shadow-modal dark:border-white/10 dark:bg-darkbg-card"
-          >
+      {showCookieBanner ? (
+          <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-[28px] border border-emerald-500/12 bg-[#fbfdfc] p-5 shadow-modal dark:border-white/10 dark:bg-darkbg-card">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <MessageCircleMore className="mt-1 h-5 w-5 text-primary" />
@@ -1031,11 +1024,10 @@ export default function Landing() {
                   </p>
                 </div>
               </div>
-              <Button onClick={dismissCookieBanner}>Got it</Button>
+              <LandingButton onClick={dismissCookieBanner}>Got it</LandingButton>
             </div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+          </div>
+      ) : null}
     </div>
   )
 }
