@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Button from './Button'
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -45,7 +44,13 @@ export default class ErrorBoundary extends React.Component {
                 {this.props.routeName ? ` • Route: ${this.props.routeName}` : ''}
               </p>
             ) : null}
-            <Button onClick={() => window.location.reload()}>Refresh page</Button>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="inline-flex h-11 items-center justify-center rounded-xl bg-brand-gradient px-5 text-sm font-semibold text-white shadow-glow transition-all duration-300 hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            >
+              Refresh page
+            </button>
           </div>
         </div>
       )

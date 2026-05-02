@@ -11,7 +11,7 @@ export default function BrandLogo({
     <div className={`inline-flex items-center gap-3 ${className}`.trim()}>
       <span className="brand-logo-glow relative inline-flex h-12 w-12 items-center justify-center rounded-2xl transition-transform duration-300 hover:scale-[1.03]">
         <img
-          src="/logo.png"
+          src="/logo.svg"
           alt="BizFlow NG logo"
           width="48"
           height="48"

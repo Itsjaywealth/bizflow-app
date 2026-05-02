@@ -1,14 +1,10 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { supabase } from './lib/supabase'
-import AppLayout from './layouts/AppLayout'
 import PublicLayout from './layouts/PublicLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import BrandLogo from './components/BrandLogo'
 import ErrorBoundary from './components/ui/ErrorBoundary'
-import { AppToaster } from './components/ui/Toast'
-import { AppShellProvider } from './context/AppShellContext'
 import useAuth from './hooks/useAuth'
 import { isEmailVerified } from './lib/authState'
 import './App.css'
@@ -74,10 +70,13 @@ const AuthCallback = lazyWithReload(() => import('./pages/auth/AuthCallback'))
 const AppInvoices = lazyWithReload(() => import('./pages/app/Invoices'))
 const InvoiceForm = lazyWithReload(() => import('./pages/app/InvoiceForm'))
 const InvoiceDetail = lazyWithReload(() => import('./pages/app/InvoiceDetail'))
+const AppLayout = lazyWithReload(() => import('./layouts/AppLayout'))
+const AppShellProvider = lazyWithReload(() => import('./context/AppShellContext').then((module) => ({ default: module.AppShellProvider })))
+const AppToaster = lazyWithReload(() => import('./components/ui/Toast').then((module) => ({ default: module.AppToaster })))
 
-function AppFrame({ children, session, business, setBusiness }) {
+function AppFrame({ children, session, business, setBusiness, authLoading }) {
   return (
-    <ProtectedRoute session={session} business={business}>
+    <ProtectedRoute session={session} business={business} loading={authLoading}>
       <AppShellProvider session={session} business={business} setBusiness={setBusiness}>
         <AppLayout session={session} business={business}>{children}</AppLayout>
       </AppShellProvider>
@@ -90,6 +89,7 @@ AppFrame.propTypes = {
   session: PropTypes.object,
   business: PropTypes.object,
   setBusiness: PropTypes.func,
+  authLoading: PropTypes.bool,
 }
 
 function RouteFallback() {
@@ -104,11 +104,14 @@ function RouteFallback() {
   )
 }
 
-function AppRoutes({ session, business, setBusiness, getAppHome }) {
+function AppRoutes({ session, business, setBusiness, getAppHome, authLoading }) {
   const location = useLocation()
+  const showAssistant = Boolean(session && business && location.pathname.startsWith('/app'))
+  const showToaster = location.pathname !== '/' || Boolean(session)
 
   return (
     <>
+      {showToaster ? <AppToaster /> : null}
       <ErrorBoundary
         boundaryName="AppRoutes"
         routeName={location.pathname}
@@ -161,21 +164,21 @@ function AppRoutes({ session, business, setBusiness, getAppHome }) {
               )
             }
           />
-          <Route path="/app/dashboard" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Dashboard business={business} /></AppFrame>} />
-          <Route path="/app/invoices" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><AppInvoices business={business} /></AppFrame>} />
-          <Route path="/app/invoices/new" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
-          <Route path="/app/invoices/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceDetail business={business} /></AppFrame>} />
-          <Route path="/app/invoices/:id/edit" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><InvoiceForm business={business} /></AppFrame>} />
-          <Route path="/app/clients" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Clients business={business} /></AppFrame>} />
-          <Route path="/app/clients/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><ClientDetail business={business} /></AppFrame>} />
-          <Route path="/app/staff" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Staff business={business} /></AppFrame>} />
-          <Route path="/app/staff/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><StaffDetail business={business} /></AppFrame>} />
-          <Route path="/app/payroll" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Payroll business={business} /></AppFrame>} />
-          <Route path="/app/products" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Products business={business} /></AppFrame>} />
-          <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Expenses business={business} /></AppFrame>} />
-          <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Reports business={business} /></AppFrame>} />
-          <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
-          <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness}><Billing /></AppFrame>} />
+          <Route path="/app/dashboard" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Dashboard business={business} /></AppFrame>} />
+          <Route path="/app/invoices" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><AppInvoices business={business} /></AppFrame>} />
+          <Route path="/app/invoices/new" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><InvoiceForm business={business} /></AppFrame>} />
+          <Route path="/app/invoices/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><InvoiceDetail business={business} /></AppFrame>} />
+          <Route path="/app/invoices/:id/edit" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><InvoiceForm business={business} /></AppFrame>} />
+          <Route path="/app/clients" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Clients business={business} /></AppFrame>} />
+          <Route path="/app/clients/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><ClientDetail business={business} /></AppFrame>} />
+          <Route path="/app/staff" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Staff business={business} /></AppFrame>} />
+          <Route path="/app/staff/:id" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><StaffDetail business={business} /></AppFrame>} />
+          <Route path="/app/payroll" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Payroll business={business} /></AppFrame>} />
+          <Route path="/app/products" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Products business={business} /></AppFrame>} />
+          <Route path="/app/expenses" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Expenses business={business} /></AppFrame>} />
+          <Route path="/app/reports" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Reports business={business} /></AppFrame>} />
+          <Route path="/app/settings" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Settings business={business} setBusiness={setBusiness} /></AppFrame>} />
+          <Route path="/app/billing" element={<AppFrame session={session} business={business} setBusiness={setBusiness} authLoading={authLoading}><Billing /></AppFrame>} />
           <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
           <Route path="/invoices" element={<Navigate to="/app/invoices" replace />} />
           <Route path="/clients" element={<Navigate to="/app/clients" replace />} />
@@ -202,7 +205,7 @@ function AppRoutes({ session, business, setBusiness, getAppHome }) {
           })
         }}
       >
-        <BizFlowAI session={session} business={business} />
+        {showAssistant ? <BizFlowAI session={session} business={business} /> : null}
       </ErrorBoundary>
     </>
   )
@@ -213,12 +216,13 @@ AppRoutes.propTypes = {
   business: PropTypes.object,
   setBusiness: PropTypes.func,
   getAppHome: PropTypes.func.isRequired,
+  authLoading: PropTypes.bool,
 }
 
 export default function App() {
   const { session, loading: authLoading } = useAuth()
   const [business, setBusiness] = useState(null)
-  const [businessLoading, setBusinessLoading] = useState(true)
+  const [businessLoading, setBusinessLoading] = useState(false)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('bizflow-theme')
@@ -251,6 +255,7 @@ export default function App() {
 
   async function loadBusiness(userId) {
     setBusinessLoading(true)
+    const { supabase } = await import('./lib/supabase')
     const { data, error } = await supabase
       .from('businesses')
       .select('*')
@@ -275,7 +280,7 @@ export default function App() {
     return business ? '/app/dashboard' : '/onboarding'
   }
 
-  if (authLoading || businessLoading) {
+  if (session && businessLoading) {
     return (
       <div className="brand-app-shell flex min-h-screen items-center justify-center bg-background dark:bg-darkbg">
         <div className="text-center">
@@ -288,9 +293,8 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <AppToaster />
       <Suspense fallback={<RouteFallback />}>
-        <AppRoutes session={session} business={business} setBusiness={setBusiness} getAppHome={getAppHome} />
+        <AppRoutes session={session} business={business} setBusiness={setBusiness} getAppHome={getAppHome} authLoading={authLoading} />
       </Suspense>
     </BrowserRouter>
   )

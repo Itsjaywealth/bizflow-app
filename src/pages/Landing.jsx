@@ -23,15 +23,6 @@ import {
   Wallet,
   X,
 } from 'lucide-react'
-import {
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from 'recharts'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
@@ -247,6 +238,45 @@ const mockInvoiceRows = [
   { invoice: 'INV-1043', client: 'Kora Labs', amount: '₦180,000', status: 'Pending' },
   { invoice: 'INV-1044', client: 'Northline Ltd', amount: '₦620,000', status: 'Paid' },
 ]
+
+function CashflowTrendPreview() {
+  const revenuePoints = chartData.map((item, index) => {
+    const x = 28 + index * 62
+    const y = 220 - (item.revenue / 1400000) * 170
+    return `${x},${y}`
+  }).join(' ')
+  const expensePoints = chartData.map((item, index) => {
+    const x = 28 + index * 62
+    const y = 220 - (item.expenses / 1400000) * 170
+    return `${x},${y}`
+  }).join(' ')
+
+  return (
+    <svg viewBox="0 0 370 240" role="img" aria-label="Revenue and expenses trend from January to June" className="h-full w-full">
+      <defs>
+        <linearGradient id="revenueGradient" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="#16A34A" />
+          <stop offset="100%" stopColor="#1A56DB" />
+        </linearGradient>
+      </defs>
+      {[52, 94, 136, 178, 220].map((y) => (
+        <line key={y} x1="24" x2="346" y1={y} y2={y} stroke="#E2E8F0" strokeDasharray="4 6" />
+      ))}
+      <polyline points={expensePoints} fill="none" stroke="#F59E0B" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+      <polyline points={revenuePoints} fill="none" stroke="url(#revenueGradient)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" />
+      {chartData.map((item, index) => {
+        const x = 28 + index * 62
+        const y = 220 - (item.revenue / 1400000) * 170
+        return (
+          <g key={item.month}>
+            <circle cx={x} cy={y} r="5" fill="#16A34A" stroke="#FFFFFF" strokeWidth="2" />
+            <text x={x} y="236" textAnchor="middle" className="fill-slate-500 text-[11px] font-semibold">{item.month}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
 
 function Reveal({ children, className = '', delay = 0 }) {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.15 })
@@ -635,16 +665,7 @@ export default function Landing() {
                           <Badge variant="success">Live</Badge>
                         </div>
                         <div className="h-72">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                              <XAxis dataKey="month" stroke="#64748B" fontSize={12} />
-                              <YAxis stroke="#64748B" fontSize={12} />
-                              <Tooltip />
-                              <Line type="monotone" dataKey="revenue" stroke="#1A56DB" strokeWidth={3} dot={false} />
-                              <Line type="monotone" dataKey="expenses" stroke="#F59E0B" strokeWidth={3} dot={false} />
-                            </LineChart>
-                          </ResponsiveContainer>
+                          <CashflowTrendPreview />
                         </div>
                       </div>
 
