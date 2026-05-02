@@ -29,6 +29,7 @@ import {
   securePasswordSchema,
 } from '../../lib/authValidation'
 import { getEmailVerificationReturnUrl } from '../../lib/appUrls'
+import { trackEvent } from '../../lib/analytics'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Enter your full name'),
@@ -85,6 +86,7 @@ export default function Signup() {
   const passwordStrength = useMemo(() => getPasswordStrengthMeta(passwordRules), [passwordRules])
 
   async function onSubmit(values) {
+    trackEvent('signup_submit', { method: 'email' })
     const phone = values.phone.startsWith('+234') ? values.phone : `+234${values.phone.replace(/^0+/, '')}`
     const { error } = await supabase.auth.signUp({
       email: values.email,
@@ -100,10 +102,12 @@ export default function Signup() {
 
     if (error) {
       console.error('Email sign-up failed:', error)
+      trackEvent('signup_error', { method: 'email', reason: error.message })
       toast.error(error.message)
       return
     }
 
+    trackEvent('signup_success', { method: 'email' })
     localStorage.setItem('bizflow-pending-email', values.email)
     toast.success('Your account has been created. Please verify your email before continuing.')
     navigate('/verify-email', { replace: true, state: { justSignedUp: true, email: values.email } })
@@ -111,9 +115,11 @@ export default function Signup() {
 
   async function handleGoogleSignIn() {
     try {
+      trackEvent('signup_submit', { method: 'google' })
       await startGoogleSignIn('/app/dashboard')
     } catch (error) {
       console.error('Google sign-in launch failed during signup:', error)
+      trackEvent('signup_error', { method: 'google', reason: error.message })
       toast.error('Google login failed. Please try again.')
     }
   }
@@ -184,6 +190,7 @@ export default function Signup() {
               suffixIcon={
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="text-neutral-400 transition-colors hover:text-primary"
                   onClick={() => setShowPassword((value) => !value)}
                 >

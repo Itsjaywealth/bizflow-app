@@ -24,6 +24,7 @@ import BrandLogo from '../components/BrandLogo'
 import Seo from '../components/Seo'
 import { SUPPORT_EMAIL, getSupportMailto } from '../lib/support'
 import { SOCIAL_LINKS } from '../lib/socialLinks'
+import { trackEvent } from '../lib/analytics'
 
 const navLinks = [
   { label: 'Features', href: '#features' },
@@ -354,6 +355,10 @@ export default function Landing() {
 
   const repeatedLogos = useMemo(() => [...socialLogos, ...socialLogos], [])
 
+  function trackLandingCta(label, target) {
+    trackEvent('landing_cta_click', { label, target })
+  }
+
   function dismissCookieBanner() {
     localStorage.setItem('bizflow-cookie-ok', 'yes')
     setShowCookieBanner(false)
@@ -383,10 +388,10 @@ export default function Landing() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <Link to="/login">
+            <Link to="/login" onClick={() => trackLandingCta('header_login', '/login')}>
               <LandingButton variant="ghost">Login</LandingButton>
             </Link>
-            <Link to="/signup">
+            <Link to="/signup" onClick={() => trackLandingCta('header_start_free_trial', '/signup')}>
               <LandingButton>Start Free Trial</LandingButton>
             </Link>
           </div>
@@ -416,10 +421,22 @@ export default function Landing() {
                   </a>
                 ))}
                 <div className="flex flex-col gap-3">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    to="/login"
+                    onClick={() => {
+                      trackLandingCta('mobile_login', '/login')
+                      setMobileMenuOpen(false)
+                    }}
+                  >
                     <LandingButton variant="ghost" fullWidth>Login</LandingButton>
                   </Link>
-                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    to="/signup"
+                    onClick={() => {
+                      trackLandingCta('mobile_start_free_trial', '/signup')
+                      setMobileMenuOpen(false)
+                    }}
+                  >
                     <LandingButton fullWidth>Start Free Trial</LandingButton>
                   </Link>
                 </div>
@@ -443,12 +460,20 @@ export default function Landing() {
                 Manage clients, send invoices, run payroll, and track revenue-all in one place.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
-                <Link to="/signup" className="w-full sm:w-auto">
+                <Link
+                  to="/signup"
+                  className="w-full sm:w-auto"
+                  onClick={() => trackLandingCta('hero_start_trial', '/signup')}
+                >
                   <LandingButton size="lg" fullWidth rightIcon={<ArrowRight className="h-4 w-4" />}>
                     Start your 14-day free trial
                   </LandingButton>
                 </Link>
-                <a href="#features" className="w-full sm:w-auto">
+                <a
+                  href="#features"
+                  className="w-full sm:w-auto"
+                  onClick={() => trackLandingCta('hero_learn_more', '#features')}
+                >
                   <LandingButton
                     size="lg"
                     fullWidth
@@ -781,7 +806,10 @@ export default function Landing() {
                       ))}
                     </div>
                     <div className="mt-8">
-                      <Link to={plan.name === 'Enterprise' ? '/support' : '/signup'}>
+                      <Link
+                        to={plan.name === 'Enterprise' ? '/support' : '/signup'}
+                        onClick={() => trackLandingCta(`pricing_${plan.name.toLowerCase()}`, plan.name === 'Enterprise' ? '/support' : '/signup')}
+                      >
                         <LandingButton
                           fullWidth
                           variant={plan.highlight ? 'secondary' : 'primary'}
@@ -927,7 +955,7 @@ export default function Landing() {
                   Join 1,200+ smart business owners already using BizFlow NG.
                 </p>
                 <div className="mt-8">
-                  <Link to="/signup">
+                  <Link to="/signup" onClick={() => trackLandingCta('final_get_started', '/signup')}>
                     <LandingButton
                       size="lg"
                       variant="secondary"

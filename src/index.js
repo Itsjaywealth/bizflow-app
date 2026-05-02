@@ -4,6 +4,9 @@ import { HelmetProvider } from 'react-helmet-async'
 import './styles/globals.css'
 import App from './App'
 import { AuthProvider } from './context/AuthContext'
+import { registerClientMonitoring } from './lib/monitoring'
+
+registerClientMonitoring()
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
