@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
+import useToast from '../../hooks/useToast'
+import { openBillingPortal, startCheckout } from '../../lib/billingApi'
 
 const plans = [
   {
     name: 'Starter',
     price: '₦5,000',
     period: '/ month',
-    current: true,
     features: ['Invoices and PDF export', 'Client records', 'Products and services', 'WhatsApp invoice sharing'],
   },
   {
@@ -28,6 +29,30 @@ const plans = [
 
 export default function Billing({ business }) {
   const currentPlan = business?.subscription_plan || 'Starter'
+  const billingSettings = business?.billing_settings || {}
+  const [loadingPlan, setLoadingPlan] = useState('')
+  const [portalLoading, setPortalLoading] = useState(false)
+  const toast = useToast()
+
+  async function handleCheckout(planName) {
+    setLoadingPlan(planName)
+    try {
+      await startCheckout(planName)
+    } catch (error) {
+      toast.error(error.message || 'Unable to start checkout right now.')
+      setLoadingPlan('')
+    }
+  }
+
+  async function handleBillingPortal() {
+    setPortalLoading(true)
+    try {
+      await openBillingPortal()
+    } catch (error) {
+      toast.error(error.message || 'Unable to open billing portal right now.')
+      setPortalLoading(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -55,7 +80,10 @@ export default function Billing({ business }) {
             <p className="text-sm font-semibold text-neutral-700">Need billing help?</p>
             <p className="mt-2 text-sm leading-7 text-emerald-50/90">If you want help choosing a plan, setting up your workspace, or handling invoicing operations, our team can walk you through it.</p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button as="a" href="/support" variant="secondary">Talk to support</Button>
+              {billingSettings.stripe_customer_id ? (
+                <Button variant="secondary" loading={portalLoading} onClick={handleBillingPortal}>Manage billing</Button>
+              ) : null}
+              <Link className="btn-outline" to="/support">Talk to support</Link>
             </div>
           </div>
         </div>
@@ -72,7 +100,7 @@ export default function Billing({ business }) {
                   <span className={`pb-1 text-sm font-medium ${plan.name === 'Growth' ? 'text-emerald-50/90' : 'text-neutral-500'}`}>{plan.period}</span>
                 </div>
               </div>
-              {plan.current || currentPlan === plan.name ? <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${plan.name === 'Growth' ? 'bg-white/15 text-white' : 'bg-primary/10 text-primary'}`}>Current</span> : null}
+              {currentPlan === plan.name ? <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${plan.name === 'Growth' ? 'bg-white/15 text-white' : 'bg-primary/10 text-primary'}`}>Current</span> : null}
             </div>
             <div className="mt-6 space-y-3">
               {plan.features.map((feature) => (
@@ -83,12 +111,21 @@ export default function Billing({ business }) {
               ))}
             </div>
             <div className="mt-6">
-              {plan.current || currentPlan === plan.name ? (
-                <Button variant="outline" fullWidth>Current plan</Button>
+              {currentPlan === plan.name ? (
+                billingSettings.stripe_customer_id ? (
+                  <Button variant="outline" fullWidth loading={portalLoading} onClick={handleBillingPortal}>Manage plan</Button>
+                ) : (
+                  <Button variant="outline" fullWidth disabled>Current plan</Button>
+                )
               ) : (
-                <Link to={plan.name === 'Setup Support' ? '/pricing?plan=setup' : '/pricing?plan=growth'}>
-                  <Button fullWidth variant={plan.name === 'Growth' ? 'secondary' : 'primary'}>{plan.name === 'Setup Support' ? 'Request setup support' : `Upgrade to ${plan.name}`}</Button>
-                </Link>
+                <Button
+                  fullWidth
+                  variant={plan.name === 'Growth' ? 'secondary' : 'primary'}
+                  loading={loadingPlan === plan.name}
+                  onClick={() => handleCheckout(plan.name)}
+                >
+                  {plan.name === 'Setup Support' ? 'Buy setup support' : `Upgrade to ${plan.name}`}
+                </Button>
               )}
             </div>
           </Card>

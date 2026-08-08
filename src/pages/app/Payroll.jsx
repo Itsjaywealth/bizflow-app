@@ -573,7 +573,7 @@ export default function Payroll({ business }) {
 
               <div className="mt-6 flex flex-wrap justify-end gap-3">
                 <Button variant="outline" leftIcon={<Download className="h-4 w-4" />} onClick={downloadSummaryPdf}>Download Payroll Summary (PDF)</Button>
-                <Button variant="outline" leftIcon={<FileSpreadsheet className="h-4 w-4" />} onClick={exportCsv}>Export to Excel</Button>
+                <Button variant="outline" leftIcon={<FileSpreadsheet className="h-4 w-4" />} onClick={exportCsv}>Export CSV</Button>
               </div>
             </>
           )}
