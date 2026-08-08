@@ -1,0 +1,1 @@
+import{j as n,P as e}from"./index-DdtwIknz.js";const s={line:"h-4 rounded-md",card:"h-32 rounded-2xl",row:"h-12 rounded-xl"};function o({variant:r="line",className:a=""}){return n.jsx("div",{className:`animate-pulse bg-neutral-200 ${s[r]} ${a}`,"aria-hidden":"true"})}o.propTypes={variant:e.oneOf(["line","card","row"]),className:e.string};export{o as S};

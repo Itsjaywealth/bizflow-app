@@ -1,11 +1,11 @@
 {
-  "buildCommand": "CI=false npm run build",
-  "outputDirectory": "build",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "installCommand": "npm install",
-  "framework": "create-react-app",
+  "framework": "vite",
   "headers": [
     {
-      "source": "/static/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -75,7 +75,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!static/|favicon.ico|manifest.json|robots.txt|asset-manifest.json|health.json).*)",
+      "source": "/((?!api/|assets/|favicon.ico|manifest.json|robots.txt|asset-manifest.json|health.json).*)",
       "destination": "/index.html"
     }
   ]

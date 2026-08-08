@@ -26,6 +26,7 @@ import Card from '../../components/ui/Card'
 import EmptyState from '../../components/ui/EmptyState'
 import Skeleton from '../../components/ui/Skeleton'
 import useToast from '../../hooks/useToast'
+import { csvEscape } from '../../lib/csvSecurity'
 import { formatCurrency, getBalance, getClientName, getPaidAmount } from './invoiceShared'
 import { formatCurrency as formatNaira, getStaffFullName } from './staffShared'
 
@@ -136,14 +137,30 @@ async function exportReportPdf(element, fileName) {
   pdf.save(fileName)
 }
 
-async function exportWorkbook(sheets, fileName) {
-  const XLSX = await import('xlsx')
-  const workbook = XLSX.utils.book_new()
-  sheets.forEach(({ name, data }) => {
-    const worksheet = XLSX.utils.json_to_sheet(data)
-    XLSX.utils.book_append_sheet(workbook, worksheet, name)
-  })
-  XLSX.writeFile(workbook, fileName)
+function buildSectionCsv({ name, data }) {
+  const columns = Array.from(data.reduce((keys, row) => {
+    Object.keys(row || {}).forEach((key) => keys.add(key))
+    return keys
+  }, new Set()))
+
+  return [
+    [name],
+    columns,
+    ...data.map((row) => columns.map((column) => row?.[column] ?? '')),
+  ].map((line) => line.map((cell) => csvEscape(cell)).join(',')).join('\n')
+}
+
+function exportReportCsv(sections, fileName) {
+  const csv = sections.map(buildSectionCsv).join('\n\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = fileName
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
 }
 
 export default function Reports({ business }) {
@@ -440,8 +457,8 @@ export default function Reports({ business }) {
     toast.success('Report PDF generated.')
   }
 
-  async function handleExportExcel() {
-    await exportWorkbook([
+  async function handleExportCsv() {
+    exportReportCsv([
       {
         name: 'Financial',
         data: financialMonthly.map((row) => ({
@@ -471,8 +488,8 @@ export default function Reports({ business }) {
         name: 'Payroll',
         data: payrollAnalytics.departmentHeadcount,
       },
-    ], `bizflow-report-${preset.toLowerCase().replace(/\s+/g, '-')}.xlsx`)
-    toast.success('Excel workbook exported.')
+    ], `bizflow-report-${preset.toLowerCase().replace(/\s+/g, '-')}.csv`)
+    toast.success('CSV report exported.')
   }
 
   const hasData = filteredInvoices.length || filteredExpenses.length || filteredClients.length || filteredPayrollRuns.length
@@ -498,7 +515,7 @@ export default function Reports({ business }) {
             </>
           ) : null}
           <Button variant="outline" leftIcon={<Download className="h-4 w-4" />} onClick={handleExportPdf}>Export Report</Button>
-          <Button variant="outline" leftIcon={<FileSpreadsheet className="h-4 w-4" />} onClick={handleExportExcel}>Export to Excel</Button>
+          <Button variant="outline" leftIcon={<FileSpreadsheet className="h-4 w-4" />} onClick={handleExportCsv}>Export CSV</Button>
         </div>
       </section>
 
