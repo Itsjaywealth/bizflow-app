@@ -25,6 +25,7 @@ import EmptyState from '../../components/ui/EmptyState'
 import Dropdown from '../../components/ui/Dropdown'
 import useToast from '../../hooks/useToast'
 import { csvEscape } from '../../lib/csvSecurity'
+import { reconcilePayment } from '../../lib/billingApi'
 import {
   buildPaymentLink,
   buildPublicInvoiceUrl,
@@ -246,7 +247,31 @@ export default function Invoices({ business }) {
   }
 
   async function bulkMarkPaid() {
-    toast.error('Payment status can no longer be changed from the browser. Use a verified payment flow or a trusted backend process instead.')
+    if (!selectedIds.length) return
+    const confirmed = window.confirm(`Record full payment for ${selectedIds.length} selected invoice(s)?`)
+    if (!confirmed) return
+
+    let succeeded = 0
+    for (const invoice of invoices) {
+      if (!selectedIds.includes(invoice.id) || getBalance(invoice) <= 0) continue
+      try {
+        await reconcilePayment({
+          invoiceId: invoice.id,
+          amount: getBalance(invoice),
+          method: 'transfer',
+          reference: 'bulk-reconciliation',
+          note: '',
+        })
+        succeeded += 1
+      } catch (_error) {
+        // Continue with the rest; report partial success below.
+      }
+    }
+
+    if (succeeded > 0) toast.success(`${succeeded} invoice(s) marked as paid.`)
+    else toast.error('No invoices could be reconciled. Try again or reconcile individually.')
+    setSelectedIds([])
+    loadInvoices()
   }
 
   function sendReminder(invoice) {

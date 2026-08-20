@@ -38,3 +38,13 @@ export async function openBillingPortal() {
   if (!url) throw new Error('Billing portal did not return a redirect URL.')
   window.location.assign(url)
 }
+
+export async function reconcilePayment({ invoiceId, amount, method, reference, note }) {
+  return postBillingAction('/api/reconciliation', {
+    invoiceId,
+    amount: Number(amount),
+    method,
+    reference,
+    note,
+  })
+}

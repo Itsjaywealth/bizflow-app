@@ -1,0 +1,1 @@
+import{j as r}from"./index-yIBGONt7.js";import{F as t}from"./index-nZzZ62jY.js";function a(){return r.jsx(t,{position:"top-right",toastOptions:{duration:4e3,className:"rounded-2xl border border-neutral-200 bg-white text-neutral-900 shadow-modal dark:border-neutral-800 dark:bg-neutral-900 dark:text-white"}})}export{a as AppToaster};

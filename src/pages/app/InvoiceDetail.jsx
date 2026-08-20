@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, Download, Link2, Mail, Pencil, Trash2 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { reconcilePayment } from '../../lib/billingApi'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
@@ -24,6 +25,10 @@ export default function InvoiceDetail({ business }) {
   const previewRef = useRef(null)
   const [invoice, setInvoice] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [reconciling, setReconciling] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('transfer')
+  const [paymentReference, setPaymentReference] = useState('')
 
   useEffect(() => {
     loadInvoice()
@@ -47,7 +52,36 @@ export default function InvoiceDetail({ business }) {
   }
 
   async function markPaid() {
-    toast.error('Payment status is read-only here until a verified payment reconciliation flow is available.')
+    const balance = getBalance(invoice)
+    const amount = paymentAmount ? Number(paymentAmount) : balance
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      toast.error('Enter a valid payment amount.')
+      return
+    }
+    if (amount > balance) {
+      toast.error(`Payment exceeds the outstanding balance (${formatCurrency(balance, invoice?.currency || 'NGN')}).`)
+      return
+    }
+
+    setReconciling(true)
+    try {
+      await reconcilePayment({
+        invoiceId: invoice.id,
+        amount,
+        method: paymentMethod,
+        reference: paymentReference,
+        note: '',
+      })
+      toast.success('Payment recorded successfully.')
+      setPaymentAmount('')
+      setPaymentReference('')
+      await loadInvoice()
+    } catch (error) {
+      toast.error(error.message || 'Unable to record the payment.')
+    } finally {
+      setReconciling(false)
+    }
   }
 
   async function deleteInvoice() {
@@ -199,11 +233,60 @@ export default function InvoiceDetail({ business }) {
           </Card>
 
           <Card className="rounded-[32px]">
-            <h2 className="text-xl font-bold text-neutral-950">Action sidebar</h2>
-            <div className="mt-5 grid gap-3">
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
-                Payment status is read-only in the browser now. Use a verified payment flow or trusted backend reconciliation before marking invoices as paid.
+            <h2 className="text-xl font-bold text-neutral-950">Record payment</h2>
+            {invoice.status === 'paid' ? (
+              <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-900">
+                This invoice is fully paid. No further reconciliation is needed.
               </div>
+            ) : (
+              <>
+                <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
+                  Outstanding balance: {formatCurrency(getBalance(invoice), invoice?.currency || 'NGN')}. Record payments received via transfer, cash, or card here.
+                </div>
+                <div className="mt-4 grid gap-3">
+                  <label className="block text-sm font-semibold text-neutral-700">
+                    Amount
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder={String(getBalance(invoice))}
+                      value={paymentAmount}
+                      onChange={(event) => setPaymentAmount(event.target.value)}
+                      className="mt-1 w-full rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 outline-none focus:border-primary dark:bg-white/5"
+                    />
+                  </label>
+                  <label className="block text-sm font-semibold text-neutral-700">
+                    Payment method
+                    <select
+                      value={paymentMethod}
+                      onChange={(event) => setPaymentMethod(event.target.value)}
+                      className="mt-1 w-full rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 outline-none focus:border-primary dark:bg-white/5"
+                    >
+                      <option value="transfer">Bank transfer</option>
+                      <option value="cash">Cash</option>
+                      <option value="card">Card</option>
+                      <option value="pos">POS</option>
+                      <option value="cheque">Cheque</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </label>
+                  <label className="block text-sm font-semibold text-neutral-700">
+                    Reference
+                    <input
+                      type="text"
+                      placeholder="e.g. Txn ref, receipt no."
+                      value={paymentReference}
+                      onChange={(event) => setPaymentReference(event.target.value)}
+                      className="mt-1 w-full rounded-2xl border border-emerald-400/12 bg-white/90 px-4 py-3 text-sm text-neutral-800 outline-none focus:border-primary dark:bg-white/5"
+                    />
+                  </label>
+                  <Button variant="primary" leftIcon={<CheckCircle2 className="h-4 w-4" />} onClick={markPaid} disabled={reconciling}>
+                    {reconciling ? 'Recording…' : 'Record payment'}
+                  </Button>
+                </div>
+              </>
+            )}
+            <div className="mt-5 grid gap-3">
               <Button variant="outline" leftIcon={<Mail className="h-4 w-4" />} onClick={sendReminder}>Send Reminder</Button>
               <Button variant="outline" leftIcon={<Pencil className="h-4 w-4" />} onClick={() => navigate(`/app/invoices/${invoice.id}/edit`)}>Edit</Button>
               <Button variant="outline" leftIcon={<Link2 className="h-4 w-4" />} onClick={() => navigator.clipboard.writeText(paymentLink)}>Copy Payment Link</Button>
